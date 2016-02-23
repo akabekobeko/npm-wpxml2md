@@ -34,7 +34,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "xml-stream": "^0.4.5"
+    "xml2js": "^0.4.16"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

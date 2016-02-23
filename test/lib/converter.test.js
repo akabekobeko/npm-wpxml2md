@@ -4,16 +4,19 @@ import Converter from '../../src/lib/converter.js';
 /** @test {Converter} */
 describe( 'Converter', () => {
   /** @test {Converter#indent} */
-  it( 'indent', () => {
-    const src    = '  A\n\n  B\n\t\tC';
-    const actual = 'A\n\nB\nC';
-    const expect = Converter.indent( src );
-    assert( expect === actual );
+  describe( 'indent', () => {
+    it( 'Indent ( space and tab )', () => {
+      const src    = '  A\n\n  B\n\t\tC';
+      const actual = 'A\n\nB\nC';
+      const expect = Converter.indent( src );
+      assert( expect === actual );
+    } );
   } );
 
   /** @test {Converter#header} */
-  it( 'header', () => {
-    const src = `
+  describe( 'header', () => {
+    it( 'Header ( normal and with id )', () => {
+      const src = `
 <h1 id="1">Title</h1>
   <h2 class="test" id="1-1">Header 1</h2>
 
@@ -22,9 +25,9 @@ describe( 'Converter', () => {
     <h3 id="1-2-1">Header 3</h2>
 
 <h2>Header 4</h2>
-`;
+  `;
 
-    let actual = `
+      let actual = `
 # Title {#1}
   ## Header 1 {#1-1}
 
@@ -33,12 +36,12 @@ describe( 'Converter', () => {
     ### Header 3 {#1-2-1}
 
 ## Header 4
-`;
+  `;
 
-    let expect = Converter.header( src );
-    assert( expect === actual );
+      let expect = Converter.header( src );
+      assert( expect === actual );
 
-    actual = `
+      actual = `
 # Title {#1}
 ## Header 1 {#1-1}
 
@@ -47,10 +50,11 @@ describe( 'Converter', () => {
 ### Header 3 {#1-2-1}
 
 ## Header 4
-`;
+  `;
 
-    expect = Converter.header( Converter.indent( src ) );
-    assert( expect === actual );
+      expect = Converter.header( Converter.indent( src ) );
+      assert( expect === actual );
+    } );
   } );
 
   /** @test {Converter#link} */

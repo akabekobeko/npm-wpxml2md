@@ -82,9 +82,9 @@ export default class Converter {
    *
    * @return {String} Replaced text.
    */
-  static header( src ) {
+  static header( text ) {
     // Header + ID
-    let dest = src.replace( /<h([0-9]).*?.id="(.*?.)">(.*?.)<\/h[0-9]>/g, ( str, $1, $2, $3 ) => {
+    let dest = text.replace( /<h([0-9]).*?.id="(.*?.)">(.*?.)<\/h[0-9]>/g, ( str, $1, $2, $3 ) => {
       switch( Number( $1 ) ) {
         case 1:  return '# '     + $3 + ' {#' + $2 + '}';
         case 2:  return '## '    + $3 + ' {#' + $2 + '}';
@@ -118,8 +118,8 @@ export default class Converter {
    *
    * @return {String} Replaced text.
    */
-  static link( src ) {
-    return src.replace( /<a.*.href="(.*?.)".*?.>(.*?.)<\/a>/gm, ( str, $1, $2 ) => {
+  static link( text ) {
+    return text.replace( /<a.*.href="(.*?.)".*?.>(.*?.)<\/a>/gm, ( str, $1, $2 ) => {
       return '[' + $2 + '](' + $1.replace( /\(/gm, '%28' ).replace( /\)/gm, '%29' ) + ')';
     } );
   }
@@ -127,7 +127,7 @@ export default class Converter {
   /**
    * Parse a WordPress shortcode.
    *
-   * @param {String} src Source text.
+   * @param {String} text Source text.
    *
    * @return {Object} Parsed result.
    */
@@ -150,19 +150,22 @@ export default class Converter {
   /**
    * Convert a short code of SyntaxHighlighter Evolved the code block of Markdown.
    *
-   * @param {String} src Source text.
+   * @param {String} text Source text.
    *
    * @return {String} Replaced text.
    *
    * @see http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/
    */
-  static shortcodeSyntaxHighlighterEvolved( src ) {
+  static shortcodeSyntaxHighlighterEvolved( text ) {
     const codes = ConverterConstants.syntaxHighlighterCodes;
-    return src.replace( /\[([^\]]+)]([^\[]+)\[\/([^\]]+)]/igm, ( str, $1, $2 ) => {
+    return text.replace( /\[([^\]]+)]([^\[]+)\[\/([^\]]+)]/igm, ( str, $1, $2 ) => {
       const obj = Converter.parseShortcode( $1 );
       if( obj.code === codes[ 0 ] ) {
-        // ```
-        return ( obj.params.lang ? '```' + obj.params.lang + $2 + '```' : str );
+        if( obj.params.lang && !( obj.params.lang === codes[ 1 ] || obj.params.lang === codes[ 2 ] ) ) {
+          return '```' + obj.params.lang + $2 + '```';
+        }
+
+        return '```' + $2 + '```';
       } else if( obj.code === codes[ 1 ] || obj.code === codes[ 2 ] ) {
         // ``` + "lang" parameter
         return '```' + $2 + '```';
