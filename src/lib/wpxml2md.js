@@ -21,12 +21,13 @@ export default class WordPressXmlToMarkdown {
     return new Promise( ( resolve, reject ) => {
       Fs.readFile( Path.resolve( src ), ( err, data ) => {
         if( err ) {
-          return reject( err );
+          reject( err );
+          return;
         }
 
         XmlParser.parseString( data.toString(), ( err2, xml ) => {
-          if( err ) {
-            return reject( err );
+          if( err2 ) {
+            return reject( err2 );
           }
 
           const posts = WordPressXmlToMarkdown.postsFromXML( xml );
@@ -39,7 +40,7 @@ export default class WordPressXmlToMarkdown {
             WordPressXmlToMarkdown.convertPost( post, dir, logger );
           } );
 
-          resolve();
+          return resolve();
         } );
       } );
     } );

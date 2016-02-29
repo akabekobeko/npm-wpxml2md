@@ -1,184 +1,240 @@
+import JsDom from 'jsdom';
+import Util from './util.js';
+import MarkdownConverters from './markdown.js';
+import GmfConverters from './gmf.js';
 
 /**
- * Constatns for the Converter class.
+ * Types of node.
  * @type {Object}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
  */
-export const ConverterConstants = {
-  syntaxHighlighterCodes: [
-    // ``` + lang parameter
-    'code',
-
-    // ```
-    'plain',
-    'text',
-
-    // ```lang
-    'as3',
-    'actionscript3',
-    'bash',
-    'shell',
-    'cf',
-    'coldfusion',
-    'c-sharp',
-    'csharp',
-    'cpp',
-    'c',
-    'css',
-    'delphi',
-    'pas',
-    'pascal',
-    'diff',
-    'patch',
-    'erl',
-    'erlang',
-    'groovy',
-    'js',
-    'jscript',
-    'javascript',
-    'java',
-    'jfx',
-    'javafx',
-    'perl',
-    'pl',
-    'php',
-    'ps',
-    'powershell',
-    'py',
-    'python',
-    'rails',
-    'ror',
-    'ruby',
-    'scala',
-    'sql',
-    'vb',
-    'vbnet',
-    'xml',
-    'xhtml',
-    'xslt',
-    'html'
-  ]
+const NodeTypes = {
+  ELEMENT_NODE: 1,
+  TEXT_NODE: 3
 };
 
 /**
- * Conver the WordPress XML to Markdown.
+ * RegExp.
+ * @type {Object}
+ */
+const RegExps = {
+  Alphabet: /A/,
+  Space: /^\s*$/i,
+  Leading: /^[ \r\n\t]/,
+  Trailing: /[ \r\n\t]$/
+};
+
+/**
+ * Conver the WordPress's post to Markdown.
+ * Design and implementation was in reference to the npm to-markdown.
+ *
+ * @see https://github.com/domchristie/to-markdown
  */
 export default class Converter {
   /**
-   * Remove the beginning lines of the indent ( space or tab ).
+   * Check that conversion is possible.
    *
-   * @param {String} src Source text.
+   * @param {Node} node                      DOM node.
+   * @param {String|Array.<String>|Function} filter Filter.
    *
-   * @return {String} Replaced text.
+   * @return {Boolean} "true" if the conversion is possible.
    */
-  static indent( src ) {
-    return src.replace( /^[ \t]*(?=\S)/gm, '' );
+  static canConvert( node, filter ) {
+    if( typeof filter === 'string' ) {
+      return filter === node.nodeName.toLowerCase();
+    }
+
+    if( Array.isArray( filter ) ) {
+      return filter.indexOf( node.nodeName.toLowerCase() ) !== -1;
+    } else if( typeof filter === 'function' ) {
+      return filter( node );
+    }
+
+    throw new TypeError( '"filter" needs to be a string, array, or function' );
   }
 
   /**
-   * Convert a headers.
-   * Header with the id will be in the format "# Text {#id}".
+   * Conver the WordPress's post to Markdown.
    *
-   * @param {String} src Source text.
+   * @param {String} post    WordPress's post text.
+   * @param {Object} options Options.
    *
-   * @return {String} Replaced text.
+   * @return {String} Markdown text.
    */
-  static header( text ) {
-    // Header + ID
-    let dest = text.replace( /<h([0-9]).*?.id="(.*?.)">(.*?.)<\/h[0-9]>/g, ( str, $1, $2, $3 ) => {
-      switch( Number( $1 ) ) {
-        case 1:  return '# '     + $3 + ' {#' + $2 + '}';
-        case 2:  return '## '    + $3 + ' {#' + $2 + '}';
-        case 3:  return '### '   + $3 + ' {#' + $2 + '}';
-        case 4:  return '#### '  + $3 + ' {#' + $2 + '}';
-        case 5:  return '##### ' + $3 + ' {#' + $2 + '}';
-        default: return str;
+  static convert( post, options = {} ) {
+    return new Promise( ( resolve, reject ) => {
+      if( typeof post !== 'string' ) {
+        return reject( new TypeError( '"post" is not a string.' ) );
       }
-    } );
 
-    // Header
-    dest = dest.replace( /<h([0-9]).*?>(.*?.)<\/h[0-9]>/g, ( str, $1, $2 ) => {
-      switch( Number( $1 ) ) {
-        case 1:  return '# '     + $2;
-        case 2:  return '## '    + $2;
-        case 3:  return '### '   + $2;
-        case 4:  return '#### '  + $2;
-        case 5:  return '##### ' + $2;
-        default: return str;
+      let converters = MarkdownConverters.slice( 0 );
+      if( options.gmf ) {
+        converters = GmfConverters.concat( converters );
       }
-    } );
 
-    return dest;
+      if( options.converters ) {
+        converters = options.converters.concat( converters );
+      }
+
+      const body  = JsDom.jsdom( post.replace( /(\d+)\. /g, '$1\\. ' ) ).body;
+      const nodes = Converter.flattenNodes( body );
+
+      // Process through nodes in reverse ( so deepest child elements are first ).
+      for( let i = nodes.length - 1; 0 <= i; --i ) {
+        Converter.process( nodes[ i ], converters );
+      }
+
+      let result = Converter.getContent( body );
+      result = result.replace( /^[\t\r\n]+|[\t\r\n\s]+$/g, '' )
+                     .replace( /\n\s+\n/g, '\n\n' )
+                     .replace( /\n{3,}/g, '\n\n' );
+
+      return resolve( result );
+    } );
   }
 
   /**
-   * Convert a links to markdown link.
-   * Parentheses in the URL will be escaped to ""%28" and "%29".
+   * Flanking the whitespaces.
    *
-   * @param {String} src Source text.
+   * @param {Node} node DOM node.
    *
-   * @return {String} Replaced text.
+   * @return {Object} whitespaces.
    */
-  static link( text ) {
-    return text.replace( /<a.*.href="(.*?.)".*?.>(.*?.)<\/a>/gm, ( str, $1, $2 ) => {
-      return '[' + $2 + '](' + $1.replace( /\(/gm, '%28' ).replace( /\)/gm, '%29' ) + ')';
-    } );
-  }
+  static flankingWhitespace( node ) {
+    let leading  = '';
+    let trailing = '';
 
-  /**
-   * Parse a WordPress shortcode.
-   *
-   * @param {String} text Source text.
-   *
-   * @return {Object} Parsed result.
-   */
-  static parseShortcode( text ) {
-    const codes = text.split( ' ' );
-    const obj   = { code: codes[ 0 ], params: {} };
+    if( !( Util.isBlockElement( node ) ) ) {
+      const hasLeading  = RegExps.Leading.test( node.innerHTML );
+      const hasTrailing = RegExps.Trailing.test( node.innerHTML );
+      if( hasLeading && !( Converter.isFlankedByWhitespace( 'left', node ) ) ) {
+        leading = ' ';
+      }
 
-    for( let i = 1, max = codes.length; i < max; ++i ) {
-      const params = codes[ i ].split( '=' );
-      if( params.length === 1 ) {
-        obj.params[ params[ 0 ] ] = ' ';
-      } else {
-        obj.params[ params[ 0 ] ] = params[ 1 ].replace( /^"(.+(?="$))"$/, '$1' );
+      if( hasTrailing && !( Converter.isFlankedByWhitespace( 'right', node ) ) ) {
+        trailing = ' ';
       }
     }
 
-    return obj;
+    return { leading: leading, trailing: trailing };
   }
 
   /**
-   * Convert a short code of SyntaxHighlighter Evolved the code block of Markdown.
+   * Flattens the tree structure of nodes.
    *
-   * @param {String} text Source text.
+   * @param {Node} node DOM node.
    *
-   * @return {String} Replaced text.
-   *
-   * @see http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/
+   * @return {Array.<Node>} Nodes.
    */
-  static shortcodeSyntaxHighlighterEvolved( text ) {
-    const codes = ConverterConstants.syntaxHighlighterCodes;
-    return text.replace( /\[([^\]]+)]([^\[]+)\[\/([^\]]+)]/igm, ( str, $1, $2 ) => {
-      const obj = Converter.parseShortcode( $1 );
-      if( obj.code === codes[ 0 ] ) {
-        if( obj.params.lang && !( obj.params.lang === codes[ 1 ] || obj.params.lang === codes[ 2 ] ) ) {
-          return '```' + obj.params.lang + $2 + '```';
-        }
+  static flattenNodes( node ) {
+    const inqueue  = [ node ];
+    const outqueue = [];
 
-        return '```' + $2 + '```';
-      } else if( obj.code === codes[ 1 ] || obj.code === codes[ 2 ] ) {
-        // ``` + "lang" parameter
-        return '```' + $2 + '```';
-      }
+    while( 0 < inqueue.length ) {
+      const elm = inqueue.shift();
+      outqueue.push( elm );
 
-      // ```lang
-      for( let i = 3, max = codes.length; i < max; ++i ) {
-        if( obj.code === codes[ i ] ) {
-          return '```' + obj.code + $2 + '```';
+      for( let i = 0, max = elm.childNodes.length; i < max; ++i ) {
+        const child = elm.childNodes[ i ];
+        if( child.nodeType === NodeTypes.ELEMENT_NODE ) {
+          inqueue.push( child );
         }
       }
+    }
 
-      return str;
+    outqueue.shift(); // Remove root
+    return outqueue;
+  }
+
+  /**
+   * Get a child contents text.
+   *
+   * @param {Node} node DOM node.
+   *
+   * @return {Text} Text.
+   */
+  static getContent( node ) {
+    let text = '';
+    for( let i = 0, max = node.childNodes.length; i < max; ++i ) {
+      const elm = node.childNodes[ i ];
+      if( elm.nodeType === NodeTypes.ELEMENT_NODE ) {
+        text += node.childNodes[ i ]._replacement;
+      } else if ( elm.nodeType === NodeTypes.TEXT_NODE ) {
+        text += elm.data;
+      }
+    }
+
+    return text;
+  }
+
+  /**
+   * Check a flanked by whitespace.
+   *
+   * @param {String} side
+   * @param {Node}   node Node.
+   *
+   * @return {Boolean} Flanked if "true".
+   */
+  static isFlankedByWhitespace( side, node ) {
+    let sibling = null;
+    let regexp  = null;
+    if( side === 'left' ) {
+      sibling = node.previousSibling;
+      regexp  = / $/;
+    } else {
+      sibling = node.nextSibling;
+      regexp  = /^ /;
+    }
+
+    let isFlanked = false;
+    if( sibling ) {
+      if( sibling.nodeType === NodeTypes.TEXT_NODE ) {
+        isFlanked = regexp.test( sibling.nodeValue );
+      } else if( sibling.nodeType === NodeTypes.ELEMENT_NODE && !( Util.isBlockElement( sibling ) ) ) {
+        isFlanked = regexp.test( sibling.textContent );
+      }
+    }
+
+    return isFlanked;
+  }
+
+  /**
+   * Convert the Node to Markdown text.
+   *
+   * @param {Node}              node       DOM node.
+   * @param {Array.<Converter>} converters Converters.
+   */
+  static process( node, converters ) {
+    let content = Converter.getContent( node );
+
+    // Remove blank nodes
+    if( !( Util.isVoidElement( node ) ) && RegExps.Alphabet.test( node.nodeName ) && RegExps.Space.test( content ) ) {
+      node._replacement = '';
+      return;
+    }
+
+    let replacement = '';
+    converters.some( ( converter ) => {
+      if( !( Converter.canConvert( node, converter.filter ) ) ) {
+        return false;
+      }
+
+      if( typeof converter.replacement !== 'function' ) {
+        throw new TypeError(  '"replacement" needs to be a function that returns a string' );
+      }
+
+      const whitespace = Converter.flankingWhitespace( node );
+      if( whitespace.leading || whitespace.trailing ) {
+        content = Util.trim( content );
+      }
+
+      replacement = whitespace.leading +
+                    converter.replacement( node, content ) +
+                    whitespace.trailing;
+
+      return true;
     } );
+
+    node._replacement = replacement;
   }
 }

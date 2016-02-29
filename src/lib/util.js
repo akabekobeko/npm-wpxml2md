@@ -2,6 +2,28 @@ import Fs from 'fs';
 import Path from 'path';
 
 /**
+ * Elements of block.
+ * @type {Array}
+ */
+const BlockElements = [
+  'address', 'article', 'aside', 'audio', 'blockquote', 'body', 'canvas',
+  'center', 'dd', 'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption',
+  'figure', 'footer', 'form', 'frameset', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'header', 'hgroup', 'hr', 'html', 'isindex', 'li', 'main', 'menu', 'nav',
+  'noframes', 'noscript', 'ol', 'output', 'p', 'pre', 'section', 'table',
+  'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul'
+];
+
+/**
+ * Elements of void.
+ * @type {Array.<String>}
+ */
+const VoidElements = [
+  'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
+  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
+];
+
+/**
  * Provides utility function.
  */
 export default class Util {
@@ -61,6 +83,28 @@ export default class Util {
   }
 
   /**
+   * Check the node of a block element.
+   *
+   * @param {Node} node Node.
+   *
+   * @return {Boolean} Block element if "true".
+   */
+  static isBlockElement( node ) {
+    return BlockElements.indexOf( node.nodeName.toLowerCase() ) !== -1;
+  }
+
+  /**
+   * Check the node of a void element.
+   *
+   * @param {Node} node Node.
+   *
+   * @return {Boolean} Void element if "true".
+   */
+  static isVoidElement( node ) {
+    return VoidElements.indexOf( node.nodeName.toLowerCase() ) !== -1;
+  }
+
+  /**
    * Asynchronous mkdir(2). No arguments other than a possible exception are given to the completion callback.
    * mode defaults to 0o777.
    *
@@ -77,6 +121,34 @@ export default class Util {
 
     Fs.mkdirSync( dir );
     return Util.existsSync( dir );
+  }
+
+  /**
+   * Get the HTML string of an element with its contents converted.
+   *
+   * @param  {Node}   node    DOM node.
+   * @param  {String} content Text.
+   *
+   * @return {String} HTML text.
+   */
+  static outerHTML( node, content ) {
+    const clone = node.cloneNode( false );
+    if( clone.outerHTML ) {
+      return clone.outerHTML.replace( '><', '>' + content + '<' );
+    }
+
+    return content;
+  }
+
+  /**
+   * Remove whitespace from both sides of a string.
+   *
+   * @param {String} str String.
+   *
+   * @return {String} New string.1
+   */
+  static trim( str ) {
+    return str.replace( /^[ \r\n\t]+|[ \r\n\t]+$/g, '' );
   }
 
   /**
