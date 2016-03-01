@@ -1,3 +1,4 @@
+import Util from './util.js';
 
 /**
  * Convert the DOM node to cell text of the table.
@@ -10,14 +11,10 @@
 function Cell( node, content ) {
   let index = 0;
   if( node.parentNode && node.parentNode.childNodes ) {
-    index  = Array.prototype.indexOf.call( node.parentNode.childNodes, node );
+    index = Util.arrayIndexOf( node.parentNode.childNodes, node );
   }
 
-  let   prefix = ' ';
-  if( index === 0 ) {
-    prefix = '| ';
-  }
-
+  const prefix = ( index === 0 ? '| ' : ' ' );
   return prefix + content + ' |';
 }
 
