@@ -29,6 +29,7 @@ const MarkdownConverters = [
       for( let i = 0; i < level; ++i ) {
         prefix += '#';
       }
+
       return '\n\n' + prefix + ' ' + content + '\n\n';
     }
   },
@@ -57,9 +58,9 @@ const MarkdownConverters = [
   {
     filter: ( node ) => {
       const hasSiblings = node.previousSibling || node.nextSibling;
-      const isCodeBlock = node.parentNode.nodeName === 'PRE' && !hasSiblings;
+      const isCodeBlock = ( node.parentNode.nodeName === 'PRE' && !( hasSiblings ) );
 
-      return node.nodeName === 'CODE' && !isCodeBlock;
+      return ( node.nodeName === 'CODE' && !( isCodeBlock ) );
     },
     replacement: ( node, content ) => {
       return '`' + content + '`';
@@ -68,7 +69,7 @@ const MarkdownConverters = [
   // Link
   {
     filter: ( node ) => {
-      return node.nodeName === 'A' && node.getAttribute( 'href' );
+      return ( node.nodeName === 'A' && node.getAttribute( 'href' ) );
     },
     replacement: ( node, content ) => {
       const titlePart = node.title ? ' "' + node.title + '"' : '';
@@ -79,10 +80,11 @@ const MarkdownConverters = [
   {
     filter: 'img',
     replacement: ( node ) => {
-      const alt = node.alt || '';
-      const src = node.getAttribute( 'src' ) || '';
-      const title = node.title || '';
+      const alt       = node.alt || '';
+      const src       = node.getAttribute( 'src' ) || '';
+      const title     = node.title || '';
       const titlePart = title ? ' "' + title + '"' : '';
+
       return src ? '![' + alt + '](' + src + titlePart + ')' : '';
     }
   },
@@ -111,7 +113,7 @@ const MarkdownConverters = [
     replacement: ( node, content ) => {
       const text   = content.replace( /^\s+/, '' ).replace( /\n/gm, '\n    ' );
       const parent = node.parentNode;
-      const index  = Array.prototype.indexOf.call( parent.children, node ) + 1;
+      const index  = Util.arrayIndexOf( parent.children, node ) + 1;
       const ol     = /ol/i;
       const prefix = ol.test( parent.nodeName ) ? index + '.  ' : '*   ';
       return prefix + text;
