@@ -28,6 +28,18 @@ const VoidElements = [
  */
 export default class Util {
   /**
+   * This method returns the first index at which a given element can be found in the array
+   *
+   * @param {Array}  arr Array.
+   * @param {Object} obj Element to locate in the array.
+   *
+   * @return {Number} If the success index, otherwise -1.
+   */
+  static arrayIndexOf( arr, obj ) {
+    return Array.prototype.indexOf.call( arr, obj );
+  }
+
+  /**
    * Check the existence of a file or folder.
    *
    * @param {String} path Path of the file or folder.
