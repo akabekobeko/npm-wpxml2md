@@ -30,6 +30,11 @@ const MarkdownConverters = [
         prefix += '#';
       }
 
+      // Inter link ( Markdown Extra )
+      if( node.id ) {
+        return '\n\n' + prefix + ' ' + content + ' {#' + node.id + '}\n\n';
+      }
+
       return '\n\n' + prefix + ' ' + content + '\n\n';
     }
   },
