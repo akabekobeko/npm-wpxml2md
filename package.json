@@ -34,6 +34,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
+    "collapse-whitespace": "^1.1.2",
     "jsdom": "^8.0.4",
     "xml2js": "^0.4.16"
   },

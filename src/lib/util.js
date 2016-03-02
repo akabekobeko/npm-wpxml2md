@@ -120,8 +120,7 @@ export default class Util {
    * Asynchronous mkdir(2). No arguments other than a possible exception are given to the completion callback.
    * mode defaults to 0o777.
    *
-   * @param  {String}   path Directory path.
-   * @param  {Function} cb   Callback function.
+   * @param {String} path Directory path.
    *
    * @return {Boolean} Success if "true".
    */

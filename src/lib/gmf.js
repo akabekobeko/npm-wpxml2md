@@ -26,7 +26,7 @@ const HighlightRegEx = /highlight highlight-(\S+)/;
 
 /**
  * Convert the HTML DOM Node to GFM ( GitHub Flavore Markdown ) text.
- * @type {Array.<Converter>}
+ * @type {Array.<MdConverter>}
  * @see https://github.com/domchristie/to-markdown/blob/master/lib/gfm-converters.js
  */
 const GmfConverters = [
@@ -74,7 +74,7 @@ const GmfConverters = [
           const border = ( align ? alignMap[ align.value ] : '---' );
 
           if( elm._replacement ) {
-            borderCells += Cell( border, elm._replacement );
+            borderCells += Cell( elm, border );
           }
         }
       }

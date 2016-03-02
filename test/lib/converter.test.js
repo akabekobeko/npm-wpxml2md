@@ -5,9 +5,19 @@ import Converter from '../../src/lib/converter.js';
 describe( 'Converter', () => {
   /** @test {Converter#convert} */
   describe( 'convert: Markdown', () => {
+    it( 'Plain text ( TEXT_NODE ), Keep a whitespace and line break', () => {
+      const post     = 'Line 1\n\nLine 2  Word\nLine3';
+      const expected = 'Line 1\n\nLine 2  Word\nLine3';
+
+      return Converter.convert( post )
+      .then( ( actual ) => {
+        assert( actual === expected );
+      } );
+    } );
+
     it( '<p>', () => {
       const post     = '<p>\nLine 1\n\nLine 2\n</p>';
-      const expected = 'Line 1\n\nLine 2';
+      const expected = 'Line 1 Line 2';
 
       return Converter.convert( post )
       .then( ( actual ) => {
@@ -125,7 +135,7 @@ Text
 
     it( '<blockquote>', () => {
       const post = '<blockquote>\nLine 1\nLine 2\n</blockquote>';
-      const expected = '> Line 1\n> Line 2';
+      const expected = '> Line 1 Line 2';
 
       return Converter.convert( post )
       .then( ( actual ) => {
@@ -158,7 +168,7 @@ Text
   </li>
   <li>Item 2</li>
 </ul>`;
-      const expected = '*   Item 1\n\n    *   Item 1-1\n    *   Item 1-2\n\n*   Item 2';
+      const expected = '*   Item 1\n    *   Item 1-1\n    *   Item 1-2\n*   Item 2';
 
       return Converter.convert( post )
       .then( ( actual ) => {
@@ -191,7 +201,7 @@ Text
   </li>
   <li>Item 2</li>
 </ol>`;
-      const expected = '1.  Item 1\n\n    1.  Item 1-1\n    2.  Item 1-2\n\n2.  Item 2';
+      const expected = '1.  Item 1\n    1.  Item 1-1\n    2.  Item 1-2\n2.  Item 2';
 
       return Converter.convert( post )
       .then( ( actual ) => {
@@ -221,7 +231,7 @@ Text
   } );
 
   /** @test {Converter#convert} */
-  describe( 'convert: GitHub Flavore Markdown', () => {
+  describe( 'convert: GitHub Flavored Markdown', () => {
     it( '<br>', () => {
       const post     = 'Line 1<br>Line 2<br>Line 3';
       const expected = 'Line 1\nLine 2\nLine 3';
@@ -254,7 +264,7 @@ const test = 'test';
 Text
 `;
 
-      const expected = 'Text\n\n```\n\nconst test = \'test\';\n\n```\n\nText';
+      const expected = 'Text\n\n```\nconst test = \'test\';\n```\n\nText';
 
       return Converter.convert( post, { gmf: true } )
       .then( ( actual ) => {
@@ -275,6 +285,54 @@ Text
 `;
 
       const expected = 'Text\n\n```js\nconst test = \'test\';\n\n```\n\nText';
+
+      return Converter.convert( post, { gmf: true } )
+      .then( ( actual ) => {
+        assert( actual === expected );
+      } );
+    } );
+
+    it( '<th>', () => {
+      const post     = '<table><th>Header 1</th><th>Header 2</th></table>';
+      const expected = '| Header 1 | Header 2 |';
+
+      return Converter.convert( post, { gmf: true } )
+      .then( ( actual ) => {
+        assert( actual === expected );
+      } );
+    } );
+
+    it( '<td>', () => {
+      const post     = '<table><td>Value 1</td><td>Value 2</td></table>';
+      const expected = '| Value 1 | Value 2 |';
+
+      return Converter.convert( post, { gmf: true } )
+      .then( ( actual ) => {
+        assert( actual === expected );
+      } );
+    } );
+
+    it( '<th>, <td>', () => {
+      const post     = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>';
+      const expected = '| Header 1 | Header 2 |\n| Value 1 | Value 2 |';
+
+      return Converter.convert( post, { gmf: true } )
+      .then( ( actual ) => {
+        assert( actual === expected );
+      } );
+    } );
+
+    it( '<thead><th>, <tbody><td>', () => {
+      const post =
+`<table>
+  <thead>
+    <tr><th>Header 1</th><th>Header 2</th></tr>
+</thead>
+  <tbody>
+    <tr><td>Value 1</td><td>Value 2</td></tr>
+  </tbody>
+</table>`;
+      const expected = '| Header 1 | Header 2 |\n| --- | --- |\n| Value 1 | Value 2 |';
 
       return Converter.convert( post, { gmf: true } )
       .then( ( actual ) => {

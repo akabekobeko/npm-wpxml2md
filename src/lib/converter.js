@@ -1,4 +1,5 @@
 import JsDom from 'jsdom';
+import CollapseWhitespace from 'collapse-whitespace';
 import Util from './util.js';
 import MarkdownConverters from './markdown.js';
 import GmfConverters from './gmf.js';
@@ -25,7 +26,7 @@ const RegExps = {
 };
 
 /**
- * Conver the WordPress's post to Markdown.
+ * Convert the WordPress's post to Markdown.
  * Design and implementation was in reference to the npm to-markdown.
  *
  * @see https://github.com/domchristie/to-markdown
@@ -54,7 +55,21 @@ export default class Converter {
   }
 
   /**
-   * Conver the WordPress's post to Markdown.
+   * Collapse the whitespace from ELEMENT_NODE node.
+   * TEXT_NODE will keep the original indentation and whitespace.
+   *
+   * @param {Array.<Node>} nodes DOM nodes.
+   */
+  static collapseWhitespace( nodes ) {
+    nodes.forEach( ( node ) => {
+      if( node.nodeType === NodeTypes.ELEMENT_NODE ) {
+        CollapseWhitespace( node, Util.isBlockElement );
+      }
+    } );
+  }
+
+  /**
+   * Convert the WordPress's post to Markdown.
    *
    * @param {String} post    WordPress's post text.
    * @param {Object} options Options.
@@ -78,6 +93,7 @@ export default class Converter {
 
       const body  = JsDom.jsdom( post.replace( /(\d+)\. /g, '$1\\. ' ) ).body;
       const nodes = Converter.flattenNodes( body );
+      Converter.collapseWhitespace( nodes );
 
       // Process through nodes in reverse ( so deepest child elements are first ).
       for( let i = nodes.length - 1; 0 <= i; --i ) {
