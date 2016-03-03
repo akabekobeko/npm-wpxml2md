@@ -10,11 +10,6 @@ import Logger from './logger.js';
  *
  * @return {Promise} Promise object.
  */
-module.exports = ( src, dest, options ) => {
-  // Set defaults
-  const opt = options || {};
-  if( opt.report === undefined ) { opt.gmf = false; }
-  if( opt.gmf    === undefined ) { opt.gmf = true; }
-
-  return WordPressXmlToMarkdown.convert( src, dest, new Logger( opt.report ), opt );
+module.exports = ( src, dest, options = { report: false, gfm: false } ) => {
+  return WordPressXmlToMarkdown.convert( src, dest, new Logger( options.report ), options );
 };
