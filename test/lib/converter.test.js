@@ -236,7 +236,7 @@ Text
       const post     = 'Line 1<br>Line 2<br>Line 3';
       const expected = 'Line 1\nLine 2\nLine 3';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -246,7 +246,17 @@ Text
       const post     = '<del>Text 1</del> <s>Text 2</s> <strike>Text 3</strike>';
       const expected = '~~Text 1~~ ~~Text 2~~ ~~Text 3~~';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
+      .then( ( actual ) => {
+        assert( actual === expected );
+      } );
+    } );
+
+    it( '<ul><li><input type="checkbox">', () => {
+      const post     = '<ul><li><input type="checkbox">Item 1</li><li><input type="checkbox" checked="true">Item 2</li></ul>';
+      const expected = '*   [ ] Item 1\n*   [x] Item 2';
+
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -266,7 +276,7 @@ Text
 
       const expected = 'Text\n\n```\nconst test = \'test\';\n```\n\nText';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -286,7 +296,7 @@ Text
 
       const expected = 'Text\n\n```js\nconst test = \'test\';\n\n```\n\nText';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -296,7 +306,7 @@ Text
       const post     = '<table><th>Header 1</th><th>Header 2</th></table>';
       const expected = '| Header 1 | Header 2 |';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -306,7 +316,7 @@ Text
       const post     = '<table><td>Value 1</td><td>Value 2</td></table>';
       const expected = '| Value 1 | Value 2 |';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -316,7 +326,7 @@ Text
       const post     = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>';
       const expected = '| Header 1 | Header 2 |\n| Value 1 | Value 2 |';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
@@ -334,7 +344,7 @@ Text
 </table>`;
       const expected = '| Header 1 | Header 2 |\n| --- | --- |\n| Value 1 | Value 2 |';
 
-      return Converter.convert( post, { gmf: true } )
+      return Converter.convert( post, { gfm: true } )
       .then( ( actual ) => {
         assert( actual === expected );
       } );
