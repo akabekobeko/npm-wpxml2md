@@ -1,6 +1,7 @@
 import JsDom from 'jsdom';
 import CollapseWhitespace from 'collapse-whitespace';
 import Util from './util.js';
+import Shortcode from './shortcode.js';
 import MarkdownConverters from './markdown.js';
 import GfmConverters from './gfm.js';
 
@@ -83,7 +84,7 @@ export default class Converter {
       }
 
       let converters = MarkdownConverters.slice( 0 );
-      if( options.gmf ) {
+      if( options.gfm ) {
         converters = GfmConverters.concat( converters );
       }
 
@@ -181,6 +182,13 @@ export default class Converter {
     }
 
     return text;
+  }
+
+  static initText( text ) {
+    const result = Shortcode.convert( text );
+
+    // Escape number list
+    return result.replace( /(\d+)\. /g, '$1\\. ' );
   }
 
   /**
