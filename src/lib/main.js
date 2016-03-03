@@ -10,6 +10,6 @@ import Logger from './logger.js';
  *
  * @return {Promise} Promise object.
  */
-module.exports = ( src, dest, options = { report: false, gfm: false } ) => {
+module.exports = ( src, dest, options = {} ) => {
   return WordPressXmlToMarkdown.convert( src, dest, new Logger( options.report ), options );
 };
