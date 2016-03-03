@@ -25,11 +25,11 @@ function Cell( node, content ) {
 const HighlightRegEx = /highlight highlight-(\S+)/;
 
 /**
- * Convert the HTML DOM Node to GFM ( GitHub Flavore Markdown ) text.
+ * Convert the HTML DOM Node to GFM ( GitHub Flavored Markdown ) text.
  * @type {Array.<MdConverter>}
  * @see https://github.com/domchristie/to-markdown/blob/master/lib/gfm-converters.js
  */
-const GmfConverters = [
+const GfmConverters = [
   // Line break
   {
     filter: 'br',
@@ -131,4 +131,4 @@ const GmfConverters = [
   }
 ];
 
-export default GmfConverters;
+export default GfmConverters;

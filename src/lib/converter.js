@@ -2,7 +2,7 @@ import JsDom from 'jsdom';
 import CollapseWhitespace from 'collapse-whitespace';
 import Util from './util.js';
 import MarkdownConverters from './markdown.js';
-import GmfConverters from './gmf.js';
+import GfmConverters from './gfm.js';
 
 /**
  * Types of node.
@@ -84,7 +84,7 @@ export default class Converter {
 
       let converters = MarkdownConverters.slice( 0 );
       if( options.gmf ) {
-        converters = GmfConverters.concat( converters );
+        converters = GfmConverters.concat( converters );
       }
 
       if( options.converters ) {
