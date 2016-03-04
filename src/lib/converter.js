@@ -78,36 +78,32 @@ export default class Converter {
    * @return {String} Markdown text.
    */
   static convert( post, options = {} ) {
-    return new Promise( ( resolve, reject ) => {
-      if( typeof post !== 'string' ) {
-        return reject( new TypeError( '"post" is not a string.' ) );
-      }
+    if( typeof post !== 'string' ) {
+      throw new TypeError( '"post" is not a string.' );
+    }
 
-      let converters = MarkdownConverters.slice( 0 );
-      if( options.gfm ) {
-        converters = GfmConverters.concat( converters );
-      }
+    let converters = MarkdownConverters.slice( 0 );
+    if( options.gfm ) {
+      converters = GfmConverters.concat( converters );
+    }
 
-      if( options.converters ) {
-        converters = options.converters.concat( converters );
-      }
+    if( options.converters ) {
+      converters = options.converters.concat( converters );
+    }
 
-      const body  = JsDom.jsdom( post.replace( /(\d+)\. /g, '$1\\. ' ) ).body;
-      const nodes = Converter.flattenNodes( body );
-      Converter.collapseWhitespace( nodes );
+    const body  = JsDom.jsdom( Converter.prepareText( post ) ).body;
+    const nodes = Converter.flattenNodes( body );
+    Converter.collapseWhitespace( nodes );
 
-      // Process through nodes in reverse ( so deepest child elements are first ).
-      for( let i = nodes.length - 1; 0 <= i; --i ) {
-        Converter.process( nodes[ i ], converters );
-      }
+    // Process through nodes in reverse ( so deepest child elements are first ).
+    for( let i = nodes.length - 1; 0 <= i; --i ) {
+      Converter.process( nodes[ i ], converters );
+    }
 
-      let result = Converter.getContent( body );
-      result = result.replace( /^[\t\r\n]+|[\t\r\n\s]+$/g, '' )
-                     .replace( /\n\s+\n/g, '\n\n' )
-                     .replace( /\n{3,}/g, '\n\n' );
-
-      return resolve( result );
-    } );
+    const result = Converter.getContent( body );
+    return result.replace( /^[\t\r\n]+|[\t\r\n\s]+$/g, '' )
+                   .replace( /\n\s+\n/g, '\n\n' )
+                   .replace( /\n{3,}/g, '\n\n' );
   }
 
   /**
@@ -184,7 +180,14 @@ export default class Converter {
     return text;
   }
 
-  static initText( text ) {
+  /**
+   * Prepare the text for parse the jsdom.
+   *
+   * @param {String} text Text.
+   *
+   * @return {String} Prepared text.
+   */
+  static prepareText( text ) {
     const result = Shortcode.convert( text );
 
     // Escape number list

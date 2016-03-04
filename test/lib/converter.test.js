@@ -8,31 +8,22 @@ describe( 'Converter', () => {
     it( 'Plain text ( TEXT_NODE ), Keep a whitespace and line break', () => {
       const post     = 'Line 1\n\nLine 2  Word\nLine3';
       const expected = 'Line 1\n\nLine 2  Word\nLine3';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<p>', () => {
       const post     = '<p>\nLine 1\n\nLine 2\n</p>';
       const expected = 'Line 1 Line 2';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<br>', () => {
       const post     = 'Line 1<br>Line 2<br>Line 3';
       const expected = 'Line 1  \nLine 2  \nLine 3';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<h1> - <h6>, and Markdown Extra Link', () => {
@@ -57,60 +48,43 @@ describe( 'Converter', () => {
 
 ###### Header 6`;
 
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<hr>', () => {
       const post     = '<hr>';
       const expected = '* * *';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<em>, <i>', () => {
       const post     = '<em>Word 1</em> <i>Word 2</i>';
       const expected = '_Word 1_ _Word 2_';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<code>', () => {
       const post     = 'Text <code>Code</code> Text';
       const expected = 'Text `Code` Text';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<a>', () => {
       const post     = 'Text <a href="://example.com/" title="title">Link</a> Text <a href="#id">Inter Link</a>';
       const expected = 'Text [Link](://example.com/ "title") Text [Inter Link](#id)';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<img>', () => {
       const post     = '<img src="example.png" alt="Title"> <img src="example.png" title="Example">';
       const expected = '![Title](example.png) ![](example.png "Example")';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<pre><code>...</code></pre>', () => {
@@ -126,21 +100,15 @@ Text
 `;
 
       const expected = 'Text\n\n    const test = \'test\';\n\nText';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<blockquote>', () => {
       const post = '<blockquote>\nLine 1\nLine 2\n</blockquote>';
       const expected = '> Line 1 Line 2';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<ul><li>', () => {
@@ -150,11 +118,8 @@ Text
   <li>Item 2</li>
 </ul>`;
       const expected = '*   Item 1\n*   Item 2';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<ul><li>, nested', () => {
@@ -169,11 +134,8 @@ Text
   <li>Item 2</li>
 </ul>`;
       const expected = '*   Item 1\n    *   Item 1-1\n    *   Item 1-2\n*   Item 2';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<ol><li>', () => {
@@ -183,11 +145,8 @@ Text
   <li>Item 2</li>
 </ol>`;
       const expected = '1.  Item 1\n2.  Item 2';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( '<ol><li>, nested', () => {
@@ -202,31 +161,23 @@ Text
   <li>Item 2</li>
 </ol>`;
       const expected = '1.  Item 1\n    1.  Item 1-1\n    2.  Item 1-2\n2.  Item 2';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( 'Block Element', () => {
-      const post = '<address>Copyright 2009 - 2016 akabeko All Rights Reserved</address>';
+      const post     = '<address>Copyright 2009 - 2016 akabeko All Rights Reserved</address>';
       const expected = '<address>Copyright 2009 - 2016 akabeko All Rights Reserved</address>';
-
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
     } );
 
     it( 'Otherwise', () => {
-      const post = '<example>Test</example>';
+      const post     = '<example>Test</example>';
       const expected = '<example>Test</example>';
+      const actual   = Converter.convert( post );
+      assert( actual === expected );
 
-      return Converter.convert( post )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
     } );
   } );
 
@@ -235,31 +186,22 @@ Text
     it( '<br>', () => {
       const post     = 'Line 1<br>Line 2<br>Line 3';
       const expected = 'Line 1\nLine 2\nLine 3';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<del>, <s>, <strike>', () => {
       const post     = '<del>Text 1</del> <s>Text 2</s> <strike>Text 3</strike>';
       const expected = '~~Text 1~~ ~~Text 2~~ ~~Text 3~~';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<ul><li><input type="checkbox">', () => {
       const post     = '<ul><li><input type="checkbox">Item 1</li><li><input type="checkbox" checked="true">Item 2</li></ul>';
       const expected = '*   [ ] Item 1\n*   [x] Item 2';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<pre><code>...</code></pre>', () => {
@@ -275,11 +217,8 @@ Text
 `;
 
       const expected = 'Text\n\n```\nconst test = \'test\';\n```\n\nText';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<div class="highlight highlight-lang"><pre>...</pre></div>', () => {
@@ -295,41 +234,29 @@ Text
 `;
 
       const expected = 'Text\n\n```js\nconst test = \'test\';\n\n```\n\nText';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<th>', () => {
       const post     = '<table><th>Header 1</th><th>Header 2</th></table>';
       const expected = '| Header 1 | Header 2 |';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<td>', () => {
       const post     = '<table><td>Value 1</td><td>Value 2</td></table>';
       const expected = '| Value 1 | Value 2 |';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<th>, <td>', () => {
       const post     = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>';
       const expected = '| Header 1 | Header 2 |\n| Value 1 | Value 2 |';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
 
     it( '<thead><th>, <tbody><td>', () => {
@@ -343,11 +270,8 @@ Text
   </tbody>
 </table>`;
       const expected = '| Header 1 | Header 2 |\n| --- | --- |\n| Value 1 | Value 2 |';
-
-      return Converter.convert( post, { gfm: true } )
-      .then( ( actual ) => {
-        assert( actual === expected );
-      } );
+      const actual   = Converter.convert( post, { gfm: true } );
+      assert( actual === expected );
     } );
   } );
 } );
