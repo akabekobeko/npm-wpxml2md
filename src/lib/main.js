@@ -11,5 +11,10 @@ import Logger from './logger.js';
  * @return {Promise} Promise object.
  */
 module.exports = ( src, dest, options = {} ) => {
-  return WordPressXmlToMarkdown.convert( src, dest, new Logger( options.report ), options );
+  const logger = new Logger( options.report );
+  logger.log( 'Input: ' + src );
+  logger.log( 'Output: ' + dest );
+  logger.log( 'Mode: ' + ( options.gfm ? 'gfm' : '' ) );
+
+  return WordPressXmlToMarkdown.convert( src, dest, logger, options );
 };

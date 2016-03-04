@@ -27,7 +27,17 @@ export default class WordPressXmlToMarkdown {
 
       const dir = WordPressXmlToMarkdown.createUniqueDestDir( dest );
       if( !( dir ) ) {
-        return reject( new Error( 'Failed to create the directory.' ) );
+        return reject( new Error( 'Failed to create the root directory.' ) );
+      }
+
+      const postsDir = Path.join( dir, 'posts' );
+      if( !( Util.mkdirSync( postsDir ) ) ) {
+        return reject( new Error( 'Failed to create the posts directory.' ) );
+      }
+
+      const pagesDir = Path.join( dir, 'pages' );
+      if( !( Util.mkdirSync( pagesDir ) ) ) {
+        return reject( new Error( 'Failed to create the pages directory.' ) );
       }
 
       return Promise
@@ -36,8 +46,21 @@ export default class WordPressXmlToMarkdown {
         return WordPressXmlToMarkdown.postsFromXML( data.toString() );
       } )
       .then( ( posts ) => {
-        const tasks = posts.map( ( post ) => WordPressXmlToMarkdown.convertPost( post, dir, logger, options ) );
-        return Promise.all( tasks );
+        posts.forEach( ( post ) => {
+          const type = post[ 'wp:post_type' ][ 0 ];
+          switch( type ) {
+            case 'post':
+              WordPressXmlToMarkdown.convertPost( type, postsDir, post, logger, options );
+              break;
+
+            case 'page':
+              WordPressXmlToMarkdown.convertPost( type, pagesDir, post, logger, options );
+              break;
+
+            default:
+              break;
+          }
+        } );
       } );
     } );
   }
@@ -45,60 +68,58 @@ export default class WordPressXmlToMarkdown {
   /**
    * Convert the post data to markdown file.
    *
-   * @param {Object} post   Post data.
+   * @param {String} type   Type of post ( post or page ).
    * @param {String} dir    Path of Markdown file output directory.
+   * @param {Object} post   Post data.
    * @param {Logger} logger Logger.
    * @param {Option} options Options.
    *
    * @return {Promise} Promise task.
    */
-  static convertPost( post, dir, logger, options ) {
-    return new Promise( ( resolve, reject ) => {
-      const date  = Util.formatDate( new Date( post.pubDate ), 'YYYY/MM/DD' ).split( '/' );
-      const year  = date[ 0 ];
-      const month = date[ 1 ];
-      const day   = date[ 2 ];
-
-      logger.log( year + '/' + month + '/' + day + ': ' + post.title );
-
-      const stream = WordPressXmlToMarkdown.createStream( dir, year, month, day );
-      if( !( stream ) ) {
-        return reject( new Error( 'Failed to create the stream.' ) );
+  static convertPost( type, dir, post, logger, options ) {
+    let date  = Util.formatDate( new Date( post.pubDate ), 'YYYY/MM/DD' );
+    if( !( date ) ) {
+      date = Util.formatDate( new Date( post[ 'wp:post_date' ] ), 'YYYY/MM/DD' );
+      if( !( date ) ) {
+        date = Util.formatDate( new Date(), 'YYYY/MM/DD' );
       }
+    }
 
-      return Converter.convert( post[ 'content:encoded' ][ 0 ], options )
-      .then( ( markdown ) => {
-        stream.write( '# ' + post.title + '\n\n', 'utf8' );
-        stream.write( markdown, 'utf8' );
-      } );
-    } );
+    const units = date.split( '/' );
+    const year  = units[ 0 ];
+    const month = units[ 1 ];
+    const day   = units[ 2 ];
+
+    logger.log( year + '/' + month + '/' + day + ' [' + type + ']: ' + post.title );
+
+    const stream = WordPressXmlToMarkdown.createStream( dir, year, month + '-' + day + '.md' );
+    if( !( stream ) ) {
+      throw new Error( 'Failed to create the stream.' );
+    }
+
+    const markdown = Converter.convert( post[ 'content:encoded' ][ 0 ], options );
+    stream.write( '# ' + post.title + '\n\n', 'utf8' );
+    stream.write( markdown, 'utf8' );
   }
 
   /**
    * Create a stream of Markdown files to be written.
    *
-   * @param {String} root  Path of the roo directory.
-   * @param {String} year  Year.
-   * @param {String} month Month.
-   * @param {String} day   Day.
+   * @param {String} root     Path of the roo directory.
+   * @param {String} year     Year.
+   * @param {String} fileName File name.
    *
    * @return {WriteStream} If successful stream, otherwise "null".
    */
-  static createStream( root, year, month, day ) {
+  static createStream( root, year, fileName ) {
     // root/year
-    let dir  = Path.join( root, year );
-    if( !( Util.mkdirSync( dir ) ) ) {
-      return null;
-    }
-
-    // root/year/month
-    dir = Path.join( dir, month );
+    const dir  = Path.join( root, year );
     if( !( Util.mkdirSync( dir ) ) ) {
       return null;
     }
 
     // root/year/month/day.md or day-X.md
-    const filePath = Util.uniquePathWithSequentialNumber( Path.join( dir, day + '.md' ) );
+    const filePath = Util.uniquePathWithSequentialNumber( Path.join( dir, fileName ) );
     if( !( filePath ) ) {
       return null;
     }

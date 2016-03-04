@@ -65,29 +65,41 @@ export default class Util {
    *
    * @see http://qiita.com/osakanafish/items/c64fe8a34e7221e811d0
    */
-  static formatDate( date, format ) {
-    const d = ( date   === undefined ? new Date()                : date   );
-    let   f = ( format === undefined ? 'YYYY-MM-DD hh:mm:ss.SSS' : format );
+  static formatDate( date = new Date(), format = 'YYYY-MM-DD hh:mm:ss.SSS' ) {
+    const Y = date.getFullYear();
+    const M = date.getMonth();
+    const D = date.getDate();
+    const h = date.getHours();
+    const m = date.getMinutes();
+    const s = date.getSeconds();
+
+    if( Number.isNaN( Y ) || Number.isNaN( M ) || Number.isNaN( D ) || Number.isNaN( h ) || Number.isNaN( m ) || Number.isNaN( s ) ) {
+      return null;
+    }
 
     // Zero padding
-    f = f.replace( /YYYY/g, d.getFullYear() );
-    f = f.replace( /MM/g,   ( '0' + ( d.getMonth() + 1 ) ).slice( -2 ) );
-    f = f.replace( /DD/g,   ( '0' +          d.getDate() ).slice( -2 ) );
-    f = f.replace( /hh/g,   ( '0' +         d.getHours() ).slice( -2 ) );
-    f = f.replace( /mm/g,   ( '0' +       d.getMinutes() ).slice( -2 ) );
-    f = f.replace( /ss/g,   ( '0' +       d.getSeconds() ).slice( -2 ) );
+    let f = format;
+    f = f.replace( /YYYY/g, Y );
+    f = f.replace( /MM/g,   ( '0' + ( M + 1 ) ).slice( -2 ) );
+    f = f.replace( /DD/g,   ( '0' +         D ).slice( -2 ) );
+    f = f.replace( /hh/g,   ( '0' +         h ).slice( -2 ) );
+    f = f.replace( /mm/g,   ( '0' +         m ).slice( -2 ) );
+    f = f.replace( /ss/g,   ( '0' +         s ).slice( -2 ) );
 
     // Single digit
-    f = f.replace( /M/g, d.getMonth() + 1 );
-    f = f.replace( /D/g, d.getDate() );
-    f = f.replace( /h/g, d.getHours() );
-    f = f.replace( /m/g, d.getMinutes() );
-    f = f.replace( /s/g, d.getSeconds() );
+    f = f.replace( /M/g, M + 1 );
+    f = f.replace( /D/g, D );
+    f = f.replace( /h/g, h );
+    f = f.replace( /m/g, m );
+    f = f.replace( /s/g, s );
 
     if( f.match( /S/g ) ) {
-      const milliSeconds = ( '00' + d.getMilliseconds() ).slice( -3 );
-      for( let i = 0, max = f.match( /S/g ).length; i < max; ++i ) {
-        f = f.replace( /S/, milliSeconds.substring( i, i + 1 ) );
+      let ms = date.getMilliseconds();
+      if( !( Number.isNaN( ms ) ) ) {
+        ms = ( '00' + ms ).slice( -3 );
+        for( let i = 0, max = f.match( /S/g ).length; i < max; ++i ) {
+          f = f.replace( /S/, ms.substring( i, i + 1 ) );
+        }
       }
     }
 

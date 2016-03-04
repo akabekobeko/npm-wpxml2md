@@ -34,6 +34,12 @@ describe( 'Util', () => {
       const text = Util.formatDate( date, 'YYYY/M/D h:m:s' );
       assert( text === '2015/8/4 21:17:45' );
     } );
+
+    it( 'NaN', () => {
+      const date = new Date( 'Wed, 30 Nov -0001 00:00:00 +0000' );
+      const text = Util.formatDate( date, 'YYYY/M/D h:m:s' );
+      assert( text === null );
+    } );
   } );
 
   /** @test {Util#uniquePathWithSequentialNumber} */
