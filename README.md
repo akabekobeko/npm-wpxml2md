@@ -95,15 +95,17 @@ Converted Markdown files are output in the following directory.
 ```
 YYYYMMDD-hhmmss/
 ├── pages/
-│   └── YYYY-MM-DD.md
+│   └── YYYY/
+│       └── MM-DD.md
 └── posts/
-    └── YYYY-MM-DD.md
+    └── YYYY/
+        └── MM-DD.md
 ```
 
 * The name of the root directory is the date time that the execution of the processing
 * The result of converting the **Pages** will be output to the `pages` directory
 * The result of converting the **Posts** will be output to the `posts` directory
-* Markdown's file name is posted datet ime.
+* Markdown's file name is posted date time.
 * If the file or directory name is a duplicate will be added to the **sequential number** at the end.
 
 ### HTML TAG
