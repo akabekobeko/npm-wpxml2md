@@ -12,9 +12,9 @@ import Logger from './logger.js';
  */
 module.exports = ( src, dest, options = {} ) => {
   const logger = new Logger( options.report );
-  logger.log( 'Input: ' + src );
+  logger.log( 'Input:  ' + src );
   logger.log( 'Output: ' + dest );
-  logger.log( 'Mode: ' + ( options.gfm ? 'gfm' : '' ) );
+  logger.log( 'Modes:  ' + ( options.noGFM ? 'no-gfm' : '' ) );
 
   return WordPressXmlToMarkdown.convert( src, dest, logger, options );
 };

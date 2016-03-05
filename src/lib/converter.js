@@ -83,7 +83,7 @@ export default class Converter {
     }
 
     let converters = MarkdownConverters.slice( 0 );
-    if( options.gfm ) {
+    if( !( options.noGFM ) ) {
       converters = GfmConverters.concat( converters );
     }
 

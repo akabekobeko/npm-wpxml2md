@@ -20,7 +20,7 @@ Usage: wpxml2md [OPTIONS]
     -o, --output  Path of the output directory.
 
     -m, --modes   Specify the mode in the comma separated.
-                  "gfm" is to enable the GitHub Flavored Markdown
+                  "no-gfm" is to disable the GitHub Flavored Markdown
 
     -r, --report  Display the process reports.
                   Default is disable.
@@ -51,7 +51,7 @@ export const Options = {
  * @type {Object}
  */
 export const Modes = {
-  gfm: 'gfm'
+  noGFM: 'no-gfm'
 };
 
 /**
@@ -157,8 +157,8 @@ export default class CLI {
         case Options.modes[ 1 ]:
           value = CLI._parseArgValue( argv, index );
           if( value ) {
-            const modes = CLI._parseMode( value );
-            options.gfm = modes.gfm;
+            const modes = CLI._parseModes( value );
+            options.noGFM = modes.noGFM;
           }
           break;
 
@@ -192,15 +192,15 @@ export default class CLI {
    *
    * @return {Object} Modes.
    */
-  static _parseMode( arg ) {
+  static _parseModes( arg ) {
     const result = {};
     if( typeof arg !== 'string' ) { return result; }
 
     const units  = arg.split( ',' );
     units.forEach( ( unit ) => {
       switch( unit ) {
-        case Modes.gfm:
-          result.gfm = true;
+        case Modes.noGFM:
+          result.noGFM = true;
           break;
 
         default:

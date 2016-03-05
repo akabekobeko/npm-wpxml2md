@@ -36,7 +36,7 @@ function main( argv, stdout ) {
       options.input,
       options.output,
       {
-        gfm:    options.gfm,
+        noGFM:    options.noGFM,
         report: options.report
       }
     );

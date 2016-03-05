@@ -82,22 +82,22 @@ describe( 'CLI', () => {
     } );
 
     it( 'Modes', () => {
-      let modes   = 'gfm';
+      let modes   = 'no-gfm';
       let options = CLI.parseArgv( [ Options.modes[ 0 ], modes ] );
-      assert( options.gfm );
+      assert( options.noGFM );
 
       options = CLI.parseArgv( [ Options.modes[ 1 ], modes ] );
-      assert( options.gfm );
+      assert( options.noGFM );
 
-      modes   = 'gfm,test';
+      modes   = 'no-gfm,test';
       options = CLI.parseArgv( [ Options.modes[ 1 ], modes ] );
-      assert( options.gfm );
+      assert( options.noGFM );
 
       options = CLI.parseArgv( [ Options.modes[ 0 ] ] );
-      assert( !( options.gfm ) );
+      assert( !( options.noGFM ) );
 
       options = CLI.parseArgv( [ Options.modes[ 1 ], Options.help[ 0 ] ] );
-      assert( !( options.gfm ) );
+      assert( !( options.noGFM ) );
     } );
 
     it( 'Report', () => {
