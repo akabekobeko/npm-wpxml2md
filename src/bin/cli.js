@@ -21,13 +21,14 @@ Usage: wpxml2md [OPTIONS]
 
     -m, --modes   Specify the mode in the comma separated.
                   "no-gfm" is to disable the GitHub Flavored Markdown
+                  "no-melink" is to disable the Markdown Extra link on header
 
     -r, --report  Display the process reports.
                   Default is disable.
 
   Examples:
     $ wpxml2md -i wordpress.xml -o ./dist -r
-    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm -r
+    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm,no-melink -r
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md
@@ -51,7 +52,8 @@ export const Options = {
  * @type {Object}
  */
 export const Modes = {
-  noGFM: 'no-gfm'
+  noGFM: 'no-gfm',
+  noMELink: 'no-melink'
 };
 
 /**
@@ -158,7 +160,8 @@ export default class CLI {
           value = CLI._parseArgValue( argv, index );
           if( value ) {
             const modes = CLI._parseModes( value );
-            options.noGFM = modes.noGFM;
+            options.noGFM    = modes.noGFM;
+            options.noMELink = modes.noMELink;
           }
           break;
 
@@ -201,6 +204,10 @@ export default class CLI {
       switch( unit ) {
         case Modes.noGFM:
           result.noGFM = true;
+          break;
+
+        case Modes.noMELink:
+          result.noMELink = true;
           break;
 
         default:

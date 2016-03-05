@@ -23,7 +23,7 @@ const MarkdownConverters = [
   // Header
   {
     filter: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
-    replacement: ( node, content ) => {
+    replacement: ( node, content, options ) => {
       const level  = node.nodeName.charAt( 1 );
       let   prefix = '';
       for( let i = 0; i < level; ++i ) {
@@ -31,7 +31,7 @@ const MarkdownConverters = [
       }
 
       // Inter link ( Markdown Extra )
-      if( node.id ) {
+      if( node.id && !( options.noMELink ) ) {
         return '\n\n' + prefix + ' ' + content + ' {#' + node.id + '}\n\n';
       }
 

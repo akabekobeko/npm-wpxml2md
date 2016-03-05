@@ -52,6 +52,13 @@ describe( 'Converter', () => {
       assert( actual === expected );
     } );
 
+    it( '<h1> no-melink', () => {
+      const post     = '<h1 id="section1">Header</h1>';
+      const expected = '# Header';
+      const actual   = Converter.convert( post, { noMELink: true } );
+      assert( actual === expected );
+    } );
+
     it( '<hr>', () => {
       const post     = '<hr>';
       const expected = '* * *';

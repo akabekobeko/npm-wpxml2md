@@ -89,15 +89,15 @@ describe( 'CLI', () => {
       options = CLI.parseArgv( [ Options.modes[ 1 ], modes ] );
       assert( options.noGFM );
 
-      modes   = 'no-gfm,test';
+      modes   = 'no-gfm,test,no-melink';
       options = CLI.parseArgv( [ Options.modes[ 1 ], modes ] );
-      assert( options.noGFM );
+      assert( options.noGFM && options.noMELink );
 
       options = CLI.parseArgv( [ Options.modes[ 0 ] ] );
-      assert( !( options.noGFM ) );
+      assert( !( options.noGFM && options.noMELink ) );
 
       options = CLI.parseArgv( [ Options.modes[ 1 ], Options.help[ 0 ] ] );
-      assert( !( options.noGFM ) );
+      assert( !( options.noGFM && options.noMELink ) );
     } );
 
     it( 'Report', () => {

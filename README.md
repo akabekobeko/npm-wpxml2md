@@ -30,7 +30,21 @@ Can export the **WordPress XML** in the following way.
 ```js
 const wpxml2md = require( 'wpxml2md' );
 
-wpxml2md( 'wordpress.xml', 'dest', { report: true, gfm: true } )
+wpxml2md( 'wordpress.xml', 'dest', { report: true } )
+.then( () => {
+  console.log( 'Completed!!' );
+} )
+.catch( ( err ) => {
+  console.error( err );
+} );
+```
+
+Add modes:
+
+```js
+const wpxml2md = require( 'wpxml2md' );
+
+wpxml2md( 'wordpress.xml', 'dest', { noGFM: true, noMELink: true } )
 .then( () => {
   console.log( 'Completed!!' );
 } )
@@ -51,8 +65,9 @@ Options:
 
 | Name | Type | Description |
 |:--------|:--|:--|
-|    gfm | Boolean | Enable the Convert the GitHub Flavored Markdown. Default is `false`, disable a conversion.  |
-| report | Boolean | Display the process reports. Default is `false`, disable a report. |
+|    noGFM | Boolean | Disable the Convert the GitHub Flavored Markdown. Default is `false`, enable a conversion.  |
+| noMELink | Boolean | Disable the Convert the GitHub Extra link on header. Default is `false`, enable a conversion.  |
+|   report | Boolean | Display the process reports. Default is `false`, disable a report. |
 
 ### CLI
 
@@ -71,14 +86,15 @@ Usage: wpxml2md [OPTIONS]
     -o, --output  Path of the output directory.
 
     -m, --modes   Specify the mode in the comma separated.
-                  "gfm" is to enable the GitHub Flavored Markdown
+                  "no-gfm" is to disable the GitHub Flavored Markdown
+                  "no-melink" is to disable the Markdown Extra link on header
 
     -r, --report  Display the process reports.
                   Default is disable.
 
   Examples:
     $ wpxml2md -i wordpress.xml -o ./dist -r
-    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm -r
+    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm,no-melink -r
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md

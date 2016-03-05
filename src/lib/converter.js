@@ -72,8 +72,8 @@ export default class Converter {
   /**
    * Convert the WordPress's post to Markdown.
    *
-   * @param {String} post    WordPress's post text.
-   * @param {Object} options Options.
+   * @param {String}     post    WordPress's post text.
+   * @param {CLIOptions} options Options.
    *
    * @return {String} Markdown text.
    */
@@ -97,7 +97,7 @@ export default class Converter {
 
     // Process through nodes in reverse ( so deepest child elements are first ).
     for( let i = nodes.length - 1; 0 <= i; --i ) {
-      Converter.process( nodes[ i ], converters );
+      Converter.process( nodes[ i ], converters, options );
     }
 
     const result = Converter.getContent( body );
@@ -230,8 +230,9 @@ export default class Converter {
    *
    * @param {Node}              node       DOM node.
    * @param {Array.<Converter>} converters Converters.
+   * @param {CLIOptions}        options    Options.
    */
-  static process( node, converters ) {
+  static process( node, converters, options ) {
     let content = Converter.getContent( node );
 
     // Remove blank nodes
@@ -256,7 +257,7 @@ export default class Converter {
       }
 
       replacement = whitespace.leading +
-                    converter.replacement( node, content ) +
+                    converter.replacement( node, content, options ) +
                     whitespace.trailing;
 
       return true;

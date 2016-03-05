@@ -32,14 +32,11 @@ function main( argv, stdout ) {
       return reject( new Error( '"-o" or "--output" has not been specified. This parameter is required.' ) );
     }
 
-    return WpXml2Md(
-      options.input,
-      options.output,
-      {
-        noGFM:    options.noGFM,
-        report: options.report
-      }
-    );
+    return WpXml2Md( options.input, options.output, {
+      noGFM:    options.noGFM,
+      noMELink: options.noMELink,
+      report:   options.report
+    } );
   } );
 }
 
