@@ -124,7 +124,7 @@ Text
   <li>Item 1</li>
   <li>Item 2</li>
 </ul>`;
-      const expected = '*   Item 1\n*   Item 2';
+      const expected = '* Item 1\n* Item 2';
       const actual   = Converter.convert( post );
       assert( actual === expected );
     } );
@@ -140,7 +140,7 @@ Text
   </li>
   <li>Item 2</li>
 </ul>`;
-      const expected = '*   Item 1\n    *   Item 1-1\n    *   Item 1-2\n*   Item 2';
+      const expected = '* Item 1\n    * Item 1-1\n    * Item 1-2\n* Item 2';
       const actual   = Converter.convert( post );
       assert( actual === expected );
     } );
@@ -151,7 +151,7 @@ Text
   <li>Item 1</li>
   <li>Item 2</li>
 </ol>`;
-      const expected = '1.  Item 1\n2.  Item 2';
+      const expected = '1. Item 1\n2. Item 2';
       const actual   = Converter.convert( post );
       assert( actual === expected );
     } );
@@ -167,7 +167,7 @@ Text
   </li>
   <li>Item 2</li>
 </ol>`;
-      const expected = '1.  Item 1\n    1.  Item 1-1\n    2.  Item 1-2\n2.  Item 2';
+      const expected = '1. Item 1\n    1. Item 1-1\n    2. Item 1-2\n2. Item 2';
       const actual   = Converter.convert( post );
       assert( actual === expected );
     } );
@@ -206,7 +206,7 @@ Text
 
     it( '<ul><li><input type="checkbox">', () => {
       const post     = '<ul><li><input type="checkbox">Item 1</li><li><input type="checkbox" checked="true">Item 2</li></ul>';
-      const expected = '*   [ ] Item 1\n*   [x] Item 2';
+      const expected = '* [ ] Item 1\n* [x] Item 2';
       const actual   = Converter.convert( post );
       assert( actual === expected );
     } );

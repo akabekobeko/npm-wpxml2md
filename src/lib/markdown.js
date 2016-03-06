@@ -120,7 +120,7 @@ const MarkdownConverters = [
       const parent = node.parentNode;
       const index  = Util.arrayIndexOf( parent.children, node ) + 1;
       const ol     = /ol/i;
-      const prefix = ol.test( parent.nodeName ) ? index + '.  ' : '*   ';
+      const prefix = ol.test( parent.nodeName ) ? index + '. ' : '* ';
       return prefix + text;
     }
   },

@@ -143,8 +143,8 @@ Default markdown.
 | `<img>` | `![TITLE](URL)` |
 | `<pre><code>` | `\n\n    TEXT\n\n` |
 | `<blockquote>` | `\n\n> TEXT\n\n` |
-| `<ul><li>` | `\n\n*  TEXT\n\n` |
-| `<ol><li>` | `\n\n1.  TEXT\n\n` |
+| `<ul><li>` | `\n\n* TEXT\n\n` |
+| `<ol><li>` | `\n\n1. TEXT\n\n` |
 
 GitHub Flavored Markdown.
 
@@ -152,7 +152,7 @@ GitHub Flavored Markdown.
 |:--|:--|
 | `<br>` | `\n` |
 | `<del>`, `<s>`, `<strike>` | `~~TEXT~~` |
-| `<ul><li><input type="checkbox">` | `*  [ ] Text`, **checked** is true if `[x]`. |
+| `<ul><li><input type="checkbox">` | `* [ ] Text`, **checked** is true if `[x]`. |
 | `<table>` | see: [Organizing information with tables - User Documentation](https://help.github.com/articles/organizing-information-with-tables/) |
 | `<pre><code>` | ````\n\n```\nCODE\n```\n\n```` |
 | `<div class="highlight highlight-lang"><pre>` | ````\n\n```lang\nCODE\n```\n\n```` |
