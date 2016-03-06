@@ -1,0 +1,49 @@
+{
+  "name": "wpxml2md",
+  "description": "Convert the WordPress XML file to Markdown files.",
+  "version": "1.0.0",
+  "author": "akabeko (http://akabeko.me/)",
+  "license": "MIT",
+  "homepage": "https://github.com/akabekobeko/npm-wpxml2md#readme",
+  "main": "index.js",
+  "bin": "bin/main.js",
+  "files": [
+    "bin",
+    "lib",
+    "index.js"
+  ],
+  "keywords": [
+    "Convert",
+    "WordPress",
+    "XML",
+    "Markdown"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akabekobeko/npm-wpxml2md.git"
+  },
+  "bugs": {
+    "url": "https://github.com/akabekobeko/npm-wpxml2md/issues"
+  },
+  "scripts": {
+    "test": "mocha --timeout 50000 --compilers js:espower-babel/guess test/**/*.test.js",
+    "start": "npm run watch",
+    "esdoc": "esdoc -c esdoc.json",
+    "build": "babel src --out-dir ./",
+    "watch": "babel src --out-dir ./ --watch",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "collapse-whitespace": "^1.1.2",
+    "jsdom": "^8.0.4",
+    "xml2js": "^0.4.16"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-preset-es2015": "^6.5.0",
+    "esdoc": "^0.4.5",
+    "espower-babel": "^4.0.1",
+    "mocha": "^2.4.5",
+    "power-assert": "^1.2.0"
+  }
+}
