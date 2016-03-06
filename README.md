@@ -185,12 +185,12 @@ console.log( test );
 
 `code` is converted to a code block.
 
-````
-```js
-const test = 'test';
-console.log( test );
-```
-````
+
+    ```js
+    const test = 'test';
+    console.log( test );
+    ```
+
 
 Short code of programming languages and converts it to a code block.
 
@@ -205,14 +205,12 @@ if( test ) {
 
 For example, the above will be converted to the following.
 
-````
-```js
-const test = 'test';
-if( test ) {
-  console.log( test );  
-}
-```
-````
+    ```js
+    const test = 'test';
+    if( test ) {
+      console.log( test );  
+    }
+    ```
 
 Language to be converted is the following. The language names are based on the [SyntaxHighlighter - Bundled Brushes](http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/).
 

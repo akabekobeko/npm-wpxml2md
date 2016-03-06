@@ -1,0 +1,15 @@
+{
+  "name": "wpxml2md-examples",
+  "description": "Examples for the wpxml2md.",
+  "private": true,
+  "version": "1.0.1",
+  "author": "akabeko (http://akabeko.me/)",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wpxml2md": "^1.0.0"
+  }
+}
