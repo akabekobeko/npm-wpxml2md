@@ -1,4 +1,4 @@
-import assert from 'power-assert';
+import assert from 'assert';
 import Path from 'path';
 import CLI from '../../src/bin/cli.js';
 import { HelpText } from '../../src/bin/cli.js';

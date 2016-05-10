@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.0.2
+
+* Change
+    * Update a node modules
+    * Node v6 support
+
 ## 1.0.1
 
 * Change:

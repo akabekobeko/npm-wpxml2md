@@ -1,4 +1,4 @@
-import assert from 'power-assert';
+import assert from 'assert';
 import Path from 'path';
 import Util from '../../src/lib/util.js';
 
