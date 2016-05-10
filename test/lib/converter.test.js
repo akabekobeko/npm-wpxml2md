@@ -1,4 +1,4 @@
-import assert from 'power-assert';
+import assert from 'assert';
 import Converter from '../../src/lib/converter.js';
 
 /** @test {Converter} */

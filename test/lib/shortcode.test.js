@@ -1,4 +1,4 @@
-import assert from 'power-assert';
+import assert from 'assert';
 import Shortcode from '../../src/lib/shortcode.js';
 import { SHCodes } from '../../src/lib/shortcode.js';
 
