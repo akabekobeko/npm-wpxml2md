@@ -25,6 +25,18 @@
   "bugs": {
     "url": "https://github.com/akabekobeko/npm-wpxml2md/issues"
   },
+  "babel": {
+    "presets": [
+      "latest"
+    ],
+    "env": {
+      "development": {
+        "presets": [
+          "power-assert"
+        ]
+      }
+    }
+  },
   "scripts": {
     "test": "mocha",
     "start": "npm run watch",
