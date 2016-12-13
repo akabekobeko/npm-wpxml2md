@@ -38,7 +38,7 @@
     }
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --timeout 50000 --compilers js:babel-register test/**/*.test.js",
     "start": "npm run watch",
     "esdoc": "esdoc -c esdoc.json",
     "build": "babel src --out-dir ./",
