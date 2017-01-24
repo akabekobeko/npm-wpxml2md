@@ -5,6 +5,9 @@
   "author": "akabeko (http://akabeko.me/)",
   "license": "MIT",
   "homepage": "https://github.com/akabekobeko/npm-wpxml2md#readme",
+  "engines": {
+    "node": ">= 6"
+  },
   "main": "index.js",
   "bin": "bin/main.js",
   "files": [
