@@ -1,10 +1,10 @@
-import Path from 'path';
+const Path = require( 'path' );
 
 /**
  * Help text.
  * @type {[type]}
  */
-export const HelpText =
+const HelpText =
 `
 Usage: wpxml2md [OPTIONS]
 
@@ -38,7 +38,7 @@ Usage: wpxml2md [OPTIONS]
  * CLI options.
  * @type {Object}
  */
-export const Options = {
+const Options = {
   help:    [ '-h', '--help' ],
   version: [ '-v', '--version' ],
   input:   [ '-i', '--input' ],
@@ -51,7 +51,7 @@ export const Options = {
  * Output modes.
  * @type {Object}
  */
-export const Modes = {
+const Modes = {
   noGFM: 'no-gfm',
   noMELink: 'no-melink'
 };
@@ -59,7 +59,7 @@ export const Modes = {
 /**
  * Provides a command line interface.
  */
-export default class CLI {
+class CLI {
   /**
    * Parse for the command line argumens.
    *
@@ -218,3 +218,10 @@ export default class CLI {
     return result;
   }
 }
+
+module.exports = {
+  HelpText: HelpText,
+  Options: Options,
+  Modes: Modes,
+  CLI: CLI
+};

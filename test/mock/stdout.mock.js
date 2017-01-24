@@ -1,7 +1,7 @@
 /**
  * Mock class of stdout.
  */
-export default class StdOutMock {
+class StdOutMock {
   /**
    * Initialize instance.
    */
@@ -29,3 +29,5 @@ export default class StdOutMock {
     }
   }
 }
+
+module.exports = StdOutMock;

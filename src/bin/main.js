@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import CLI from './cli.js';
-import WpXml2Md from '../lib/main.js';
+const CLI = require( './cli.js' );
+const WpXml2Md = require( '../lib/main.js' );
 
 /**
  * Entry point of the CLI.

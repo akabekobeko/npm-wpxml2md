@@ -1,10 +1,10 @@
-import assert from 'assert';
-import Path from 'path';
-import CLI from '../../src/bin/cli.js';
-import { HelpText } from '../../src/bin/cli.js';
-import { Options } from '../../src/bin/cli.js';
-import Package from '../../package.json';
-import StdOutMock from '../mock/stdout.mock.js';
+const assert = require( 'power-assert' );
+const Path = require( 'path' );
+const CLI = require( '../../src/bin/cli.js' ).CLI;
+const HelpText = require( '../../src/bin/cli.js' ).HelpText;
+const Options = require( '../../src/bin/cli.js' ).Options;
+const Package = require( '../../package.json' );
+const StdOutMock = require( '../mock/stdout.mock.js' );
 
 /** @test {CLI} */
 describe( 'CLI', () => {

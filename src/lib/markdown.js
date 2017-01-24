@@ -1,4 +1,4 @@
-import Util from './util.js';
+const Util = require( './util.js' );
 
 /**
  * Convert the HTML DOM Node to Markdown text.
@@ -163,4 +163,4 @@ const MarkdownConverters = [
   }
 ];
 
-export default MarkdownConverters;
+module.exports = MarkdownConverters;

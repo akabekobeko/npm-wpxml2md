@@ -1,5 +1,5 @@
-import Fs from 'fs';
-import Path from 'path';
+const Fs = require( 'fs' );
+const Path = require( 'path' );
 
 /**
  * Elements of block.
@@ -26,7 +26,7 @@ const VoidElements = [
 /**
  * Provides utility function.
  */
-export default class Util {
+class Util {
   /**
    * This method returns the first index at which a given element can be found in the array
    *
@@ -205,3 +205,5 @@ export default class Util {
     return null;
   }
 }
+
+module.exports = Util;
