@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.0
+
+* Change
+  * [Drop transpile by Babel](https://github.com/akabekobeko/npm-wpxml2md/issues/37)
+
 ## 1.0.3
 
 * Change
