@@ -1,6 +1,6 @@
-import assert from 'assert';
-import Path from 'path';
-import Util from '../../src/lib/util.js';
+const assert = require( 'assert' );
+const Path = require( 'path' );
+const Util = require( '../../src/lib/util.js' );
 
 /** @test {Util} */
 describe( 'Util', () => {

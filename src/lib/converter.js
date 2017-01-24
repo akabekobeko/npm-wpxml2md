@@ -1,9 +1,9 @@
-import JsDom from 'jsdom';
-import CollapseWhitespace from 'collapse-whitespace';
-import Util from './util.js';
-import Shortcode from './shortcode.js';
-import MarkdownConverters from './markdown.js';
-import GfmConverters from './gfm.js';
+const JsDom = require( 'jsdom' );
+const CollapseWhitespace = require( 'collapse-whitespace' );
+const Util = require( './util.js' );
+const Shortcode = require( './shortcode.js' ).Shortcode;
+const MarkdownConverters = require( './markdown.js' );
+const GfmConverters = require( './gfm.js' );
 
 /**
  * Types of node.
@@ -32,7 +32,7 @@ const RegExps = {
  *
  * @see https://github.com/domchristie/to-markdown
  */
-export default class Converter {
+class Converter {
   /**
    * Check that conversion is possible.
    *
@@ -266,3 +266,5 @@ export default class Converter {
     node._replacement = replacement;
   }
 }
+
+module.exports = Converter;

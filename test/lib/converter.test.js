@@ -1,5 +1,5 @@
-import assert from 'assert';
-import Converter from '../../src/lib/converter.js';
+const assert = require( 'power-assert' );
+const Converter = require( '../../src/lib/converter.js' );
 
 /** @test {Converter} */
 describe( 'Converter', () => {

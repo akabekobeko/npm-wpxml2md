@@ -2,7 +2,7 @@
  * Constatns for the Converter class.
  * @type {Object}
  */
-export const SHCodes = [
+const SHCodes = [
   // ``` + lang parameter
   'code',
 
@@ -69,7 +69,7 @@ const Block = {
 /**
  * Convert the WordPress's shotcode to Markdown.
  */
-export default class Shortcode {
+class Shortcode {
   /**
    * Convert the WordPress's shotcode to Markdown.
    *
@@ -151,3 +151,8 @@ export default class Shortcode {
     return text.replace( /^[\n]|[\n]$/g, '' );
   }
 }
+
+module.exports = {
+  SHCodes: SHCodes,
+  Shortcode: Shortcode
+};

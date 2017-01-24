@@ -2,7 +2,7 @@
 /**
  * Display the log message for the stdout.
  */
-export default class Logger {
+class Logger {
   /**
    * Initialize instance.
    *
@@ -34,3 +34,5 @@ export default class Logger {
     }
   }
 }
+
+module.exports = Logger;

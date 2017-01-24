@@ -1,6 +1,6 @@
-import assert from 'assert';
-import Shortcode from '../../src/lib/shortcode.js';
-import { SHCodes } from '../../src/lib/shortcode.js';
+const assert = require( 'power-assert' );
+const Shortcode = require( '../../src/lib/shortcode.js' ).Shortcode;
+const SHCodes = require( '../../src/lib/shortcode.js' ).SHCodes;
 
 /** @test {Shortcode} */
 describe( 'Shortcode', () => {

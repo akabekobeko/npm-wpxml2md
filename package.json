@@ -9,7 +9,7 @@
     "node": ">= 6"
   },
   "main": "index.js",
-  "bin": "bin/main.js",
+  "bin": "src/bin/main.js",
   "files": [
     "bin",
     "lib",
@@ -34,7 +34,10 @@
     "test": {
       "type": "mocha",
       "source": "./test"
-    }
+    },
+    "plugins": [
+      { "name": "esdoc-node" }
+    ]
   },
   "babel": {
     "presets": [
@@ -49,24 +52,17 @@
     }
   },
   "scripts": {
-    "test": "mocha --timeout 50000 --compilers js:babel-register test/**/*.test.js",
-    "start": "npm run watch",
-    "esdoc": "esdoc",
-    "build": "babel src --out-dir ./",
-    "watch": "babel src --out-dir ./ --watch",
-    "prepublish": "npm run build"
+    "test": "mocha --timeout 50000 test/**/*.test.js",
+    "esdoc": "esdoc"
   },
   "dependencies": {
     "collapse-whitespace": "^1.1.4",
-    "jsdom": "^9.8.3",
+    "jsdom": "^9.9.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-preset-latest": "^6.16.0",
-    "babel-preset-power-assert": "^1.0.0",
-    "babel-register": "^6.18.0",
-    "esdoc": "^0.4.8",
+    "esdoc": "^0.5.2",
+    "esdoc-node": "^1.0.0",
     "mocha": "^3.2.0",
     "power-assert": "^1.4.2"
   }
