@@ -51,7 +51,7 @@
   "scripts": {
     "test": "mocha --timeout 50000 --compilers js:babel-register test/**/*.test.js",
     "start": "npm run watch",
-    "esdoc": "esdoc -c esdoc.json",
+    "esdoc": "esdoc",
     "build": "babel src --out-dir ./",
     "watch": "babel src --out-dir ./ --watch",
     "prepublish": "npm run build"
