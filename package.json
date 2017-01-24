@@ -25,6 +25,14 @@
   "bugs": {
     "url": "https://github.com/akabekobeko/npm-wpxml2md/issues"
   },
+  "esdoc": {
+    "source": "./src",
+    "destination": "./esdoc",
+    "test": {
+      "type": "mocha",
+      "source": "./test"
+    }
+  },
   "babel": {
     "presets": [
       "latest"
