@@ -39,18 +39,6 @@
       { "name": "esdoc-node" }
     ]
   },
-  "babel": {
-    "presets": [
-      "latest"
-    ],
-    "env": {
-      "development": {
-        "presets": [
-          "power-assert"
-        ]
-      }
-    }
-  },
   "scripts": {
     "test": "mocha --timeout 50000 test/**/*.test.js",
     "esdoc": "esdoc"
