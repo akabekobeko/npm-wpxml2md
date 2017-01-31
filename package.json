@@ -36,11 +36,22 @@
       "source": "./test"
     },
     "plugins": [
-      { "name": "esdoc-node" }
+      {
+        "name": "esdoc-node"
+      }
     ]
   },
+  "babel": {
+    "env": {
+      "development": {
+        "presets": [
+          "power-assert"
+        ]
+      }
+    }
+  },
   "scripts": {
-    "test": "mocha --timeout 50000 test/**/*.test.js",
+    "test": "mocha --timeout 50000 --compilers js:babel-register test/**/*.test.js",
     "esdoc": "esdoc"
   },
   "dependencies": {
@@ -49,6 +60,8 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "babel-preset-power-assert": "^1.0.0",
+    "babel-register": "^6.22.0",
     "esdoc": "^0.5.2",
     "esdoc-node": "^1.0.0",
     "mocha": "^3.2.0",
