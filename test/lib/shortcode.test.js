@@ -1,4 +1,4 @@
-const assert = require( 'power-assert' );
+const assert = require( 'assert' );
 const Shortcode = require( '../../src/lib/shortcode.js' ).Shortcode;
 const SHCodes = require( '../../src/lib/shortcode.js' ).SHCodes;
 

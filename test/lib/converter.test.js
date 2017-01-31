@@ -1,4 +1,4 @@
-const assert = require( 'power-assert' );
+const assert = require( 'assert' );
 const Converter = require( '../../src/lib/converter.js' );
 
 /** @test {Converter} */

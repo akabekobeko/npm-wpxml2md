@@ -1,4 +1,4 @@
-const assert = require( 'power-assert' );
+const assert = require( 'assert' );
 const Path = require( 'path' );
 const CLI = require( '../../src/bin/cli.js' ).CLI;
 const HelpText = require( '../../src/bin/cli.js' ).HelpText;
