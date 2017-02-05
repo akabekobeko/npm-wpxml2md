@@ -79,7 +79,11 @@ class Converter {
    *
    * @return {String} Markdown text.
    */
-  static convert( post, options = {} ) {
+  static convert( post, options ) {
+    if( !( options ) ) {
+      options = {};
+    }
+
     if( typeof post !== 'string' ) {
       throw new TypeError( '"post" is not a string.' );
     }

@@ -67,7 +67,15 @@ class Util {
    *
    * @see http://qiita.com/osakanafish/items/c64fe8a34e7221e811d0
    */
-  static formatDate( date = new Date(), format = 'YYYY-MM-DD hh:mm:ss.SSS' ) {
+  static formatDate( date, format ) {
+    if( !( date ) ) {
+      date = new Date();
+    }
+
+    if( typeof format !== 'string' ) {
+      format = 'YYYY-MM-DD hh:mm:ss.SSS';
+    }
+
     const Y = date.getFullYear();
     const M = date.getMonth();
     const D = date.getDate();
@@ -186,7 +194,15 @@ class Util {
    *
    * @return {String} Success is the unique path ( full path ), failure is null. If not duplicate returns the original path.
    */
-  static uniquePathWithSequentialNumber( path, min = 1, max = 256 ) {
+  static uniquePathWithSequentialNumber( path, min, max ) {
+    if( typeof min !== 'number' ) {
+      min = 1;
+    }
+
+    if( typeof max !== 'number' ) {
+      max = 256;
+    }
+
     const originalPath = Path.resolve( path );
     if( !( Util.existsSync( originalPath ) && typeof min === 'number' && typeof max === 'number' && 0 <= min && min < max ) ) {
       return originalPath;
