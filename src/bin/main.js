@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict';
+
 const CLI = require( './cli.js' );
 const WpXml2Md = require( '../lib/main.js' );
 

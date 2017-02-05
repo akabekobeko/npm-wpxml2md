@@ -1,3 +1,5 @@
+'use strict';
+
 const JsDom = require( 'jsdom' );
 const CollapseWhitespace = require( 'collapse-whitespace' );
 const Util = require( './util.js' );

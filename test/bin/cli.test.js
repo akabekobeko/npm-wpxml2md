@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require( 'assert' );
 const Path = require( 'path' );
 const CLI = require( '../../src/bin/cli.js' ).CLI;

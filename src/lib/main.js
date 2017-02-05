@@ -1,3 +1,5 @@
+'use strict';
+
 const WordPressXmlToMarkdown = require( './wpxml2md.js' );
 const Logger = require( './logger.js' );
 
