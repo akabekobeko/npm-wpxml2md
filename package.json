@@ -1,12 +1,12 @@
 {
   "name": "wpxml2md",
   "description": "Convert the WordPress XML file to Markdown files.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "akabeko (http://akabeko.me/)",
   "license": "MIT",
   "homepage": "https://github.com/akabekobeko/npm-wpxml2md#readme",
   "engines": {
-    "node": ">= 6"
+    "node": ">= 4"
   },
   "main": "index.js",
   "bin": "src/bin/main.js",

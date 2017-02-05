@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Constatns for the Converter class.
  * @type {Object}

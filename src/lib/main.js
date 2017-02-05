@@ -1,3 +1,5 @@
+'use strict';
+
 const WordPressXmlToMarkdown = require( './wpxml2md.js' );
 const Logger = require( './logger.js' );
 
@@ -10,7 +12,11 @@ const Logger = require( './logger.js' );
  *
  * @return {Promise} Promise object.
  */
-module.exports = ( src, dest, options = {} ) => {
+module.exports = ( src, dest, options ) => {
+  if( !( options ) ) {
+    options = {};
+  }
+
   const logger = new Logger( options.report );
   logger.log( 'Input:  ' + src );
   logger.log( 'Output: ' + dest );

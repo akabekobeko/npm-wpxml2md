@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * Display the log message for the stdout.
@@ -9,6 +10,10 @@ class Logger {
    * @param {Boolean} available "true" to display the report, default is "true".
    */
   constructor( available = true ) {
+    if( available === null || available === undefined ) {
+      available = true;
+    }
+
     this._available = available;
   }
 

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Mock class of stdout.
  */
