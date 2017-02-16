@@ -2,7 +2,7 @@
 
 'use strict'
 
-const CLI = require('./cli.js')
+const CLI = require('./cli.js').CLI
 const WpXml2Md = require('../lib/index.js')
 
 /**
