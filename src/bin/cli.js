@@ -1,13 +1,12 @@
-'use strict';
+'use strict'
 
-const Path = require( 'path' );
+const Path = require('path')
 
 /**
  * Help text.
  * @type {[type]}
  */
-const HelpText =
-`
+const HelpText = `
 Usage: wpxml2md [OPTIONS]
 
   Convert the WordPress XML file to Markdown files.
@@ -34,20 +33,20 @@ Usage: wpxml2md [OPTIONS]
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md
-`;
+`
 
 /**
  * CLI options.
  * @type {Object}
  */
 const Options = {
-  help:    [ '-h', '--help' ],
+  help: [ '-h', '--help' ],
   version: [ '-v', '--version' ],
-  input:   [ '-i', '--input' ],
-  output:  [ '-o', '--output' ],
-  modes:   [ '-m', '--modes' ],
-  report:  [ '-r', '--report' ]
-};
+  input: [ '-i', '--input' ],
+  output: [ '-o', '--output' ],
+  modes: [ '-m', '--modes' ],
+  report: [ '-r', '--report' ]
+}
 
 /**
  * Output modes.
@@ -56,7 +55,7 @@ const Options = {
 const Modes = {
   noGFM: 'no-gfm',
   noMELink: 'no-melink'
-};
+}
 
 /**
  * Provides a command line interface.
@@ -69,22 +68,22 @@ class CLI {
    *
    * @return {CLIOptions} Parse results.
    */
-  static parseArgv( argv ) {
-    if( !( argv && 0 < argv.length ) ) {
-      return { help: true };
+  static parseArgv (argv) {
+    if (!(argv && 0 < argv.length)) {
+      return { help: true }
     }
 
-    switch( argv[ 0 ] ) {
-      case Options.help[ 0 ]:
-      case Options.help[ 1 ]:
-        return { help: true };
+    switch (argv[ 0 ]) {
+      case Options.help[0]:
+      case Options.help[1]:
+        return {help: true}
 
-      case Options.version[ 0 ]:
-      case Options.version[ 1 ]:
-        return { version: true };
+      case Options.version[0]:
+      case Options.version[1]:
+        return {version: true}
 
       default:
-        return CLI._parseArgv( argv );
+        return CLI._parseArgv(argv)
     }
   }
 
@@ -93,8 +92,8 @@ class CLI {
    *
    * @param {WritableStream} stdout Standard output.
    */
-  static printHelp( stdout ) {
-    stdout.write( HelpText );
+  static printHelp (stdout) {
+    stdout.write(HelpText)
   }
 
   /**
@@ -102,17 +101,17 @@ class CLI {
    *
    * @param {WritableStream} stdout Standard output.
    */
-  static printVersion( stdout ) {
-    const read = ( path ) => {
+  static printVersion (stdout) {
+    const read = (path) => {
       try {
-        return require( path ).version;
-      } catch( err ) {
-        return null;
+        return require(path).version
+      } catch (err) {
+        return null
       }
-    };
+    }
 
-    const version = read( '../package.json' ) || read( '../../package.json' );
-    stdout.write( 'v' + version + '\n' );
+    const version = read('../package.json') || read('../../package.json')
+    stdout.write('v' + version + '\n')
   }
 
   /**
@@ -122,9 +121,9 @@ class CLI {
    *
    * @return {Boolean} If the option of the value "true".
    */
-  static _isValue( value ) {
-    const keys = Object.keys( Options );
-    return !( keys.some( ( key ) => value === Options[ key ][ 0 ] || value === Options[ key ][ 1 ] ) );
+  static _isValue (value) {
+    const keys = Object.keys(Options)
+    return !(keys.some((key) => value === Options[key][0] || value === Options[key][1]))
   }
 
   /**
@@ -134,45 +133,49 @@ class CLI {
    *
    * @return {CLIOptions} Parse results.
    */
-  static _parseArgv( argv ) {
-    const options = {};
-    let   value   = null;
+  static _parseArgv (argv) {
+    const options = {}
+    let   value   = null
 
-    argv.forEach( ( arg, index ) => {
-      switch( arg ) {
-        case Options.input[ 0 ]:
-        case Options.input[ 1 ]:
-          value = CLI._parseArgValue( argv, index );
-          if( value ) { options.input = Path.resolve( value ); }
-          break;
-
-        case Options.output[ 0 ]:
-        case Options.output[ 1 ]:
-          value = CLI._parseArgValue( argv, index );
-          if( value ) { options.output = Path.resolve( value ); }
-          break;
-
-        case Options.report[ 0 ]:
-        case Options.report[ 1 ]:
-          options.report = true;
-          break;
-
-        case Options.modes[ 0 ]:
-        case Options.modes[ 1 ]:
-          value = CLI._parseArgValue( argv, index );
-          if( value ) {
-            const modes = CLI._parseModes( value );
-            options.noGFM    = modes.noGFM;
-            options.noMELink = modes.noMELink;
+    argv.forEach((arg, index) => {
+      switch (arg) {
+        case Options.input[0]:
+        case Options.input[1]:
+          value = CLI._parseArgValue(argv, index)
+          if (value) {
+            options.input = Path.resolve(value)
           }
-          break;
+          break
+
+        case Options.output[0]:
+        case Options.output[1]:
+          value = CLI._parseArgValue(argv, index)
+          if (value) {
+            options.output = Path.resolve(value)
+          }
+          break
+
+        case Options.report[0]:
+        case Options.report[1]:
+          options.report = true
+          break
+
+        case Options.modes[0]:
+        case Options.modes[1]:
+          value = CLI._parseArgValue(argv, index)
+          if (value) {
+            const modes = CLI._parseModes(value)
+            options.noGFM    = modes.noGFM
+            options.noMELink = modes.noMELink
+          }
+          break
 
         default:
-          break;
+          break
       }
-    } );
+    })
 
-    return options;
+    return options
   }
 
   /**
@@ -183,11 +186,13 @@ class CLI {
    *
    * @return {String} Its contents if the option value, otherwise null.
    */
-  static _parseArgValue( argv, index ) {
-    if( !( index + 1 < argv.length ) ) { return null; }
+  static _parseArgValue (argv, index) {
+    if (!(index + 1 < argv.length)) {
+      return null
+    }
 
-    const value = argv[ index + 1 ];
-    return ( CLI._isValue( value ) ? value : null );
+    const value = argv[index + 1]
+    return (CLI._isValue(value) ? value : null)
   }
 
   /**
@@ -197,27 +202,29 @@ class CLI {
    *
    * @return {Object} Modes.
    */
-  static _parseModes( arg ) {
-    const result = {};
-    if( typeof arg !== 'string' ) { return result; }
+  static _parseModes (arg) {
+    const result = {}
+    if (typeof arg !== 'string') {
+      return result
+    }
 
-    const units  = arg.split( ',' );
-    units.forEach( ( unit ) => {
-      switch( unit ) {
+    const units  = arg.split(',')
+    units.forEach((unit) => {
+      switch (unit) {
         case Modes.noGFM:
-          result.noGFM = true;
-          break;
+          result.noGFM = true
+          break
 
         case Modes.noMELink:
-          result.noMELink = true;
-          break;
+          result.noMELink = true
+          break
 
         default:
-          break;
+          break
       }
-    } );
+    })
 
-    return result;
+    return result
   }
 }
 
@@ -226,4 +233,4 @@ module.exports = {
   Options: Options,
   Modes: Modes,
   CLI: CLI
-};
+}

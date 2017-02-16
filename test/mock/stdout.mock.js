@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * Mock class of stdout.
@@ -7,8 +7,8 @@ class StdOutMock {
   /**
    * Initialize instance.
    */
-  constructor() {
-    this._text = '';
+  constructor () {
+    this._text = ''
   }
 
   /**
@@ -16,8 +16,8 @@ class StdOutMock {
    *
    * @return {String} Text.
    */
-  get text() {
-    return this._text;
+  get text () {
+    return this._text
   }
 
   /**
@@ -25,11 +25,11 @@ class StdOutMock {
    *
    * @param {String} text Text.
    */
-  write( text ) {
-    if( typeof text === 'string' ) {
-      this._text = text;
+  write (text) {
+    if (typeof text === 'string') {
+      this._text = text
     }
   }
 }
 
-module.exports = StdOutMock;
+module.exports = StdOutMock
