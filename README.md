@@ -4,6 +4,7 @@
 [![npm version](https://badge.fury.io/js/wpxml2md.svg)](https://badge.fury.io/js/wpxml2md)
 [![Build Status](https://travis-ci.org/akabekobeko/npm-wpxml2md.svg?branch=master)](https://travis-ci.org/akabekobeko/npm-wpxml2md)
 [![Document](https://doc.esdoc.org/github.com/akabekobeko/npm-wpxml2md/badge.svg?t=0)](https://doc.esdoc.org/github.com/akabekobeko/npm-wpxml2md)
+[![Standard - JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](http://standardjs.com/)
 
 Convert the WordPress XML file to Markdown files.
 
@@ -29,29 +30,29 @@ Can export the **WordPress XML** in the following way.
 `wpxml2md` is promisify function.
 
 ```js
-const wpxml2md = require( 'wpxml2md' );
+const wpxml2md = require('wpxml2md');
 
-wpxml2md( 'wordpress.xml', 'dest', { report: true } )
-.then( () => {
-  console.log( 'Completed!!' );
+wpxml2md('wordpress.xml', 'dest', {report: true})
+.then(() => {
+  console.log('Completed!!');
 } )
-.catch( ( err ) => {
-  console.error( err );
-} );
+.catch((err) => {
+  console.error(err);
+});
 ```
 
 Add modes:
 
 ```js
-const wpxml2md = require( 'wpxml2md' );
+const wpxml2md = require('wpxml2md');
 
-wpxml2md( 'wordpress.xml', 'dest', { noGFM: true, noMELink: true } )
-.then( () => {
-  console.log( 'Completed!!' );
-} )
-.catch( ( err ) => {
-  console.error( err );
-} );
+wpxml2md('wordpress.xml', 'dest', {noGFM: true, noMELink: true})
+.then(() => {
+  console.log('Completed!!');
+})
+.catch((err) => {
+  console.error( err);
+});
 ```
 
 `wpxml2md( src, dest, [OPTIONS] )`

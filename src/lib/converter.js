@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-const JsDom = require( 'jsdom' );
-const CollapseWhitespace = require( 'collapse-whitespace' );
-const Util = require( './util.js' );
-const Shortcode = require( './shortcode.js' ).Shortcode;
-const MarkdownConverters = require( './markdown.js' );
-const GfmConverters = require( './gfm.js' );
+const JsDom = require('jsdom')
+const CollapseWhitespace = require('collapse-whitespace')
+const Util = require('./util.js')
+const Shortcode = require('./shortcode.js').Shortcode
+const MarkdownConverters = require('./markdown.js')
+const GfmConverters = require('./gfm.js')
 
 /**
  * Types of node.
@@ -15,7 +15,7 @@ const GfmConverters = require( './gfm.js' );
 const NodeTypes = {
   ELEMENT_NODE: 1,
   TEXT_NODE: 3
-};
+}
 
 /**
  * RegExp.
@@ -26,7 +26,7 @@ const RegExps = {
   Space: /^\s*$/i,
   Leading: /^[ \r\n\t]/,
   Trailing: /[ \r\n\t]$/
-};
+}
 
 /**
  * Convert the WordPress's post to Markdown.
@@ -43,18 +43,18 @@ class Converter {
    *
    * @return {Boolean} "true" if the conversion is possible.
    */
-  static canConvert( node, filter ) {
-    if( typeof filter === 'string' ) {
-      return filter === node.nodeName.toLowerCase();
+  static canConvert (node, filter) {
+    if (typeof filter === 'string') {
+      return (filter === node.nodeName.toLowerCase())
     }
 
-    if( Array.isArray( filter ) ) {
-      return filter.indexOf( node.nodeName.toLowerCase() ) !== -1;
-    } else if( typeof filter === 'function' ) {
-      return filter( node );
+    if (Array.isArray(filter)) {
+      return (filter.indexOf(node.nodeName.toLowerCase()) !== -1)
+    } else if (typeof filter === 'function') {
+      return filter(node)
     }
 
-    throw new TypeError( '"filter" needs to be a string, array, or function' );
+    throw new TypeError('"filter" needs to be a string, array, or function')
   }
 
   /**
@@ -63,12 +63,12 @@ class Converter {
    *
    * @param {Array.<Node>} nodes DOM nodes.
    */
-  static collapseWhitespace( nodes ) {
-    nodes.forEach( ( node ) => {
-      if( node.nodeType === NodeTypes.ELEMENT_NODE ) {
-        CollapseWhitespace( node, Util.isBlockElement );
+  static collapseWhitespace (nodes) {
+    nodes.forEach((node) => {
+      if (node.nodeType === NodeTypes.ELEMENT_NODE) {
+        CollapseWhitespace(node, Util.isBlockElement)
       }
-    } );
+    })
   }
 
   /**
@@ -79,37 +79,37 @@ class Converter {
    *
    * @return {String} Markdown text.
    */
-  static convert( post, options ) {
-    if( !( options ) ) {
-      options = {};
+  static convert (post, options) {
+    if (!(options)) {
+      options = {}
     }
 
-    if( typeof post !== 'string' ) {
-      throw new TypeError( '"post" is not a string.' );
+    if (typeof post !== 'string') {
+      throw new TypeError('"post" is not a string.')
     }
 
-    let converters = MarkdownConverters.slice( 0 );
-    if( !( options.noGFM ) ) {
-      converters = GfmConverters.concat( converters );
+    let converters = MarkdownConverters.slice(0)
+    if (!(options.noGFM)) {
+      converters = GfmConverters.concat(converters)
     }
 
-    if( options.converters ) {
-      converters = options.converters.concat( converters );
+    if (options.converters) {
+      converters = options.converters.concat(converters)
     }
 
-    const body  = JsDom.jsdom( Converter.prepareText( post ) ).body;
-    const nodes = Converter.flattenNodes( body );
-    Converter.collapseWhitespace( nodes );
+    const body  = JsDom.jsdom(Converter.prepareText(post)).body
+    const nodes = Converter.flattenNodes(body)
+    Converter.collapseWhitespace(nodes)
 
-    // Process through nodes in reverse ( so deepest child elements are first ).
-    for( let i = nodes.length - 1; 0 <= i; --i ) {
-      Converter.process( nodes[ i ], converters, options );
+    // Process through nodes in reverse (so deepest child elements are first).
+    for (let i = nodes.length - 1; 0 <= i; --i) {
+      Converter.process(nodes[i], converters, options)
     }
 
-    const result = Converter.getContent( body );
-    return result.replace( /^[\t\r\n]+|[\t\r\n\s]+$/g, '' )
-                   .replace( /\n\s+\n/g, '\n\n' )
-                   .replace( /\n{3,}/g, '\n\n' );
+    const result = Converter.getContent(body)
+    return result.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
+                 .replace(/\n\s+\n/g, '\n\n')
+                 .replace(/\n{3,}/g, '\n\n')
   }
 
   /**
@@ -119,23 +119,23 @@ class Converter {
    *
    * @return {Object} whitespaces.
    */
-  static flankingWhitespace( node ) {
-    let leading  = '';
-    let trailing = '';
+  static flankingWhitespace (node) {
+    let leading  = ''
+    let trailing = ''
 
-    if( !( Util.isBlockElement( node ) ) ) {
-      const hasLeading  = RegExps.Leading.test( node.innerHTML );
-      const hasTrailing = RegExps.Trailing.test( node.innerHTML );
-      if( hasLeading && !( Converter.isFlankedByWhitespace( 'left', node ) ) ) {
-        leading = ' ';
+    if (!(Util.isBlockElement(node))) {
+      const hasLeading  = RegExps.Leading.test(node.innerHTML)
+      const hasTrailing = RegExps.Trailing.test(node.innerHTML)
+      if (hasLeading && !(Converter.isFlankedByWhitespace('left', node))) {
+        leading = ' '
       }
 
-      if( hasTrailing && !( Converter.isFlankedByWhitespace( 'right', node ) ) ) {
-        trailing = ' ';
+      if (hasTrailing && !(Converter.isFlankedByWhitespace('right', node))) {
+        trailing = ' '
       }
     }
 
-    return { leading: leading, trailing: trailing };
+    return { leading: leading, trailing: trailing }
   }
 
   /**
@@ -145,24 +145,26 @@ class Converter {
    *
    * @return {Array.<Node>} Nodes.
    */
-  static flattenNodes( node ) {
-    const inqueue  = [ node ];
-    const outqueue = [];
+  static flattenNodes (node) {
+    const inqueue  = [node]
+    const outqueue = []
 
-    while( 0 < inqueue.length ) {
-      const elm = inqueue.shift();
-      outqueue.push( elm );
+    while (0 < inqueue.length) {
+      const elm = inqueue.shift()
+      outqueue.push(elm)
 
-      for( let i = 0, max = elm.childNodes.length; i < max; ++i ) {
-        const child = elm.childNodes[ i ];
-        if( child.nodeType === NodeTypes.ELEMENT_NODE ) {
-          inqueue.push( child );
+      for (let i = 0, max = elm.childNodes.length; i < max; ++i) {
+        const child = elm.childNodes[i]
+        if (child.nodeType === NodeTypes.ELEMENT_NODE) {
+          inqueue.push(child)
         }
       }
     }
 
-    outqueue.shift(); // Remove root
-    return outqueue;
+    // Remove root
+    outqueue.shift()
+
+    return outqueue
   }
 
   /**
@@ -172,18 +174,18 @@ class Converter {
    *
    * @return {Text} Text.
    */
-  static getContent( node ) {
-    let text = '';
-    for( let i = 0, max = node.childNodes.length; i < max; ++i ) {
-      const elm = node.childNodes[ i ];
-      if( elm.nodeType === NodeTypes.ELEMENT_NODE ) {
-        text += node.childNodes[ i ]._replacement;
-      } else if ( elm.nodeType === NodeTypes.TEXT_NODE ) {
-        text += elm.data;
+  static getContent (node) {
+    let text = ''
+    for (let i = 0, max = node.childNodes.length; i < max; ++i) {
+      const elm = node.childNodes[i]
+      if (elm.nodeType === NodeTypes.ELEMENT_NODE) {
+        text += node.childNodes[i]._replacement
+      } else if (elm.nodeType === NodeTypes.TEXT_NODE) {
+        text += elm.data
       }
     }
 
-    return text;
+    return text
   }
 
   /**
@@ -193,11 +195,11 @@ class Converter {
    *
    * @return {String} Prepared text.
    */
-  static prepareText( text ) {
-    const result = Shortcode.convert( text );
+  static prepareText (text) {
+    const result = Shortcode.convert(text)
 
     // Escape number list
-    return result.replace( /(\d+)\. /g, '$1\\. ' );
+    return result.replace(/(\d+)\. /g, '$1\\. ')
   }
 
   /**
@@ -208,27 +210,27 @@ class Converter {
    *
    * @return {Boolean} Flanked if "true".
    */
-  static isFlankedByWhitespace( side, node ) {
-    let sibling = null;
-    let regexp  = null;
-    if( side === 'left' ) {
-      sibling = node.previousSibling;
-      regexp  = / $/;
+  static isFlankedByWhitespace (side, node) {
+    let sibling = null
+    let regexp  = null
+    if (side === 'left') {
+      sibling = node.previousSibling
+      regexp  = / $/
     } else {
-      sibling = node.nextSibling;
-      regexp  = /^ /;
+      sibling = node.nextSibling
+      regexp  = /^ /
     }
 
-    let isFlanked = false;
-    if( sibling ) {
-      if( sibling.nodeType === NodeTypes.TEXT_NODE ) {
-        isFlanked = regexp.test( sibling.nodeValue );
-      } else if( sibling.nodeType === NodeTypes.ELEMENT_NODE && !( Util.isBlockElement( sibling ) ) ) {
-        isFlanked = regexp.test( sibling.textContent );
+    let isFlanked = false
+    if (sibling) {
+      if (sibling.nodeType === NodeTypes.TEXT_NODE) {
+        isFlanked = regexp.test(sibling.nodeValue)
+      } else if (sibling.nodeType === NodeTypes.ELEMENT_NODE && !(Util.isBlockElement(sibling))) {
+        isFlanked = regexp.test(sibling.textContent)
       }
     }
 
-    return isFlanked;
+    return isFlanked
   }
 
   /**
@@ -238,39 +240,39 @@ class Converter {
    * @param {Array.<Converter>} converters Converters.
    * @param {CLIOptions}        options    Options.
    */
-  static process( node, converters, options ) {
-    let content = Converter.getContent( node );
+  static process (node, converters, options) {
+    let content = Converter.getContent(node)
 
     // Remove blank nodes
-    if( !( Util.isVoidElement( node ) ) && RegExps.Alphabet.test( node.nodeName ) && RegExps.Space.test( content ) ) {
-      node._replacement = '';
-      return;
+    if (!(Util.isVoidElement(node)) && RegExps.Alphabet.test(node.nodeName) && RegExps.Space.test(content)) {
+      node._replacement = ''
+      return
     }
 
-    let replacement = '';
-    converters.some( ( converter ) => {
-      if( !( Converter.canConvert( node, converter.filter ) ) ) {
-        return false;
+    let replacement = ''
+    converters.some((converter) => {
+      if (!(Converter.canConvert(node, converter.filter))) {
+        return false
       }
 
-      if( typeof converter.replacement !== 'function' ) {
-        throw new TypeError(  '"replacement" needs to be a function that returns a string' );
+      if (typeof converter.replacement !== 'function') {
+        throw new TypeError('"replacement" needs to be a function that returns a string')
       }
 
-      const whitespace = Converter.flankingWhitespace( node );
-      if( whitespace.leading || whitespace.trailing ) {
-        content = Util.trim( content );
+      const whitespace = Converter.flankingWhitespace(node)
+      if (whitespace.leading || whitespace.trailing) {
+        content = Util.trim(content)
       }
 
       replacement = whitespace.leading +
-                    converter.replacement( node, content, options ) +
-                    whitespace.trailing;
+                    converter.replacement(node, content, options) +
+                    whitespace.trailing
 
-      return true;
-    } );
+      return true
+    })
 
-    node._replacement = replacement;
+    node._replacement = replacement
   }
 }
 
-module.exports = Converter;
+module.exports = Converter

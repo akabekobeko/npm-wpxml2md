@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const Fs = require( 'fs' );
-const Path = require( 'path' );
+const Fs = require('fs')
+const Path = require('path')
 
 /**
  * Elements of block.
@@ -14,7 +14,7 @@ const BlockElements = [
   'header', 'hgroup', 'hr', 'html', 'isindex', 'li', 'main', 'menu', 'nav',
   'noframes', 'noscript', 'ol', 'output', 'p', 'pre', 'section', 'table',
   'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul'
-];
+]
 
 /**
  * Elements of void.
@@ -23,7 +23,7 @@ const BlockElements = [
 const VoidElements = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
   'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
-];
+]
 
 /**
  * Provides utility function.
@@ -37,8 +37,8 @@ class Util {
    *
    * @return {Number} If the success index, otherwise -1.
    */
-  static arrayIndexOf( arr, obj ) {
-    return Array.prototype.indexOf.call( arr, obj );
+  static arrayIndexOf (arr, obj) {
+    return Array.prototype.indexOf.call(arr, obj)
   }
 
   /**
@@ -48,12 +48,12 @@ class Util {
    *
    * @return {Boolean} True if exists. Otherwise false.
    */
-  static existsSync( path ) {
+  static existsSync (path) {
     try {
-      Fs.accessSync( Path.resolve( path ), Fs.F_OK );
-      return true;
-    } catch( err ) {
-      return false;
+      Fs.accessSync(Path.resolve(path), Fs.F_OK)
+      return true
+    } catch (err) {
+      return false
     }
   }
 
@@ -67,53 +67,53 @@ class Util {
    *
    * @see http://qiita.com/osakanafish/items/c64fe8a34e7221e811d0
    */
-  static formatDate( date, format ) {
-    if( !( date ) ) {
-      date = new Date();
+  static formatDate (date, format) {
+    if (!(date)) {
+      date = new Date()
     }
 
-    if( typeof format !== 'string' ) {
-      format = 'YYYY-MM-DD hh:mm:ss.SSS';
+    if (typeof format !== 'string') {
+      format = 'YYYY-MM-DD hh:mm:ss.SSS'
     }
 
-    const Y = date.getFullYear();
-    const M = date.getMonth();
-    const D = date.getDate();
-    const h = date.getHours();
-    const m = date.getMinutes();
-    const s = date.getSeconds();
+    const Y = date.getFullYear()
+    const M = date.getMonth()
+    const D = date.getDate()
+    const h = date.getHours()
+    const m = date.getMinutes()
+    const s = date.getSeconds()
 
-    if( Number.isNaN( Y ) || Number.isNaN( M ) || Number.isNaN( D ) || Number.isNaN( h ) || Number.isNaN( m ) || Number.isNaN( s ) ) {
-      return null;
+    if (Number.isNaN(Y) || Number.isNaN(M) || Number.isNaN(D) || Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(s)) {
+      return null
     }
 
     // Zero padding
-    let f = format;
-    f = f.replace( /YYYY/g, Y );
-    f = f.replace( /MM/g,   ( '0' + ( M + 1 ) ).slice( -2 ) );
-    f = f.replace( /DD/g,   ( '0' +         D ).slice( -2 ) );
-    f = f.replace( /hh/g,   ( '0' +         h ).slice( -2 ) );
-    f = f.replace( /mm/g,   ( '0' +         m ).slice( -2 ) );
-    f = f.replace( /ss/g,   ( '0' +         s ).slice( -2 ) );
+    let f = format
+    f = f.replace(/YYYY/g, Y)
+    f = f.replace(/MM/g,   ('0' + (M + 1)).slice(-2))
+    f = f.replace(/DD/g,   ('0' +         D).slice(-2))
+    f = f.replace(/hh/g,   ('0' +         h).slice(-2))
+    f = f.replace(/mm/g,   ('0' +         m).slice(-2))
+    f = f.replace(/ss/g,   ('0' +         s).slice(-2))
 
     // Single digit
-    f = f.replace( /M/g, M + 1 );
-    f = f.replace( /D/g, D );
-    f = f.replace( /h/g, h );
-    f = f.replace( /m/g, m );
-    f = f.replace( /s/g, s );
+    f = f.replace(/M/g, M + 1)
+    f = f.replace(/D/g, D)
+    f = f.replace(/h/g, h)
+    f = f.replace(/m/g, m)
+    f = f.replace(/s/g, s)
 
-    if( f.match( /S/g ) ) {
-      let ms = date.getMilliseconds();
-      if( !( Number.isNaN( ms ) ) ) {
-        ms = ( '00' + ms ).slice( -3 );
-        for( let i = 0, max = f.match( /S/g ).length; i < max; ++i ) {
-          f = f.replace( /S/, ms.substring( i, i + 1 ) );
+    if (f.match(/S/g)) {
+      let ms = date.getMilliseconds()
+      if (!(Number.isNaN(ms))) {
+        ms = ('00' + ms).slice(-3)
+        for (let i = 0, max = f.match(/S/g).length; i < max; ++i) {
+          f = f.replace(/S/, ms.substring(i, i + 1))
         }
       }
     }
 
-    return f;
+    return f
   }
 
   /**
@@ -123,8 +123,8 @@ class Util {
    *
    * @return {Boolean} Block element if "true".
    */
-  static isBlockElement( node ) {
-    return BlockElements.indexOf( node.nodeName.toLowerCase() ) !== -1;
+  static isBlockElement (node) {
+    return BlockElements.indexOf(node.nodeName.toLowerCase()) !== -1
   }
 
   /**
@@ -134,8 +134,8 @@ class Util {
    *
    * @return {Boolean} Void element if "true".
    */
-  static isVoidElement( node ) {
-    return VoidElements.indexOf( node.nodeName.toLowerCase() ) !== -1;
+  static isVoidElement (node) {
+    return VoidElements.indexOf(node.nodeName.toLowerCase()) !== -1
   }
 
   /**
@@ -146,14 +146,14 @@ class Util {
    *
    * @return {Boolean} Success if "true".
    */
-  static mkdirSync( path ) {
-    const dir = Path.resolve( path );
-    if( Util.existsSync( dir ) ) {
-      return true;
+  static mkdirSync (path) {
+    const dir = Path.resolve(path)
+    if (Util.existsSync(dir)) {
+      return true
     }
 
-    Fs.mkdirSync( dir );
-    return Util.existsSync( dir );
+    Fs.mkdirSync(dir)
+    return Util.existsSync(dir)
   }
 
   /**
@@ -164,13 +164,13 @@ class Util {
    *
    * @return {String} HTML text.
    */
-  static outerHTML( node, content ) {
-    const clone = node.cloneNode( false );
-    if( clone.outerHTML ) {
-      return clone.outerHTML.replace( '><', '>' + content + '<' );
+  static outerHTML (node, content) {
+    const clone = node.cloneNode(false)
+    if (clone.outerHTML) {
+      return clone.outerHTML.replace('><', '>' + content + '<')
     }
 
-    return content;
+    return content
   }
 
   /**
@@ -180,8 +180,8 @@ class Util {
    *
    * @return {String} New string.1
    */
-  static trim( str ) {
-    return str.replace( /^[ \r\n\t]+|[ \r\n\t]+$/g, '' );
+  static trim (str) {
+    return str.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, '')
   }
 
   /**
@@ -192,36 +192,36 @@ class Util {
    * @param  {Number} min  The minimum value of the sequential number. Defailt is 1.
    * @param  {Number} max  The maximum value of the sequential number. Defailt is 256.
    *
-   * @return {String} Success is the unique path ( full path ), failure is null. If not duplicate returns the original path.
+   * @return {String} Success is the unique path (full path), failure is null. If not duplicate returns the original path.
    */
-  static uniquePathWithSequentialNumber( path, min, max ) {
-    if( typeof min !== 'number' ) {
-      min = 1;
+  static uniquePathWithSequentialNumber (path, min, max) {
+    if (typeof min !== 'number') {
+      min = 1
     }
 
-    if( typeof max !== 'number' ) {
-      max = 256;
+    if (typeof max !== 'number') {
+      max = 256
     }
 
-    const originalPath = Path.resolve( path );
-    if( !( Util.existsSync( originalPath ) && typeof min === 'number' && typeof max === 'number' && 0 <= min && min < max ) ) {
-      return originalPath;
+    const originalPath = Path.resolve(path)
+    if (!(Util.existsSync(originalPath) && typeof min === 'number' && typeof max === 'number' && 0 <= min && min < max)) {
+      return originalPath
     }
 
-    const ext    = Path.extname( originalPath );
-    const base   = Path.basename( originalPath, ext );
-    const parent = Path.dirname( originalPath );
+    const ext    = Path.extname(originalPath)
+    const base   = Path.basename(originalPath, ext)
+    const parent = Path.dirname(originalPath)
 
-    for( let i = min; i <= max; ++i ) {
-      const name       = base + '-' + i + ext;
-      const uniquePath = Path.join( parent, name );
-      if( !( Util.existsSync( uniquePath ) ) ) {
-        return uniquePath;
+    for (let i = min; i <= max; ++i) {
+      const name       = base + '-' + i + ext
+      const uniquePath = Path.join(parent, name)
+      if (!(Util.existsSync(uniquePath))) {
+        return uniquePath
       }
     }
 
-    return null;
+    return null
   }
 }
 
-module.exports = Util;
+module.exports = Util

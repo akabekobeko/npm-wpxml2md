@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * Display the log message for the stdout.
@@ -9,12 +9,12 @@ class Logger {
    *
    * @param {Boolean} available "true" to display the report, default is "true".
    */
-  constructor( available = true ) {
-    if( available === null || available === undefined ) {
-      available = true;
+  constructor (available = true) {
+    if (available === null || available === undefined) {
+      available = true
     }
 
-    this._available = available;
+    this._available = available
   }
 
   /**
@@ -22,9 +22,9 @@ class Logger {
    *
    * @param {Array.<Object>} args Message arguments.
    */
-  log( ...args ) {
-    if( this._available ) {
-      console.log( ...args );
+  log (...args) {
+    if (this._available) {
+      console.log(...args)
     }
   }
 
@@ -33,11 +33,11 @@ class Logger {
    *
    * @param {Array.<Object>} args Message arguments.
    */
-  error( ...args ) {
-    if( this._available ) {
-      console.error( ...args );
+  error (...args) {
+    if (this._available) {
+      console.error(...args)
     }
   }
 }
 
-module.exports = Logger;
+module.exports = Logger
