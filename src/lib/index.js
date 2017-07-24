@@ -1,7 +1,5 @@
-'use strict'
-
-const WordPressXmlToMarkdown = require('./wpxml2md.js')
-const Logger = require('./logger.js')
+import WordPressXmlToMarkdown from './wpxml2md.js'
+import Logger from './logger.js'
 
 /**
  * Conver WordPress XML to Markdown.

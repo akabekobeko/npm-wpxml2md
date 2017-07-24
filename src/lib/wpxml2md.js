@@ -1,15 +1,13 @@
-'use strict'
-
-const Fs = require('fs')
-const Path = require('path')
-const XmlParser = require('xml2js')
-const Util = require('./util.js')
-const Converter = require('./converter.js')
+import Fs from 'fs'
+import Path  from 'path'
+import XmlParser  from 'xml2js'
+import Util  from './util.js'
+import Converter  from './converter.js'
 
 /**
  * Convert WordPress XML to Markdown files.
  */
-class WordPressXmlToMarkdown {
+export default class WordPressXmlToMarkdown {
   /**
    * Conver WordPress XML file to Markdown files.
    *
@@ -183,5 +181,3 @@ class WordPressXmlToMarkdown {
     })
   }
 }
-
-module.exports = WordPressXmlToMarkdown

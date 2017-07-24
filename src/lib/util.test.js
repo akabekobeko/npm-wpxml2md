@@ -1,15 +1,13 @@
-'use strict'
-
-const assert = require('assert')
-const Path = require('path')
-const Util = require('../../src/lib/util.js')
+import assert from 'assert'
+import Path from 'path'
+import Util from './util.js'
 
 /** @test {Util} */
 describe('Util', () => {
   /** @test {Util#existsSync} */
   describe('existsSync', () => {
     it('Exists', () => {
-      assert(Util.existsSync('./test'))
+      assert(Util.existsSync('./examples'))
     })
 
     it('Not exists', () => {
@@ -47,8 +45,8 @@ describe('Util', () => {
   /** @test {Util#uniquePathWithSequentialNumber} */
   describe('uniquePathWithSequentialNumber', () => {
     it('Unique path: directory', () => {
-      const actual = Util.uniquePathWithSequentialNumber('./test')
-      const expect = Path.resolve('./test-1')
+      const actual = Util.uniquePathWithSequentialNumber('./examples')
+      const expect = Path.resolve('./examples-1')
       assert(actual === expect)
     })
 

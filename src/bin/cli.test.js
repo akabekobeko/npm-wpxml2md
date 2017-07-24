@@ -1,12 +1,39 @@
-'use strict'
+import assert from 'assert'
+import Path from 'path'
+import CLI, {HelpText, Options} from './cli.js'
+import Package from '../../package.json'
 
-const assert = require('assert')
-const Path = require('path')
-const CLI = require('../../src/bin/cli.js').CLI
-const HelpText = require('../../src/bin/cli.js').HelpText
-const Options = require('../../src/bin/cli.js').Options
-const Package = require('../../package.json')
-const StdOutMock = require('../mock/stdout.mock.js')
+/**
+ * Mock class of stdout.
+ */
+class StdOutMock {
+  /**
+   * Initialize instance.
+   */
+  constructor () {
+    this._text = ''
+  }
+
+  /**
+   * Gets the written text.
+   *
+   * @return {String} Text.
+   */
+  get text () {
+    return this._text
+  }
+
+  /**
+   * Write the text.
+   *
+   * @param {String} text Text.
+   */
+  write (text) {
+    if (typeof text === 'string') {
+      this._text = text
+    }
+  }
+}
 
 /** @test {CLI} */
 describe('CLI', () => {
@@ -52,7 +79,7 @@ describe('CLI', () => {
     })
 
     it('Input', () => {
-      const input    = './test/wp.xml'
+      const input    = './examples/wp.xml'
       const expected = Path.resolve(input)
       let options = CLI.parseArgv([ Options.input[ 0 ], input ])
       assert(options.input === expected)
@@ -68,7 +95,7 @@ describe('CLI', () => {
     })
 
     it('Output', () => {
-      const output   = './test'
+      const output   = './examples'
       const expected = Path.resolve(output)
       let options = CLI.parseArgv([ Options.output[ 0 ], output ])
       assert(options.output === expected)

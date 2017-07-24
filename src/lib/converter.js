@@ -1,11 +1,9 @@
-'use strict'
-
-const JsDom = require('jsdom')
-const CollapseWhitespace = require('collapse-whitespace')
-const Util = require('./util.js')
-const Shortcode = require('./shortcode.js').Shortcode
-const MarkdownConverters = require('./markdown.js')
-const GfmConverters = require('./gfm.js')
+import {JSDOM} from 'jsdom'
+import CollapseWhitespace from 'collapse-whitespace'
+import Util from './util.js'
+import Shortcode from './shortcode.js'
+import MarkdownConverters from './markdown.js'
+import GfmConverters from './gfm.js'
 
 /**
  * Types of node.
@@ -34,7 +32,7 @@ const RegExps = {
  *
  * @see https://github.com/domchristie/to-markdown
  */
-class Converter {
+export default class Converter {
   /**
    * Check that conversion is possible.
    *
@@ -97,7 +95,7 @@ class Converter {
       converters = options.converters.concat(converters)
     }
 
-    const body  = JsDom.jsdom(Converter.prepareText(post)).body
+    const body  = (new JSDOM(Converter.prepareText(post))).window.document.body
     const nodes = Converter.flattenNodes(body)
     Converter.collapseWhitespace(nodes)
 
@@ -108,8 +106,8 @@ class Converter {
 
     const result = Converter.getContent(body)
     return result.replace(/^[\t\r\n]+|[\t\r\n\s]+$/g, '')
-                 .replace(/\n\s+\n/g, '\n\n')
-                 .replace(/\n{3,}/g, '\n\n')
+      .replace(/\n\s+\n/g, '\n\n')
+      .replace(/\n{3,}/g, '\n\n')
   }
 
   /**
@@ -274,5 +272,3 @@ class Converter {
     node._replacement = replacement
   }
 }
-
-module.exports = Converter

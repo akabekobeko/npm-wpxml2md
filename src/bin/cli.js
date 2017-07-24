@@ -1,12 +1,10 @@
-'use strict'
-
-const Path = require('path')
+import Path from 'path'
 
 /**
  * Help text.
  * @type {[type]}
  */
-const HelpText = `
+export const HelpText = `
 Usage: wpxml2md [OPTIONS]
 
   Convert the WordPress XML file to Markdown files.
@@ -39,7 +37,7 @@ Usage: wpxml2md [OPTIONS]
  * CLI options.
  * @type {Object}
  */
-const Options = {
+export const Options = {
   help: [ '-h', '--help' ],
   version: [ '-v', '--version' ],
   input: [ '-i', '--input' ],
@@ -52,7 +50,7 @@ const Options = {
  * Output modes.
  * @type {Object}
  */
-const Modes = {
+export const Modes = {
   noGFM: 'no-gfm',
   noMELink: 'no-melink'
 }
@@ -60,7 +58,7 @@ const Modes = {
 /**
  * Provides a command line interface.
  */
-class CLI {
+export default class CLI {
   /**
    * Parse for the command line argumens.
    *
@@ -226,11 +224,4 @@ class CLI {
 
     return result
   }
-}
-
-module.exports = {
-  HelpText: HelpText,
-  Options: Options,
-  Modes: Modes,
-  CLI: CLI
 }

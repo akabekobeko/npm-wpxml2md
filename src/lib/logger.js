@@ -1,9 +1,7 @@
-'use strict'
-
 /**
  * Display the log message for the stdout.
  */
-class Logger {
+export default class Logger {
   /**
    * Initialize instance.
    *
@@ -39,5 +37,3 @@ class Logger {
     }
   }
 }
-
-module.exports = Logger

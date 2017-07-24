@@ -1,7 +1,5 @@
-'use strict'
-
-const assert = require('assert')
-const Converter = require('../../src/lib/converter.js')
+import assert from 'assert'
+import Converter from './converter.js'
 
 /** @test {Converter} */
 describe('Converter', () => {
