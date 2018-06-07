@@ -1,7 +1,7 @@
 {
   "name": "wpxml2md",
   "description": "Convert the WordPress XML file to Markdown files.",
-  "version": "1.2.0",
+  "version": "1.5.0",
   "author": "akabeko (http://akabeko.me/)",
   "license": "MIT",
   "homepage": "https://github.com/akabekobeko/npm-wpxml2md#readme",
@@ -40,7 +40,7 @@
         "env",
         {
           "targets": {
-            "node": 6
+            "node": 8
           }
         }
       ]
@@ -54,7 +54,7 @@
     }
   },
   "scripts": {
-    "test": "mocha --timeout 50000 --compilers js:babel-register src/**/*.test.js",
+    "test": "mocha --timeout 50000 --require babel-register src/**/*.test.js",
     "start": "npm run watch",
     "esdoc": "esdoc",
     "eslint": "eslint ./src",
@@ -64,22 +64,22 @@
   },
   "dependencies": {
     "collapse-whitespace": "^1.1.6",
-    "jsdom": "^11.1.0",
-    "xml2js": "^0.4.17"
+    "jsdom": "^11.11.0",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-power-assert": "^1.0.0",
-    "babel-register": "^6.24.1",
-    "esdoc": "^0.5.2",
-    "eslint": "^4.3.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "mocha": "^3.4.2",
-    "power-assert": "^1.4.4"
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-power-assert": "^2.0.0",
+    "babel-register": "^6.26.0",
+    "esdoc": "^1.1.0",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "mocha": "^5.2.0",
+    "power-assert": "^1.5.0"
   }
 }
