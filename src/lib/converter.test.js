@@ -1,28 +1,28 @@
 import assert from 'assert'
-import Converter from './converter.js'
+import Convert from './converter.js'
 
 /** @test {Converter} */
 describe('Converter', () => {
-  /** @test {Converter#convert} */
+  /** @test {Convert} */
   describe('convert: Markdown', () => {
     it('Plain text (TEXT_NODE), Keep a whitespace and line break', () => {
       const post     = 'Line 1\n\nLine 2  Word\nLine3'
       const expected = 'Line 1\n\nLine 2  Word\nLine3'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<p>', () => {
       const post     = '<p>\nLine 1\n\nLine 2\n</p>'
       const expected = 'Line 1 Line 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<br>', () => {
       const post     = 'Line 1<br>Line 2<br>Line 3'
       const expected = 'Line 1  \nLine 2  \nLine 3'
-      const actual   = Converter.convert(post, { noGFM: true })
+      const actual   = Convert(post, { noGFM: true })
       assert(actual === expected)
     })
 
@@ -48,49 +48,49 @@ describe('Converter', () => {
 
 ###### Header 6`
 
-      const actual = Converter.convert(post)
+      const actual = Convert(post)
       assert(actual === expected)
     })
 
     it('<h1> no-melink', () => {
       const post     = '<h1 id="section1">Header</h1>'
       const expected = '# Header'
-      const actual   = Converter.convert(post, { noMELink: true })
+      const actual   = Convert(post, { noMELink: true })
       assert(actual === expected)
     })
 
     it('<hr>', () => {
       const post     = '<hr>'
       const expected = '* * *'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<em>, <i>', () => {
       const post     = '<em>Word 1</em> <i>Word 2</i>'
       const expected = '_Word 1_ _Word 2_'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<code>', () => {
       const post     = 'Text <code>Code</code> Text'
       const expected = 'Text `Code` Text'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<a>', () => {
       const post     = 'Text <a href="://example.com/" title="title">Link</a> Text <a href="#id">Inter Link</a>'
       const expected = 'Text [Link](://example.com/ "title") Text [Inter Link](#id)'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<img>', () => {
       const post     = '<img src="example.png" alt="Title"> <img src="example.png" title="Example">'
       const expected = '![Title](example.png) ![](example.png "Example")'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -107,14 +107,14 @@ Text
 `
 
       const expected = 'Text\n\n    const test = \'test\';\n\nText'
-      const actual   = Converter.convert(post, { noGFM: true })
+      const actual   = Convert(post, { noGFM: true })
       assert(actual === expected)
     })
 
     it('<blockquote>', () => {
       const post = '<blockquote>\nLine 1\nLine 2\n</blockquote>'
       const expected = '> Line 1 Line 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -125,7 +125,7 @@ Text
   <li>Item 2</li>
 </ul>`
       const expected = '* Item 1\n* Item 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -141,7 +141,7 @@ Text
   <li>Item 2</li>
 </ul>`
       const expected = '* Item 1\n    * Item 1-1\n    * Item 1-2\n* Item 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -152,7 +152,7 @@ Text
   <li>Item 2</li>
 </ol>`
       const expected = '1. Item 1\n2. Item 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -168,45 +168,45 @@ Text
   <li>Item 2</li>
 </ol>`
       const expected = '1. Item 1\n    1. Item 1-1\n    2. Item 1-2\n2. Item 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('Block Element', () => {
       const post     = '<address>Copyright 2009 - 2016 akabeko All Rights Reserved</address>'
       const expected = '<address>Copyright 2009 - 2016 akabeko All Rights Reserved</address>'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('Otherwise', () => {
       const post     = '<example>Test</example>'
       const expected = '<example>Test</example>'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
   })
 
-  /** @test {Converter#convert} */
+  /** @test {Convert} */
   describe('convert: GitHub Flavored Markdown', () => {
     it('<br>', () => {
       const post     = 'Line 1<br>Line 2<br>Line 3'
       const expected = 'Line 1\nLine 2\nLine 3'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<del>, <s>, <strike>', () => {
       const post     = '<del>Text 1</del> <s>Text 2</s> <strike>Text 3</strike>'
       const expected = '~~Text 1~~ ~~Text 2~~ ~~Text 3~~'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<ul><li><input type="checkbox">', () => {
       const post     = '<ul><li><input type="checkbox">Item 1</li><li><input type="checkbox" checked="true">Item 2</li></ul>'
       const expected = '* [ ] Item 1\n* [x] Item 2'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -223,7 +223,7 @@ Text
 `
 
       const expected = 'Text\n\n```\nconst test = \'test\';\n```\n\nText'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -240,28 +240,28 @@ Text
 `
 
       const expected = 'Text\n\n```js\nconst test = \'test\';\n\n```\n\nText'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<th>', () => {
       const post     = '<table><th>Header 1</th><th>Header 2</th></table>'
       const expected = '| Header 1 | Header 2 |'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<td>', () => {
       const post     = '<table><td>Value 1</td><td>Value 2</td></table>'
       const expected = '| Value 1 | Value 2 |'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
     it('<th>, <td>', () => {
       const post     = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>'
       const expected = '| Header 1 | Header 2 |\n| Value 1 | Value 2 |'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
 
@@ -276,7 +276,7 @@ Text
   </tbody>
 </table>`
       const expected = '| Header 1 | Header 2 |\n| --- | --- |\n| Value 1 | Value 2 |'
-      const actual   = Converter.convert(post)
+      const actual   = Convert(post)
       assert(actual === expected)
     })
   })

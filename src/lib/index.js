@@ -20,5 +20,5 @@ module.exports = (src, dest, options) => {
   logger.log('Output: ' + dest)
   logger.log('Modes:  ' + (options.noGFM ? 'no-gfm' : ''))
 
-  return WordPressXmlToMarkdown.convert(src, dest, logger, options)
+  return WordPressXmlToMarkdown(src, dest, logger, options)
 }

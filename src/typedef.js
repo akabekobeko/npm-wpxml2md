@@ -10,13 +10,13 @@
  * @property {Function}              replacement Function to replace the DOM Node.
  */
 
- /**
-  * Optional settings of this tool.
-  *
-  * @typedef {Object} Option
-  * @property {Boolean}   gmf        Enable a GitHub Flavored Markdown. Default is disable.
-  * @property {Converter} converters Extended converter collection.
-  */
+/**
+ * Optional settings of this tool.
+ *
+ * @typedef {Object} Option
+ * @property {Boolean}   gmf        Enable a GitHub Flavored Markdown. Default is disable.
+ * @property {Converter} converters Extended converter collection.
+ */
 
 /**
  * Commad line options.
