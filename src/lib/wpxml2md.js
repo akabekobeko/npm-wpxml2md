@@ -1,8 +1,11 @@
 import Fs from 'fs'
 import Path  from 'path'
+import NodeUtil from 'util'
 import XmlParser  from 'xml2js'
 import Util  from './util.js'
 import Convert  from './converter.js'
+
+const ParseXML = NodeUtil.promisify(XmlParser.parseString)
 
 /**
  * Create a stream of Markdown files to be written.
@@ -187,24 +190,17 @@ const createUniqueDestDir = (dir) => {
 /**
  * Gets the posts data from XML.
  *
- * @param {String} text XML text.
+ * @param {String} src Path of XML file..
  *
  * @return {Promise} Promise task.
  */
-const postsFromXML = (text) => {
-  return new Promise((resolve, reject) => {
-    XmlParser.parseString(text, (err, xml) => {
-      if (err) {
-        return reject(err)
-      }
-
-      if (!(xml.rss && xml.rss.channel && 0 < xml.rss.channel.length && xml.rss.channel[0].item && 0 < xml.rss.channel[0].item.length)) {
-        return reject(new Error('Invalid WordPress Post XML.'))
-      }
-
-      return resolve(xml.rss.channel[0].item)
-    })
-  })
+const postsFromXML = async (src) => {
+  const data = Fs.readFileSync(Path.resolve(src))
+  if (!(data)) {
+    throw new Error(`"${src}" is not found.`)
+  }
+  const xml   = await ParseXML(data.toString())
+  return xml.rss.channel[0].item
 }
 
 /**
@@ -217,40 +213,27 @@ const postsFromXML = (text) => {
  *
  * @return {Promise} Promise object.
  */
-const WordPressXmlToMarkdown = (src, dest, logger, options) => {
-  return new Promise((resolve, reject) => {
-    const data = Fs.readFileSync(Path.resolve(src))
-    if (!(data)) {
-      return reject(new Error(`"${src}" is not found.`))
-    }
+const WordPressXmlToMarkdown = async (src, dest, logger, options) => {
+  const dir = createUniqueDestDir(dest)
+  if (!(dir)) {
+    throw new Error('Failed to create the root directory.')
+  }
 
-    const dir = createUniqueDestDir(dest)
-    if (!(dir)) {
-      return reject(new Error('Failed to create the root directory.'))
-    }
+  const postsDir = Path.join(dir, 'posts')
+  if (!(Util.mkdirSync(postsDir))) {
+    throw new Error('Failed to create the posts directory.')
+  }
 
-    const postsDir = Path.join(dir, 'posts')
-    if (!(Util.mkdirSync(postsDir))) {
-      return reject(new Error('Failed to create the posts directory.'))
-    }
+  const pagesDir = Path.join(dir, 'pages')
+  if (!(Util.mkdirSync(pagesDir))) {
+    throw new Error('Failed to create the pages directory.')
+  }
 
-    const pagesDir = Path.join(dir, 'pages')
-    if (!(Util.mkdirSync(pagesDir))) {
-      return reject(new Error('Failed to create the pages directory.'))
-    }
-
-    return Promise
-      .resolve()
-      .then(() => {
-        return postsFromXML(data.toString())
-      })
-      .then((posts) => {
-        posts.forEach((post) => {
-          const metadata = readMetadata(post)
-          convertPost(post, metadata, metadata.type === 'post' ? postsDir : pagesDir, logger, options)
-        })
-      })
-  })
+  const posts = await postsFromXML(src)
+  for (let post of posts) {
+    const metadata = readMetadata(post)
+    await convertPost(post, metadata, metadata.type === 'post' ? postsDir : pagesDir, logger, options)
+  }
 }
 
 export default WordPressXmlToMarkdown
