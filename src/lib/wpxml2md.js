@@ -4,19 +4,20 @@ import NodeUtil from 'util'
 import XmlParser  from 'xml2js'
 import Util  from './util.js'
 import Convert  from './converter.js'
+import ImageLinkReplace from './image-link-replacer.js'
 
 const ParseXML = NodeUtil.promisify(XmlParser.parseString)
 
 /**
- * Create a stream of Markdown files to be written.
+ * Create a directory to save the markdown file.
  *
  * @param {String} root Path of the roo directory.
  * @param {String} year Year.
- * @param {String} fileName File name.
+ * @param {String} month Month
  *
- * @return {WriteStream} If successful stream, otherwise "null".
+ * @return {String} If successful it is the path of the created directory.
  */
-const createStream = (root, year, month, fileName) => {
+const createSaveDir = (root, year, month) => {
   // root/year
   let dir  = Path.join(root, year)
   if (!(Util.mkdirSync(dir))) {
@@ -29,13 +30,7 @@ const createStream = (root, year, month, fileName) => {
     return null
   }
 
-  // root/year/month/day.md or day-X.md
-  const filePath = Util.uniquePathWithSequentialNumber(Path.join(dir, fileName))
-  if (!(filePath)) {
-    return null
-  }
-
-  return Fs.createWriteStream(filePath)
+  return dir
 }
 
 /**
@@ -63,7 +58,7 @@ const arrayToString = (arr) => {
  * Write an article metadata.
  *
  * @param {Object} metadata Metadata of article.
- * @param {Stream} stream Writable stream.
+ * @param {WriteStream} stream Writable stream.
  */
 const writeMetadata = (metadata, stream) => {
   const text =
@@ -138,19 +133,32 @@ const readMetadata = (post) => {
  *
  * @return {Promise} Promise task.
  */
-const convertPost = (post, metadata, dir, logger, options) => {
+const convertPost = async (post, metadata, rootDir, logger, options) => {
   logger.log(`${metadata.year}/${metadata.month}/${metadata.day} ['${metadata.type}']: ${metadata.title}`)
 
-  const stream = createStream(dir, metadata.year, metadata.month, `${metadata.day}.md`)
+  const dir = createSaveDir(rootDir, metadata.year, metadata.month)
+  if (!(dir)) {
+    throw new Error('Failed to create a save directory.')
+  }
+
+  // If there are multiple articles on the same day, their names will be duplicated and made unique.
+  const filePath = Util.uniquePathWithSequentialNumber(Path.join(dir, `${metadata.day}.md`))
+  const stream = Fs.createWriteStream(filePath)
   if (!(stream)) {
     throw new Error('Failed to create the stream.')
   }
 
-  const markdown = Convert(post['content:encoded'][0], options)
   if (options.withMetadata) {
     writeMetadata(metadata, stream)
   } else {
     stream.write(`# ${metadata.title}\n\n`, 'utf8')
+  }
+
+  let markdown = Convert(post['content:encoded'][0], options)
+
+  if (options.withImageLinkReplace) {
+    const basename = Path.basename(filePath, '.md')
+    markdown = await ImageLinkReplace(markdown, dir, basename, logger)
   }
 
   stream.write(markdown, 'utf8')

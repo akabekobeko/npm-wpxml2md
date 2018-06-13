@@ -18,7 +18,7 @@ export default class Logger {
   /**
    * Display a log message for the stdout.
    *
-   * @param {Array.<Object>} args Message arguments.
+   * @param {Object[]} args Message arguments.
    */
   log (...args) {
     if (this._available) {
@@ -29,7 +29,7 @@ export default class Logger {
   /**
    * Display an error message for the stdout.
    *
-   * @param {Array.<Object>} args Message arguments.
+   * @param {Object[]} args Message arguments.
    */
   error (...args) {
     if (this._available) {
