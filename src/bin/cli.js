@@ -21,6 +21,8 @@ Usage: wpxml2md [OPTIONS]
     -m, --modes   Specify the mode in the comma separated.
                   "no-gfm" is to disable the GitHub Flavored Markdown
                   "no-melink" is to disable the Markdown Extra link on header
+                  "metadata" is to enable output article metadata
+                  "image" is to enable download and replace link syntaxes a linked images from article
 
     -r, --report  Display the process reports.
                   Default is disable.
@@ -52,7 +54,9 @@ export const Options = {
  */
 export const Modes = {
   noGFM: 'no-gfm',
-  noMELink: 'no-melink'
+  noMELink: 'no-melink',
+  withMetadata: 'metadata',
+  withImageLinkReplace: 'image'
 }
 
 /**
@@ -62,7 +66,7 @@ export default class CLI {
   /**
    * Parse for the command line argumens.
    *
-   * @param {Array.<String>} argv Arguments of the command line.
+   * @param {String[]} argv Arguments of the command line.
    *
    * @return {CLIOptions} Parse results.
    */
@@ -127,7 +131,7 @@ export default class CLI {
   /**
    * Parse for the command line argumens.
    *
-   * @param {Array.<String>} argv Arguments of the command line.
+   * @param {String[]} argv Arguments of the command line.
    *
    * @return {CLIOptions} Parse results.
    */
@@ -163,8 +167,10 @@ export default class CLI {
           value = CLI._parseArgValue(argv, index)
           if (value) {
             const modes = CLI._parseModes(value)
-            options.noGFM    = modes.noGFM
+            options.noGFM = modes.noGFM
             options.noMELink = modes.noMELink
+            options.withMetadata = modes.withMetadata
+            options.withImageLinkReplace = modes.withImageLinkReplace
           }
           break
 
@@ -179,8 +185,8 @@ export default class CLI {
   /**
    * Parse for option value.
    *
-   * @param {Array.<String>} argv  Arguments of the command line.
-   * @param {Number}         index Index of argumens.
+   * @param {String[]} argv  Arguments of the command line.
+   * @param {Number} index Index of argumens.
    *
    * @return {String} Its contents if the option value, otherwise null.
    */
@@ -215,6 +221,14 @@ export default class CLI {
 
         case Modes.noMELink:
           result.noMELink = true
+          break
+
+        case Modes.withMetadata:
+          result.withMetadata = true
+          break
+
+        case Modes.withImageLinkReplace:
+          result.withImageLinkReplace = true
           break
 
         default:

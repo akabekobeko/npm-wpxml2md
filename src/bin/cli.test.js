@@ -63,80 +63,85 @@ describe('CLI', () => {
       let options = CLI.parseArgv([])
       assert(options.help)
 
-      options = CLI.parseArgv([ Options.help[ 0 ] ])
+      options = CLI.parseArgv([Options.help[0]])
       assert(options.help)
 
-      options = CLI.parseArgv([ Options.help[ 1 ] ])
+      options = CLI.parseArgv([Options.help[1]])
       assert(options.help)
     })
 
     it('Version', () => {
-      let options = CLI.parseArgv([ Options.version[ 0 ] ])
+      let options = CLI.parseArgv([Options.version[0]])
       assert(options.version)
 
-      options = CLI.parseArgv([ Options.version[ 1 ] ])
+      options = CLI.parseArgv([Options.version[1]])
       assert(options.version)
     })
 
     it('Input', () => {
       const input    = './examples/wp.xml'
       const expected = Path.resolve(input)
-      let options = CLI.parseArgv([ Options.input[ 0 ], input ])
+      let options = CLI.parseArgv([Options.input[0], input])
       assert(options.input === expected)
 
-      options = CLI.parseArgv([ Options.input[ 1 ], input ])
+      options = CLI.parseArgv([Options.input[1], input])
       assert(options.input === expected)
 
-      options = CLI.parseArgv([ Options.input[ 0 ] ])
+      options = CLI.parseArgv([Options.input[0]])
       assert(options.input !== expected)
 
-      options = CLI.parseArgv([ Options.input[ 1 ], Options.help[ 0 ] ])
+      options = CLI.parseArgv([Options.input[1], Options.help[0]])
       assert(options.input !== expected)
     })
 
     it('Output', () => {
       const output   = './examples'
       const expected = Path.resolve(output)
-      let options = CLI.parseArgv([ Options.output[ 0 ], output ])
+      let options = CLI.parseArgv([Options.output[0], output])
       assert(options.output === expected)
 
-      options = CLI.parseArgv([ Options.output[ 1 ], output ])
+      options = CLI.parseArgv([Options.output[1], output])
       assert(options.output === expected)
 
-      options = CLI.parseArgv([ Options.output[ 0 ] ])
+      options = CLI.parseArgv([Options.output[0]])
       assert(options.output !== expected)
 
-      options = CLI.parseArgv([ Options.output[ 1 ], Options.help[ 0 ] ])
+      options = CLI.parseArgv([Options.output[1], Options.help[0]])
       assert(options.output !== expected)
     })
 
     it('Modes', () => {
       let modes   = 'no-gfm'
-      let options = CLI.parseArgv([ Options.modes[ 0 ], modes ])
+      let options = CLI.parseArgv([Options.modes[0], modes])
       assert(options.noGFM)
 
-      options = CLI.parseArgv([ Options.modes[ 1 ], modes ])
+      options = CLI.parseArgv([Options.modes[1], modes])
       assert(options.noGFM)
 
       modes   = 'no-gfm,test,no-melink'
-      options = CLI.parseArgv([ Options.modes[ 1 ], modes ])
+      options = CLI.parseArgv([Options.modes[1], modes])
       assert(options.noGFM && options.noMELink)
 
-      options = CLI.parseArgv([ Options.modes[ 0 ] ])
+      options = CLI.parseArgv([Options.modes[0]])
       assert(!(options.noGFM && options.noMELink))
 
-      options = CLI.parseArgv([ Options.modes[ 1 ], Options.help[ 0 ] ])
+      options = CLI.parseArgv([Options.modes[1], Options.help[0]])
       assert(!(options.noGFM && options.noMELink))
+
+      modes   = 'metadata,test,image'
+      options = CLI.parseArgv([Options.modes[1], modes])
+      assert(options.withMetadata)
+      assert(options.withImageLinkReplace)
     })
 
     it('Report', () => {
       let options = CLI.parseArgv()
       assert(!(options.report))
 
-      options = CLI.parseArgv([ Options.report[ 0 ] ])
+      options = CLI.parseArgv([Options.report[0]])
       assert(options.report)
 
-      options = CLI.parseArgv([ Options.report[ 1 ] ])
+      options = CLI.parseArgv([Options.report[1]])
       assert(options.report)
     })
   })

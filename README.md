@@ -72,7 +72,7 @@ Options:
 |noGFM|Boolean (`false`)|Disable the Convert the GitHub Flavored Markdown.|
 |noMELink|Boolean (`false`)|Disable the Convert the GitHub Extra link on header.|
 |withMetadata|Boolean (`false`)|Output article metadata in YAML format at the top of Markdown.|
-|downloadImage|Boolean (`false`)|Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers (`DD` is an article posted day. `DD-1.png`, `DD-2.png`, ...).|
+|withImageLinkReplace|Boolean (`false`)|Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers (`DD` is an article posted day. `DD-1.png`, `DD-2.png`, ...).|
 |report|Boolean (`false`)|Display the process reports.|
 
 ### CLI
@@ -95,7 +95,7 @@ Usage: wpxml2md [OPTIONS]
                   "no-gfm" is to disable the GitHub Flavored Markdown
                   "no-melink" is to disable the Markdown Extra link on header
                   "metadata" is to enable output article metadata
-                  "image" is to enable download a linked images from article
+                  "image" is to enable download and replace link syntaxes a linked images from article
 
     -r, --report  Display the process reports.
                   Default is disable.
