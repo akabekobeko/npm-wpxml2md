@@ -32,7 +32,7 @@ Can export the **WordPress XML** in the following way.
 ```js
 const wpxml2md = require('wpxml2md');
 
-wpxml2md('wordpress.xml', 'dest', {report: true})
+wpxml2md('wordpress.xml', 'dest', true)
 .then(() => {
   console.log('Completed!!');
 } )
@@ -41,12 +41,19 @@ wpxml2md('wordpress.xml', 'dest', {report: true})
 });
 ```
 
-Add modes:
+With modes:
 
 ```js
 const wpxml2md = require('wpxml2md');
 
-wpxml2md('wordpress.xml', 'dest', {noGFM: true, noMELink: true})
+const modes = {
+  noGFM: true,
+  noMELink: true,
+  withMetadata: true,
+  withImageLinkReplace: true
+};
+
+wpxml2md('wordpress.xml', 'dest', true, modes)
 .then(() => {
   console.log('Completed!!');
 })
@@ -57,15 +64,16 @@ wpxml2md('wordpress.xml', 'dest', {noGFM: true, noMELink: true})
 
 #### wpxml2md
 
-`wpxml2md(src, dest, [OPTIONS])`
+`wpxml2md(src, dest, withReport, modes)`
 
 |Name|Type|Description|
 |---|---|---|
 |src|String|Path of the XML file exported from WordPress.|
 |dest|String|Destination directory path.|
-|options|Object|Options.|
+|report|Boolean (`false`)|Display the process reports.|
+|modes|Modes|Modes of markdown parse and output..|
 
-Options:
+Modes:
 
 |Name|Type (Default)|Description|
 |---|---|---|
@@ -73,7 +81,6 @@ Options:
 |noMELink|Boolean (`false`)|Disable the Convert the GitHub Extra link on header.|
 |withMetadata|Boolean (`false`)|Output article metadata in YAML format at the top of Markdown.|
 |withImageLinkReplace|Boolean (`false`)|Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers (`DD` is an article posted day. `DD-1.png`, `DD-2.png`, ...).|
-|report|Boolean (`false`)|Display the process reports.|
 
 ### CLI
 

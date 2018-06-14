@@ -1,5 +1,5 @@
-const Fs = require( 'fs' );
-const Path = require( 'path' );
+const Fs = require('fs')
+const Path = require('path')
 
 /**
  * Check the existence of a file or folder.
@@ -8,12 +8,12 @@ const Path = require( 'path' );
  *
  * @return {Boolean} True if exists. Otherwise false.
  */
-function existsSync( path ) {
+function existsSync (path) {
   try {
-    Fs.accessSync( Path.resolve( path ), Fs.F_OK );
-    return true;
-  } catch( err ) {
-    return false;
+    Fs.accessSync(Path.resolve(path), Fs.F_OK)
+    return true
+  } catch (err) {
+    return false
   }
 }
 
@@ -25,17 +25,17 @@ function existsSync( path ) {
  *
  * @return {Boolean} Success if "true".
  */
-function mkdirSync( path ) {
-  const dir = Path.resolve( path );
-  if( existsSync( dir ) ) {
-    return true;
+function mkdirSync (path) {
+  const dir = Path.resolve(path)
+  if (existsSync(dir)) {
+    return true
   }
 
-  Fs.mkdirSync( dir );
-  return existsSync( dir );
+  Fs.mkdirSync(dir)
+  return existsSync(dir)
 }
 
 module.exports = {
   existsSync: existsSync,
   mkdirSync: mkdirSync
-};
+}

@@ -188,9 +188,9 @@ const isFlankedByWhitespace = (side, node) => {
  *
  * @param {Node} node DOM node.
  * @param {Converter[]} converters Converters.
- * @param {CLIOptions} options Options.
+ * @param {Modes} modes Modes.
  */
-const process = (node, converters, options) => {
+const process = (node, converters, modes) => {
   let content = getContent(node)
 
   // Remove blank nodes
@@ -215,7 +215,7 @@ const process = (node, converters, options) => {
     }
 
     replacement = whitespace.leading +
-                  converter.replacement(node, content, options) +
+                  converter.replacement(node, content, modes) +
                   whitespace.trailing
 
     return true
@@ -229,28 +229,20 @@ const process = (node, converters, options) => {
  * Design and implementation was in reference to the npm to-markdown.
  *
  * @param {String} post WordPress's post text.
- * @param {CLIOptions} options Options.
+ * @param {Modes} modes Modes.
  *
  * @return {String} Markdown text.
  *
  * @see https://github.com/domchristie/to-markdown
  */
-const Convert = (post, options) => {
-  if (!(options)) {
-    options = {}
-  }
-
+const Convert = (post, modes = {}) => {
   if (typeof post !== 'string') {
     throw new TypeError('"post" is not a string.')
   }
 
   let converters = MarkdownConverters.slice(0)
-  if (!(options.noGFM)) {
+  if (!(modes.noGFM)) {
     converters = GfmConverters.concat(converters)
-  }
-
-  if (options.converters) {
-    converters = options.converters.concat(converters)
   }
 
   const body  = (new JSDOM(prepareText(post))).window.document.body
@@ -259,7 +251,7 @@ const Convert = (post, options) => {
 
   // Process through nodes in reverse (so deepest child elements are first).
   for (let i = nodes.length - 1; 0 <= i; --i) {
-    process(nodes[i], converters, options)
+    process(nodes[i], converters, modes)
   }
 
   const result = getContent(body)

@@ -2,8 +2,8 @@ import Fs from 'fs'
 import Path  from 'path'
 import NodeUtil from 'util'
 import XmlParser  from 'xml2js'
-import Util  from './util.js'
-import Convert  from './converter.js'
+import Util from './util.js'
+import Convert from './converter.js'
 import ImageLinkReplace from './image-link-replacer.js'
 
 const ParseXML = NodeUtil.promisify(XmlParser.parseString)
@@ -129,11 +129,11 @@ const readMetadata = (post) => {
  * @param {Object} metadata Metadata.
  * @param {String} dir Path of Markdown file output directory.
  * @param {Logger} logger Logger.
- * @param {Option} options Options.
+ * @param {Modes} modes Modes.
  *
  * @return {Promise} Promise task.
  */
-const convertPost = async (post, metadata, rootDir, logger, options) => {
+const convertPost = async (post, metadata, rootDir, modes, logger) => {
   logger.log(`${metadata.year}/${metadata.month}/${metadata.day} ['${metadata.type}']: ${metadata.title}`)
 
   const dir = createSaveDir(rootDir, metadata.year, metadata.month)
@@ -148,15 +148,15 @@ const convertPost = async (post, metadata, rootDir, logger, options) => {
     throw new Error('Failed to create the stream.')
   }
 
-  if (options.withMetadata) {
+  if (modes.withMetadata) {
     writeMetadata(metadata, stream)
   } else {
     stream.write(`# ${metadata.title}\n\n`, 'utf8')
   }
 
-  let markdown = Convert(post['content:encoded'][0], options)
+  let markdown = Convert(post['content:encoded'][0], modes)
 
-  if (options.withImageLinkReplace) {
+  if (modes.withImageLinkReplace) {
     const basename = Path.basename(filePath, '.md')
     markdown = await ImageLinkReplace(markdown, dir, basename, logger)
   }
@@ -216,12 +216,12 @@ const postsFromXML = async (src) => {
  *
  * @param {String} src Path of the WordPress XML file.
  * @param {String} dest Path of Markdown files output directory.
+ * @param {Modes} modes Modes.
  * @param {Logger} logger Logger.
- * @param {Option} options Options.
  *
  * @return {Promise} Promise object.
  */
-const WordPressXmlToMarkdown = async (src, dest, logger, options) => {
+const WordPressXmlToMarkdown = async (src, dest, modes, logger) => {
   const dir = createUniqueDestDir(dest)
   if (!(dir)) {
     throw new Error('Failed to create the root directory.')
@@ -239,8 +239,8 @@ const WordPressXmlToMarkdown = async (src, dest, logger, options) => {
 
   const posts = await postsFromXML(src)
   for (let post of posts) {
-    const metadata = readMetadata(post)
-    await convertPost(post, metadata, metadata.type === 'post' ? postsDir : pagesDir, logger, options)
+    const m = readMetadata(post)
+    await convertPost(post, m, m.type === 'post' ? postsDir : pagesDir, modes, logger)
   }
 }
 

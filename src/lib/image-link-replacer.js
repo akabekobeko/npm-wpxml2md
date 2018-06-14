@@ -19,6 +19,15 @@ const REGEX_IMAGE_LINK = /(\[!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)\]\((.*?)\
  */
 const REGEX_IMAGE_URL = /(http)?s?:?(\/\/[^"']*?\.(?:png|jpg|jpeg|gif|png|svg))/
 
+/**
+ * Escape a regexp syntaxes.
+ *
+ * @param {String} str Original string.
+ *
+ * @return {String} Escaped string.
+ *
+ * @see https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
+ */
 const escapeRegExp = (str) => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }

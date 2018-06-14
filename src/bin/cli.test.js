@@ -1,6 +1,6 @@
 import assert from 'assert'
 import Path from 'path'
-import CLI, {HelpText, Options} from './cli.js'
+import { ParseArgv, PrintHelp, PrintVersion, HelpText, Options } from './cli.js'
 import Package from '../../package.json'
 
 /**
@@ -41,7 +41,7 @@ describe('CLI', () => {
   describe('printHelp', () => {
     it('Print', () => {
       const mock = new StdOutMock()
-      CLI.printHelp(mock)
+      PrintHelp(mock)
       assert(mock.text === HelpText)
     })
   })
@@ -50,7 +50,7 @@ describe('CLI', () => {
   describe('printVersion', () => {
     it('Print', () => {
       const mock = new StdOutMock()
-      CLI.printVersion(mock)
+      PrintVersion(mock)
 
       const expected = 'v' + Package.version + '\n'
       assert(mock.text === expected)
@@ -60,88 +60,85 @@ describe('CLI', () => {
   /** @test {CLI#parseArgv} */
   describe('parseArgv', () => {
     it('Help', () => {
-      let options = CLI.parseArgv([])
+      let options = ParseArgv([])
       assert(options.help)
 
-      options = CLI.parseArgv([Options.help[0]])
+      options = ParseArgv([Options.help[0]])
       assert(options.help)
 
-      options = CLI.parseArgv([Options.help[1]])
+      options = ParseArgv([Options.help[1]])
       assert(options.help)
     })
 
     it('Version', () => {
-      let options = CLI.parseArgv([Options.version[0]])
+      let options = ParseArgv([Options.version[0]])
       assert(options.version)
 
-      options = CLI.parseArgv([Options.version[1]])
+      options = ParseArgv([Options.version[1]])
       assert(options.version)
     })
 
     it('Input', () => {
       const input    = './examples/wp.xml'
       const expected = Path.resolve(input)
-      let options = CLI.parseArgv([Options.input[0], input])
+      let options = ParseArgv([Options.input[0], input])
       assert(options.input === expected)
 
-      options = CLI.parseArgv([Options.input[1], input])
+      options = ParseArgv([Options.input[1], input])
       assert(options.input === expected)
 
-      options = CLI.parseArgv([Options.input[0]])
+      options = ParseArgv([Options.input[0]])
       assert(options.input !== expected)
 
-      options = CLI.parseArgv([Options.input[1], Options.help[0]])
+      options = ParseArgv([Options.input[1], Options.help[0]])
       assert(options.input !== expected)
     })
 
     it('Output', () => {
       const output   = './examples'
       const expected = Path.resolve(output)
-      let options = CLI.parseArgv([Options.output[0], output])
+      let options = ParseArgv([Options.output[0], output])
       assert(options.output === expected)
 
-      options = CLI.parseArgv([Options.output[1], output])
+      options = ParseArgv([Options.output[1], output])
       assert(options.output === expected)
 
-      options = CLI.parseArgv([Options.output[0]])
+      options = ParseArgv([Options.output[0]])
       assert(options.output !== expected)
 
-      options = CLI.parseArgv([Options.output[1], Options.help[0]])
+      options = ParseArgv([Options.output[1], Options.help[0]])
       assert(options.output !== expected)
     })
 
     it('Modes', () => {
       let modes   = 'no-gfm'
-      let options = CLI.parseArgv([Options.modes[0], modes])
-      assert(options.noGFM)
+      let options = ParseArgv([Options.modes[0], modes])
+      assert(options.modes.noGFM)
 
-      options = CLI.parseArgv([Options.modes[1], modes])
-      assert(options.noGFM)
+      options = ParseArgv([Options.modes[1], modes])
+      assert(options.modes.noGFM)
 
       modes   = 'no-gfm,test,no-melink'
-      options = CLI.parseArgv([Options.modes[1], modes])
-      assert(options.noGFM && options.noMELink)
+      options = ParseArgv([Options.modes[1], modes])
+      assert(options.modes.noGFM && options.modes.noMELink)
 
-      options = CLI.parseArgv([Options.modes[0]])
-      assert(!(options.noGFM && options.noMELink))
-
-      options = CLI.parseArgv([Options.modes[1], Options.help[0]])
-      assert(!(options.noGFM && options.noMELink))
+      options = ParseArgv([Options.modes[0]])
+      assert(!(options.modes))
 
       modes   = 'metadata,test,image'
-      options = CLI.parseArgv([Options.modes[1], modes])
-      assert(options.withMetadata)
-      assert(options.withImageLinkReplace)
+      options = ParseArgv([Options.modes[1], modes])
+      assert(options.modes.withMetadata)
+      assert(options.modes.withImageLinkReplace)
     })
 
     it('Report', () => {
-      let options = CLI.parseArgv()
+      let options = ParseArgv()
       assert(!(options.report))
 
-      options = CLI.parseArgv([Options.report[0]])
+      options = ParseArgv([Options.report[0]])
       assert(options.report)
 
-      options = CLI.parseArgv([Options.report[1]])
+      options = ParseArgv([Options.report[1]])
       assert(options.report)
     })
   })
