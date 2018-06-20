@@ -1,8 +1,5 @@
-'use strict'
-
-const assert = require('assert')
-const Shortcode = require('../../src/lib/shortcode.js').Shortcode
-const SHCodes = require('../../src/lib/shortcode.js').SHCodes
+import assert from 'assert'
+import Shortcode, {SHCodes} from './shortcode.js'
 
 /** @test {Shortcode} */
 describe('Shortcode', () => {

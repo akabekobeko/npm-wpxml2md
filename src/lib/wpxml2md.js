@@ -1,187 +1,247 @@
-'use strict'
+import Fs from 'fs'
+import Path  from 'path'
+import NodeUtil from 'util'
+import XmlParser  from 'xml2js'
+import Util from './util.js'
+import Convert from './converter.js'
+import ImageLinkReplace from './image-link-replacer.js'
 
-const Fs = require('fs')
-const Path = require('path')
-const XmlParser = require('xml2js')
-const Util = require('./util.js')
-const Converter = require('./converter.js')
+const ParseXML = NodeUtil.promisify(XmlParser.parseString)
 
 /**
- * Convert WordPress XML to Markdown files.
+ * Create a directory to save the markdown file.
+ *
+ * @param {String} root Path of the roo directory.
+ * @param {String} year Year.
+ * @param {String} month Month
+ *
+ * @return {String} If successful it is the path of the created directory.
  */
-class WordPressXmlToMarkdown {
-  /**
-   * Conver WordPress XML file to Markdown files.
-   *
-   * @param {String} src     Path of the WordPress XML file.
-   * @param {String} dest    Path of Markdown files output directory.
-   * @param {Logger} logger  Logger.
-   * @param {Option} options Options.
-   *
-   * @return {Promise} Promise object.
-   */
-  static convert (src, dest, logger, options) {
-    return new Promise((resolve, reject) => {
-      const data = Fs.readFileSync(Path.resolve(src))
-      if (!(data)) {
-        return reject(new Error('"' + src + '" is not found.'))
+const createSaveDir = (root, year, month) => {
+  // root/year
+  let dir  = Path.join(root, year)
+  if (!(Util.mkdirSync(dir))) {
+    return null
+  }
+
+  // root/year/month
+  dir = Path.join(dir, month)
+  if (!(Util.mkdirSync(dir))) {
+    return null
+  }
+
+  return dir
+}
+
+/**
+ * Array to string for metadata.
+ *
+ * @param {Array} arr Array.
+ *
+ * @return {String} String.
+ */
+const arrayToString = (arr) => {
+  if (!(arr && arr.length)) {
+    return '[]'
+  }
+
+  let str = `["${arr[0]}"`
+  for (let i = 1, max = arr.length; i < max; ++i) {
+    str += `, "${arr[i]}"`
+  }
+
+  str += ']'
+  return str
+}
+
+/**
+ * Write an article metadata.
+ *
+ * @param {Object} metadata Metadata of article.
+ * @param {WriteStream} stream Writable stream.
+ */
+const writeMetadata = (metadata, stream) => {
+  const text =
+`---
+path: "/${metadata.year}/${metadata.month}/${metadata.permanentName}/"
+date: "${metadata.year}-${metadata.month}-${metadata.day}T${metadata.time}Z"
+title: "${metadata.title}"
+categories: ${arrayToString(metadata.categories)}
+tags: ${arrayToString(metadata.tags)}
+`
+
+  stream.write(text, 'utf8')
+
+  if (metadata.type === 'page') {
+    stream.write(`single: true\n`, 'utf8')
+  }
+
+  stream.write('---\n\n', 'utf8')
+}
+
+/**
+ * Read an article metadata from xml object.
+ *
+ * @param {Object} post XML object.
+ *
+ * @return {Object} Metadata.
+ */
+const readMetadata = (post) => {
+  const categories = []
+  const tags       = []
+  if (post.category) {
+    post.category.forEach((value) => {
+      switch (value.$.domain) {
+        case 'category':
+          categories.push(value._)
+          break
+
+        case 'post_tag':
+          tags.push(value._)
+          break
+
+        default:
+          break
       }
-
-      const dir = WordPressXmlToMarkdown.createUniqueDestDir(dest)
-      if (!(dir)) {
-        return reject(new Error('Failed to create the root directory.'))
-      }
-
-      const postsDir = Path.join(dir, 'posts')
-      if (!(Util.mkdirSync(postsDir))) {
-        return reject(new Error('Failed to create the posts directory.'))
-      }
-
-      const pagesDir = Path.join(dir, 'pages')
-      if (!(Util.mkdirSync(pagesDir))) {
-        return reject(new Error('Failed to create the pages directory.'))
-      }
-
-      return Promise
-      .resolve()
-      .then(() => {
-        return WordPressXmlToMarkdown.postsFromXML(data.toString())
-      })
-      .then((posts) => {
-        posts.forEach((post) => {
-          const type = post[ 'wp:post_type' ][ 0 ]
-          switch (type) {
-            case 'post':
-              WordPressXmlToMarkdown.convertPost(type, postsDir, post, logger, options)
-              break
-
-            case 'page':
-              WordPressXmlToMarkdown.convertPost(type, pagesDir, post, logger, options)
-              break
-
-            default:
-              break
-          }
-        })
-      })
     })
   }
 
-  /**
-   * Convert the post data to markdown file.
-   *
-   * @param {String} type   Type of post (post or page).
-   * @param {String} dir    Path of Markdown file output directory.
-   * @param {Object} post   Post data.
-   * @param {Logger} logger Logger.
-   * @param {Option} options Options.
-   *
-   * @return {Promise} Promise task.
-   */
-  static convertPost (type, dir, post, logger, options) {
-    let date  = Util.formatDate(new Date(post.pubDate), 'YYYY/MM/DD')
-    if (!(date)) {
-      date = Util.formatDate(new Date(post[ 'wp:post_date' ]), 'YYYY/MM/DD')
-      if (!(date)) {
-        date = Util.formatDate(new Date(), 'YYYY/MM/DD')
-      }
-    }
+  const datetime = post['wp:post_date_gmt'][0].split(' ')
+  const date     = datetime[0].split('-')
 
-    const units = date.split('/')
-    const year  = units[ 0 ]
-    const month = units[ 1 ]
-    const day   = units[ 2 ]
+  return {
+    year: date[0],
+    month: date[1],
+    day: date[2],
+    time: datetime[1],
+    permanentName: post['wp:post_name'][0],
+    title: post['title'][0],
+    categories,
+    tags,
+    type: post['wp:post_type'][0]
+  }
+}
 
-    logger.log(year + '/' + month + '/' + day + ' [' + type + ']: ' + post.title)
+/**
+ * Convert the post data to markdown file.
+ *
+ * @param {Object} post Post data.
+ * @param {Object} metadata Metadata.
+ * @param {String} dir Path of Markdown file output directory.
+ * @param {Logger} logger Logger.
+ * @param {Modes} modes Modes.
+ *
+ * @return {Promise} Promise task.
+ */
+const convertPost = async (post, metadata, rootDir, modes, logger) => {
+  logger.log(`${metadata.year}/${metadata.month}/${metadata.day} ['${metadata.type}']: ${metadata.title}`)
 
-    const stream = WordPressXmlToMarkdown.createStream(dir, year, month + '-' + day + '.md')
-    if (!(stream)) {
-      throw new Error('Failed to create the stream.')
-    }
-
-    const markdown = Converter.convert(post[ 'content:encoded' ][ 0 ], options)
-    stream.write('# ' + post.title + '\n\n', 'utf8')
-    stream.write(markdown, 'utf8')
+  const dir = createSaveDir(rootDir, metadata.year, metadata.month)
+  if (!(dir)) {
+    throw new Error('Failed to create a save directory.')
   }
 
-  /**
-   * Create a stream of Markdown files to be written.
-   *
-   * @param {String} root     Path of the roo directory.
-   * @param {String} year     Year.
-   * @param {String} fileName File name.
-   *
-   * @return {WriteStream} If successful stream, otherwise "null".
-   */
-  static createStream (root, year, fileName) {
-    // root/year
-    const dir  = Path.join(root, year)
-    if (!(Util.mkdirSync(dir))) {
-      return null
-    }
-
-    // root/year/month/day.md or day-X.md
-    const filePath = Util.uniquePathWithSequentialNumber(Path.join(dir, fileName))
-    if (!(filePath)) {
-      return null
-    }
-
-    return Fs.createWriteStream(filePath)
+  // If there are multiple articles on the same day, their names will be duplicated and made unique.
+  const filePath = Util.uniquePathWithSequentialNumber(Path.join(dir, `${metadata.day}.md`))
+  const stream = Fs.createWriteStream(filePath)
+  if (!(stream)) {
+    throw new Error('Failed to create the stream.')
   }
 
-  /**
-   * Create a directory with a unique name.
-   *
-   * @param {String} dir Base directory path.
-   *
-   * @return {String} The path of the created directory. Failure is null.
-   */
-  static createUniqueDestDir (dir) {
-    const base = Path.resolve(dir)
-    const name = Util.formatDate(new Date(), 'YYYYMMDD-hhmmss')
+  if (modes.withMetadata) {
+    writeMetadata(metadata, stream)
+  } else {
+    stream.write(`# ${metadata.title}\n\n`, 'utf8')
+  }
 
-    let path = Path.resolve(base, name)
+  let markdown = Convert(post['content:encoded'][0], modes)
+
+  if (modes.withImageLinkReplace) {
+    const basename = Path.basename(filePath, '.md')
+    markdown = await ImageLinkReplace(markdown, dir, basename, logger)
+  }
+
+  stream.write(markdown, 'utf8')
+}
+
+/**
+ * Create a directory with a unique name.
+ *
+ * @param {String} dir Base directory path.
+ *
+ * @return {String} The path of the created directory. Failure is null.
+ */
+const createUniqueDestDir = (dir) => {
+  const base = Path.resolve(dir)
+  const name = Util.formatDate(new Date(), 'YYYYMMDD-hhmmss')
+
+  let path = Path.resolve(base, name)
+  if (!(Util.existsSync(path))) {
+    if (Util.mkdirSync(path)) {
+      return path
+    }
+  }
+
+  // Add sequential number
+  for (let i = 1; i <= 256; ++i) {
+    path = Path.resolve(base, name + '-' + i)
     if (!(Util.existsSync(path))) {
       if (Util.mkdirSync(path)) {
         return path
       }
     }
-
-    // Add sequential number
-    for (let i = 1; i <= 256; ++i) {
-      path = Path.resolve(base, name + '-' + i)
-      if (!(Util.existsSync(path))) {
-        if (Util.mkdirSync(path)) {
-          return path
-        }
-      }
-    }
-
-    return null
   }
 
-  /**
-   * Gets the posts data from XML.
-   *
-   * @param {String} text XML text.
-   *
-   * @return {Promise} Promise task.
-   */
-  static postsFromXML (text) {
-    return new Promise((resolve, reject) => {
-      XmlParser.parseString(text, (err, xml) => {
-        if (err) {
-          return reject(err)
-        }
+  return null
+}
 
-        if (!(xml.rss && xml.rss.channel && 0 < xml.rss.channel.length && xml.rss.channel[ 0 ].item && 0 < xml.rss.channel[ 0 ].item.length)) {
-          return reject(new Error('Invalid WordPress Post XML.'))
-        }
+/**
+ * Gets the posts data from XML.
+ *
+ * @param {String} src Path of XML file..
+ *
+ * @return {Promise} Promise task.
+ */
+const postsFromXML = async (src) => {
+  const data = Fs.readFileSync(Path.resolve(src))
+  if (!(data)) {
+    throw new Error(`"${src}" is not found.`)
+  }
+  const xml   = await ParseXML(data.toString())
+  return xml.rss.channel[0].item
+}
 
-        return resolve(xml.rss.channel[ 0 ].item)
-      })
-    })
+/**
+ * Conver WordPress XML file to Markdown files.
+ *
+ * @param {String} src Path of the WordPress XML file.
+ * @param {String} dest Path of Markdown files output directory.
+ * @param {Modes} modes Modes.
+ * @param {Logger} logger Logger.
+ *
+ * @return {Promise} Promise object.
+ */
+const WordPressXmlToMarkdown = async (src, dest, modes, logger) => {
+  const dir = createUniqueDestDir(dest)
+  if (!(dir)) {
+    throw new Error('Failed to create the root directory.')
+  }
+
+  const postsDir = Path.join(dir, 'posts')
+  if (!(Util.mkdirSync(postsDir))) {
+    throw new Error('Failed to create the posts directory.')
+  }
+
+  const pagesDir = Path.join(dir, 'pages')
+  if (!(Util.mkdirSync(pagesDir))) {
+    throw new Error('Failed to create the pages directory.')
+  }
+
+  const posts = await postsFromXML(src)
+  for (let post of posts) {
+    const m = readMetadata(post)
+    await convertPost(post, m, m.type === 'post' ? postsDir : pagesDir, modes, logger)
   }
 }
 
-module.exports = WordPressXmlToMarkdown
+export default WordPressXmlToMarkdown

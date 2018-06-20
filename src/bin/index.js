@@ -1,28 +1,26 @@
 #!/usr/bin/env node
 
-'use strict'
-
-const CLI = require('./cli.js').CLI
-const WpXml2Md = require('../lib/index.js')
+import { ParseArgv, PrintHelp, PrintVersion } from './cli.js'
+import WpXml2Md from '../lib/index.js'
 
 /**
  * Entry point of the CLI.
  *
- * @param {Array.<String>} argv   Arguments of the command line.
+ * @param {String[]} argv Arguments of the command line.
  * @param {WritableStream} stdout Standard output.
  *
- * @return {Promise} Promise object.
+ * @return {Promise} Asynchronous task.
  */
 function main (argv, stdout) {
   return new Promise((resolve, reject) => {
-    const options = CLI.parseArgv(argv)
+    const options = ParseArgv(argv)
     if (options.help) {
-      CLI.printHelp(stdout)
+      PrintHelp(stdout)
       return resolve()
     }
 
     if (options.version) {
-      CLI.printVersion(stdout)
+      PrintVersion(stdout)
       return resolve()
     }
 
@@ -34,16 +32,12 @@ function main (argv, stdout) {
       return reject(new Error('"-o" or "--output" has not been specified. This parameter is required.'))
     }
 
-    return WpXml2Md(options.input, options.output, {
-      noGFM: options.noGFM,
-      noMELink: options.noMELink,
-      report: options.report
-    })
+    return WpXml2Md(options.input, options.output, options.report, options.modes)
   })
 }
 
 main(process.argv.slice(2), process.stdout)
-.then()
-.catch((err) => {
-  console.error(err)
-})
+  .then()
+  .catch((err) => {
+    console.error(err)
+  })

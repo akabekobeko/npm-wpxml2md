@@ -19,9 +19,9 @@ $ npm install wpxml2md
 Can export the **WordPress XML** in the following way.
 
 1. Displays the management screen of WordPress
-1. Select the `Tools` - `Export` from the menu
-1. Select `All content` in `Choose what to export`
-1. Click to `Download Export File`
+2. Select the `Tools` - `Export` from the menu
+3. Select `All content` in `Choose what to export`
+4. Click to `Download Export File`
 
 ## Usage
 
@@ -32,7 +32,7 @@ Can export the **WordPress XML** in the following way.
 ```js
 const wpxml2md = require('wpxml2md');
 
-wpxml2md('wordpress.xml', 'dest', {report: true})
+wpxml2md('wordpress.xml', 'dest', true)
 .then(() => {
   console.log('Completed!!');
 } )
@@ -41,12 +41,19 @@ wpxml2md('wordpress.xml', 'dest', {report: true})
 });
 ```
 
-Add modes:
+With modes:
 
 ```js
 const wpxml2md = require('wpxml2md');
 
-wpxml2md('wordpress.xml', 'dest', {noGFM: true, noMELink: true})
+const modes = {
+  noGFM: true,
+  noMELink: true,
+  withMetadata: true,
+  withImageLinkReplace: true
+};
+
+wpxml2md('wordpress.xml', 'dest', true, modes)
 .then(() => {
   console.log('Completed!!');
 })
@@ -55,21 +62,25 @@ wpxml2md('wordpress.xml', 'dest', {noGFM: true, noMELink: true})
 });
 ```
 
-`wpxml2md( src, dest, [OPTIONS] )`
+#### wpxml2md
 
-| Name | Type | Description |
-|:--------|:--|:--|
-|     src |   String | Path of the XML file exported from WordPress. |
-|    dest |   String | Destination directory path. |
-| options |   Object | Options. |
+`wpxml2md(src, dest, withReport, modes)`
 
-Options:
+|Name|Type|Description|
+|---|---|---|
+|src|String|Path of the XML file exported from WordPress.|
+|dest|String|Destination directory path.|
+|report|Boolean (`false`)|Display the process reports.|
+|modes|Modes|Modes of markdown parse and output..|
 
-| Name | Type | Description |
-|:--------|:--|:--|
-|    noGFM | Boolean | Disable the Convert the GitHub Flavored Markdown. Default is `false`, enable a conversion.  |
-| noMELink | Boolean | Disable the Convert the GitHub Extra link on header. Default is `false`, enable a conversion.  |
-|   report | Boolean | Display the process reports. Default is `false`, disable a report. |
+Modes:
+
+|Name|Type (Default)|Description|
+|---|---|---|
+|noGFM|Boolean (`false`)|Disable the Convert the GitHub Flavored Markdown.|
+|noMELink|Boolean (`false`)|Disable the Convert the GitHub Extra link on header.|
+|withMetadata|Boolean (`false`)|Output article metadata in YAML format at the top of Markdown.|
+|withImageLinkReplace|Boolean (`false`)|Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers (`DD` is an article posted day. `DD-1.png`, `DD-2.png`, ...).|
 
 ### CLI
 
@@ -90,13 +101,15 @@ Usage: wpxml2md [OPTIONS]
     -m, --modes   Specify the mode in the comma separated.
                   "no-gfm" is to disable the GitHub Flavored Markdown
                   "no-melink" is to disable the Markdown Extra link on header
+                  "metadata" is to enable output article metadata
+                  "image" is to enable download and replace link syntaxes a linked images from article
 
     -r, --report  Display the process reports.
                   Default is disable.
 
   Examples:
     $ wpxml2md -i wordpress.xml -o ./dist -r
-    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm,no-melink -r
+    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm,no-melink,metadata,image -r
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md
@@ -112,12 +125,14 @@ Converted Markdown files are output in the following directory.
 
 ```
 YYYYMMDD-hhmmss/
-├── pages/
-│   └── YYYY/
-│       └── MM-DD.md
-└── posts/
-    └── YYYY/
-        └── MM-DD.md
+├── pages
+│   └── YYYY
+│       └── MM
+│           └── DD.md
+└── posts
+    └── YYYY
+        └── MM
+            └── DD.md
 ```
 
 * The name of the root directory is the date time that the execution of the processing
@@ -131,33 +146,33 @@ YYYYMMDD-hhmmss/
 Default markdown.
 
 | TAG | Markdown |
-|:--|:--|
-| `Plain Text` | Plain text will keep the line breaks and blank lines. It is a specification to enable the WordPress of paragraph function. |
-| `<p>` | `\n\nTEXT\n\n` |
-| `<br>` | `  \n` |
-| `<h1>` | `\n\n# TEXT\n\n`, support from `h1` to `h6`. |
-| `<h1 id="id">` | `\n\n# TEXT {#id}\n\n`, for Markdown Extra |
-| `<hr>` | `\n\n* * *\n\n` |
-| `<em>`, `<i>` | `_TEXT_` |
-| `<strong>`, `<b>` | `**TEXT**` |
-| `<code>` | `` `TEXT` `` |
-| `<a>` | `[TEXT](URL "ALT")` |
-| `<img>` | `![TITLE](URL)` |
-| `<pre><code>` | `\n\n    TEXT\n\n` |
-| `<blockquote>` | `\n\n> TEXT\n\n` |
-| `<ul><li>` | `\n\n* TEXT\n\n` |
-| `<ol><li>` | `\n\n1. TEXT\n\n` |
+|---|---|
+|`Plain Text`|Plain text will keep the line breaks and blank lines. It is a specification to enable the WordPress of paragraph function.|
+|`<p>`|`\n\nTEXT\n\n`|
+|`<br>`|`\n`|
+|`<h1>` |`\n\n# TEXT\n\n`, support from `h1` to `h6`.|
+|`<h1 id="id">`|`\n\n# TEXT {#id}\n\n`, for Markdown Extra.|
+|`<hr>`|`\n\n* * *\n\n`|
+|`<em>`, `<i>`|`_TEXT_`|
+|`<strong>`, `<b>`|`**TEXT**`|
+|`<code>`|`` `TEXT` ``|
+|`<a>`|`[TEXT](URL "ALT")`|
+|`<img>`|`![TITLE](URL)`|
+|`<pre><code>`|`\n\n    TEXT\n\n`|
+|`<blockquote>`| `\n\n> TEXT\n\n`|
+|`<ul><li>`|`\n\n* TEXT\n\n`|
+|`<ol><li>`|`\n\n1. TEXT\n\n`|
 
 GitHub Flavored Markdown.
 
-| TAG | Markdown |
-|:--|:--|
-| `<br>` | `\n` |
-| `<del>`, `<s>`, `<strike>` | `~~TEXT~~` |
-| `<ul><li><input type="checkbox">` | `* [ ] Text`, **checked** is true if `[x]`. |
-| `<table>` | see: [Organizing information with tables - User Documentation](https://help.github.com/articles/organizing-information-with-tables/) |
-| `<pre><code>` | ````\n\n```\nCODE\n```\n\n```` |
-| `<div class="highlight highlight-lang"><pre>` | ````\n\n```lang\nCODE\n```\n\n```` |
+|TAG|Markdown|
+|---|---|
+|`<br>`|`\n`|
+|`<del>`, `<s>`, `<strike>`|`~~TEXT~~`|
+|`<ul><li><input type="checkbox">` |`* [ ] Text`, **checked** is true if `[x]`.|
+|`<table>` |see: [Organizing information with tables - User Documentation](https://help.github.com/articles/organizing-information-with-tables/)|
+|`<pre><code>` |````\n\n```\nCODE\n```\n\n````|
+|`<div class="highlight highlight-lang"><pre>`|````\n\n```lang\nCODE\n```\n\n````|
 
 ### Shortcode
 

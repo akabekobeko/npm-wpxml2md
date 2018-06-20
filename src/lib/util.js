@@ -1,7 +1,5 @@
-'use strict'
-
-const Fs = require('fs')
-const Path = require('path')
+import Fs from 'fs'
+import Path from 'path'
 
 /**
  * Elements of block.
@@ -28,7 +26,7 @@ const VoidElements = [
 /**
  * Provides utility function.
  */
-class Util {
+export default class Util {
   /**
    * This method returns the first index at which a given element can be found in the array
    *
@@ -194,15 +192,7 @@ class Util {
    *
    * @return {String} Success is the unique path (full path), failure is null. If not duplicate returns the original path.
    */
-  static uniquePathWithSequentialNumber (path, min, max) {
-    if (typeof min !== 'number') {
-      min = 1
-    }
-
-    if (typeof max !== 'number') {
-      max = 256
-    }
-
+  static uniquePathWithSequentialNumber (path, min = 1, max = 256) {
     const originalPath = Path.resolve(path)
     if (!(Util.existsSync(originalPath) && typeof min === 'number' && typeof max === 'number' && 0 <= min && min < max)) {
       return originalPath
@@ -223,5 +213,3 @@ class Util {
     return null
   }
 }
-
-module.exports = Util

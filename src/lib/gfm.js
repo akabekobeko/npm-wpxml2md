@@ -1,6 +1,4 @@
-'use strict'
-
-const Util = require('./util.js')
+import Util from './util.js'
 
 /**
  * Convert the DOM node to cell text of the table.
@@ -133,4 +131,4 @@ const GfmConverters = [
   }
 ]
 
-module.exports = GfmConverters
+export default GfmConverters
