@@ -97,7 +97,7 @@ const downloadImages = async (images, dir, logger) => {
  *
  * @return {Object} Link and image (URL/Saved file name) list.
  */
-const parseImageLink = (markdown, basename) => {
+export const parseImageLink = (markdown, basename) => {
   if (!(markdown)) {
     return { links: [], images: [] }
   }
@@ -130,21 +130,23 @@ const parseImageLink = (markdown, basename) => {
 /**
  * Replace a link syntaxes.
  *
- * @param {Object[]} images Image URL/Name.
  * @param {String[]} links Link syntaxes in markdown.
+ * @param {Object[]} images Image URL/Name.
  *
  * @return {Object[]} Replaced link syntaxes.
  */
-const replaceLinks = (images, links) => {
+export const replaceLinks = (links, images) => {
   const results = []
-  for (let image of images) {
-    const regexp = new RegExp(escapeRegExp(image.url), 'g')
-    for (let link of links) {
-      const newLink = link.replace(regexp, image.fileName)
-      if (link !== newLink) {
-        // Make it a replacement candidate for markdown if it is replaced
-        results.push({ link, newLink })
-      }
+  for (let link of links) {
+    let newLink = link
+    for (let image of images) {
+      const regexp = new RegExp(escapeRegExp(image.url), 'g')
+      newLink = newLink.replace(regexp, image.fileName)
+    }
+
+    if (newLink !== link) {
+      // Make it a replacement candidate for markdown if it is replaced
+      results.push({ link, newLink })
     }
   }
 
@@ -169,7 +171,7 @@ const ImageLinkReplacer = async (markdown, dir, basename, logger) => {
     }
 
     const succeededImages = await downloadImages(data.images, dir, logger)
-    const targets = replaceLinks(succeededImages, data.links)
+    const targets = replaceLinks(data.links, succeededImages)
 
     for (let target of targets) {
       markdown = markdown.replace(target.link, target.newLink)
