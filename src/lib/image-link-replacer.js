@@ -2,6 +2,7 @@ import Fs from 'fs'
 import Path from 'path'
 import NodeUtil from 'util'
 import Request from 'request'
+import Util from './util.js'
 
 const RequestGet = NodeUtil.promisify(Request)
 
@@ -18,19 +19,6 @@ const REGEX_IMAGE_LINK = /(\[!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)\]\((.*?)\
  * @type {RegExp}
  */
 const REGEX_IMAGE_URL = /(http)?s?:?(\/\/[^"']*?\.(?:png|jpg|jpeg|gif|png|svg))/
-
-/**
- * Escape a regexp syntaxes.
- *
- * @param {String} str Original string.
- *
- * @return {String} Escaped string.
- *
- * @see https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
- */
-const escapeRegExp = (str) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
 
 /**
  * Recursively enumurate a file paths from directory.
@@ -140,7 +128,7 @@ export const replaceLinks = (links, images) => {
   for (let link of links) {
     let newLink = link
     for (let image of images) {
-      const regexp = new RegExp(escapeRegExp(image.url), 'g')
+      const regexp = new RegExp(Util.escapeRegExp(image.url), 'g')
       newLink = newLink.replace(regexp, image.fileName)
     }
 

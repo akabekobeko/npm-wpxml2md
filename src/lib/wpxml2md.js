@@ -123,6 +123,27 @@ const readMetadata = (post) => {
 }
 
 /**
+ * Replace the link URL included in Markdown.
+ *
+ * @param {String} markdown Markdown text.
+ * @param {String} oldPrefix Target.
+ * @param {String} newPrefix String to replace.
+ *
+ * @return {String} Replaced string.
+ */
+export const replaceLinkURL = (markdown, oldPrefix, newPrefix = '') => {
+  if (!(markdown && oldPrefix)) {
+    return markdown
+  }
+
+  return markdown.replace(/\[(.*?)\]\((.*?)\)/g, (match, $1, $2) => {
+    const regexp = new RegExp(Util.escapeRegExp(oldPrefix), 'g')
+    const url = $2.replace(regexp, newPrefix)
+    return `[${$1}](${url})`
+  })
+}
+
+/**
  * Convert the post data to markdown file.
  *
  * @param {Object} post Post data.
@@ -159,6 +180,10 @@ const convertPost = async (post, metadata, rootDir, modes, logger) => {
   if (modes.withImageLinkReplace) {
     const basename = Path.basename(filePath, '.md')
     markdown = await ImageLinkReplace(markdown, dir, basename, logger)
+  }
+
+  if (modes.replaceLinkURL && modes.replaceLinkURL.old) {
+    markdown = replaceLinkURL(markdown, modes.replaceLinkURL.old, modes.replaceLinkURL.new)
   }
 
   stream.write(markdown, 'utf8')
