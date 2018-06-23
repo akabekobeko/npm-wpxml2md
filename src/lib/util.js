@@ -30,13 +30,26 @@ export default class Util {
   /**
    * This method returns the first index at which a given element can be found in the array
    *
-   * @param {Array}  arr Array.
+   * @param {Array} arr Array.
    * @param {Object} obj Element to locate in the array.
    *
    * @return {Number} If the success index, otherwise -1.
    */
   static arrayIndexOf (arr, obj) {
     return Array.prototype.indexOf.call(arr, obj)
+  }
+
+  /**
+   * Escape a regexp syntaxes.
+   *
+   * @param {String} str Original string.
+   *
+   * @return {String} Escaped string.
+   *
+   * @see https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
+   */
+  static escapeRegExp (str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   }
 
   /**

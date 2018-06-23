@@ -4,6 +4,14 @@ import Util from './util.js'
 
 /** @test {Util} */
 describe('Util', () => {
+  describe('escapeRegExp', () => {
+    it('Escape', () => {
+      const actual = Util.escapeRegExp('https://example.com/test.jpeg')
+      const expected = 'https://example\\.com/test\\.jpeg'
+      assert(actual === expected)
+    })
+  })
+
   /** @test {Util#existsSync} */
   describe('existsSync', () => {
     it('Exists', () => {
