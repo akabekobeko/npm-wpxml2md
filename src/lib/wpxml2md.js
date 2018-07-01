@@ -55,28 +55,21 @@ const arrayToString = (arr) => {
 }
 
 /**
- * Write an article metadata.
+ * Create a header of article metadata.
  *
  * @param {Object} metadata Metadata of article.
- * @param {WriteStream} stream Writable stream.
+ *
+ * @return {String} Header text.
  */
-const writeMetadata = (metadata, stream) => {
-  const text =
-`---
-path: "/${metadata.year}/${metadata.month}/${metadata.permanentName}/"
+export const createMetadataHeader = (metadata) => {
+  const last = metadata.type === 'page' ? 'single: true\n---\n\n' : '---\n\n'
+  return `---
+path: "/${metadata.type}s/${metadata.year}/${metadata.month}/${metadata.permanentName}/"
 date: "${metadata.year}-${metadata.month}-${metadata.day}T${metadata.time}Z"
 title: "${metadata.title}"
 categories: ${arrayToString(metadata.categories)}
 tags: ${arrayToString(metadata.tags)}
-`
-
-  stream.write(text, 'utf8')
-
-  if (metadata.type === 'page') {
-    stream.write(`single: true\n`, 'utf8')
-  }
-
-  stream.write('---\n\n', 'utf8')
+${last}`
 }
 
 /**
@@ -170,7 +163,7 @@ const convertPost = async (post, metadata, rootDir, modes, logger) => {
   }
 
   if (modes.withMetadata) {
-    writeMetadata(metadata, stream)
+    stream.write(createMetadataHeader(metadata), 'utf8')
   } else {
     stream.write(`# ${metadata.title}\n\n`, 'utf8')
   }
