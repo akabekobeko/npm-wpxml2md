@@ -32,7 +32,7 @@ function main (argv, stdout) {
       return reject(new Error('"-o" or "--output" has not been specified. This parameter is required.'))
     }
 
-    return WpXml2Md(options.input, options.output, options.report, options.modes)
+    return WpXml2Md(options.input, options.output, options)
   })
 }
 

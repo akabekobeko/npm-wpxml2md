@@ -21,6 +21,14 @@
  */
 
 /**
+ * Value of replace link prefix.
+ *
+ * @typedef {Object} ReplaceLinkPrefix
+ * @property {String} old Target string.
+ * @property {String} new Placeholder string.
+ */
+
+/**
  * Commad line options.
  *
  * @typedef {Object} CLIOptions
@@ -29,5 +37,9 @@
  * @property {String} input Path of the SVG file or PNG file directory.
  * @property {String} output Path of the output directory.
  * @property {Boolean} report Display the process reports. Default is disable.
- * @property {Modes} modes Modes of markdown parse and output.
+ * @property {Boolean} noGFM Disable the GitHub Flavored Markdown.
+ * @property {Boolean} noMELink Disable the Markdown Extra link on header.
+ * @property {Boolean} withMetadata Enable output article metadata.
+ * @property {Boolean} withImageLinkReplace Enable download and replace link syntaxes a linked images from article.
+ * @property {ReplaceLinkPrefix} replaceLinkPrefix Replace the link URL prefix with the specified word.
  */

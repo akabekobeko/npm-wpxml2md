@@ -64,23 +64,26 @@ wpxml2md('wordpress.xml', 'dest', true, modes)
 
 #### wpxml2md
 
-`wpxml2md(src, dest, withReport, modes)`
+`wpxml2md(src, dest, options)`
 
 |Name|Type|Description|
 |---|---|---|
 |src|String|Path of the XML file exported from WordPress.|
 |dest|String|Destination directory path.|
-|report|Boolean (`false`)|Display the process reports.|
-|modes|Modes|Modes of markdown parse and output..|
+|options|Object|Options.|
 
-Modes:
+Options:
 
-|Name|Type (Default)|Description|
+|Name|Type|Description|
 |---|---|---|
-|noGFM|Boolean (`false`)|Disable the Convert the GitHub Flavored Markdown.|
-|noMELink|Boolean (`false`)|Disable the Convert the GitHub Extra link on header.|
-|withMetadata|Boolean (`false`)|Output article metadata in YAML format at the top of Markdown.|
-|withImageLinkReplace|Boolean (`false`)|Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers (`DD` is an article posted day. `DD-1.png`, `DD-2.png`, ...).|
+|report|Boolean|Default is `false`. Display the process reports.|
+|noGFM|Boolean|Default is `false`. Disable the Convert the GitHub Flavored Markdown.|
+|noMELink|Boolean|Default is `false`. Disable the Convert the GitHub Extra link on header.|
+|withMetadata|Boolean|Default is `false`. Output article metadata in YAML format at the top of Markdown.|
+|withImageLinkReplace|Boolean|Default is `false`. Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers, `DD` is an article posted day (yyyymm"dd"). `DD-1.png`, `DD-2.png`, ...etc.|
+|replaceLinkURL|Object|Default is `undefined`. Replace the link URL prefix with the specified word.|
+|_replaceLinkURL_.old|String|Target.|
+|_replaceLinkURL_.new|String|Replacement.|
 
 ### CLI
 
@@ -90,26 +93,30 @@ Usage: wpxml2md [OPTIONS]
   Convert the WordPress XML file to Markdown files.
 
   Options:
-    -h, --help    Display this text.
+    -h, --help      Display this text.
 
-    -v, --version Display the version number.
+    -v, --version   Display the version number.
 
-    -i, --input   Path of the XML file exported from WordPress.
+    -i, --input     Path of the XML file exported from WordPress.
 
-    -o, --output  Path of the output directory.
+    -o, --output    Path of the output directory.
 
-    -m, --modes   Specify the mode in the comma separated.
-                  "no-gfm" is to disable the GitHub Flavored Markdown
-                  "no-melink" is to disable the Markdown Extra link on header
-                  "metadata" is to enable output article metadata
-                  "image" is to enable download and replace link syntaxes a linked images from article
+    -r, --report    Output process reports.
 
-    -r, --report  Display the process reports.
-                  Default is disable.
+    --no-gfm        Disable the GitHub Flavored Markdown.
+
+    --no-melink     Disable the Markdown Extra link on header.
+
+    --with-metadata Enable output article metadata.
+
+    --with-image    Enable download and replace link syntaxes a linked images from article.
+
+    --replace-link  Replace the link URL prefix with the specified word, format is "target=placeholder".
+                    If "--replace-link http://example.com/=/" then "http://example.com/" will be replaced with "/".
 
   Examples:
     $ wpxml2md -i wordpress.xml -o ./dist -r
-    $ wpxml2md -i wordpress.xml -o ./dist -m no-gfm,no-melink,metadata,image -r
+    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image --replace-link http://akabeko.me/=/
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md
@@ -145,7 +152,7 @@ YYYYMMDD-hhmmss/
 
 Default markdown.
 
-| TAG | Markdown |
+|TAG|Markdown|
 |---|---|
 |`Plain Text`|Plain text will keep the line breaks and blank lines. It is a specification to enable the WordPress of paragraph function.|
 |`<p>`|`\n\nTEXT\n\n`|
@@ -196,7 +203,7 @@ Remove the short code dregs. Contents will Markdown conversion as HTML.
 ```
 [code lang="js"]
 const test = 'test';
-console.log( test );
+console.log(test);
 [/code]
 ```
 
@@ -205,7 +212,7 @@ console.log( test );
 
     ```js
     const test = 'test';
-    console.log( test );
+    console.log(test);
     ```
 
 
@@ -214,8 +221,8 @@ Short code of programming languages and converts it to a code block.
 ```
 [js]
 const test = 'test';
-if( test ) {
-  console.log( test );  
+if (test) {
+  console.log(test);
 }
 [/js]
 ```
@@ -224,38 +231,38 @@ For example, the above will be converted to the following.
 
     ```js
     const test = 'test';
-    if( test ) {
-      console.log( test );  
+    if (test) {
+      console.log(test);
     }
     ```
 
 Language to be converted is the following. The language names are based on the [SyntaxHighlighter - Bundled Brushes](http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/).
 
-| Language | Shortcode |
+|Language|Shortcode|
 |:--|:--|
-| Plain Text | plain, text |
-| ActionScript3 | as3, actionscript3 |
-| Bash/shell | bash, shell |
-| ColdFusion | cf, coldfusion |
-| C# | c-sharp, csharp |
-| C++ | cpp, c |
-| CSS | css |
-| Delphi | delphi, pas, pascal |
-| Diff | diff, patch |
-| Erlang | erl, erlang |
-| Groovy | groovy |
-| JavaScript | js, jscript, javascript |
-| Java | java |
-| JavaFX | jfx, javafx |
-| Perl | perl, pl |
-| PHP | php |
-| PowerShell | ps, powershell |
-| Python | py, python |
-| Ruby | rails, ror, ruby |
-| Scala | scala |
-| SQL | sql |
-| Visual Basic | vb, vbnet |
-| XML | xml, xhtml, xslt, html, xhtml |
+|Plain Text|plain, text|
+|ActionScript3|as3, actionscript3|
+|Bash/shell|bash, shell|
+|ColdFusion|cf, coldfusion|
+|C#|c-sharp, csharp|
+|C++|cpp, c|
+|CSS|css|
+|Delphi|delphi, pas, pascal|
+|Diff|diff, patch|
+|Erlang|erl, erlang|
+|Groovy|groovy|
+|JavaScript|js, jscript, javascript|
+|Java|java|
+|JavaFX|jfx, javafx|
+|Perl|perl, pl|
+|PHP|php|
+|PowerShell|ps, powershell|
+|Python|py, python|
+|Ruby|rails, ror, ruby|
+|Scala|scala|
+|SQL|sql|
+|Visual Basic|vb, vbnet|
+|XML|xml, xhtml, xslt, html, xhtml|
 
 ## ChangeLog
 

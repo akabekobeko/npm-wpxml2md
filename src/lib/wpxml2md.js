@@ -124,8 +124,8 @@ const readMetadata = (post) => {
  *
  * @return {String} Replaced string.
  */
-export const replaceLinkURL = (markdown, oldPrefix, newPrefix = '') => {
-  if (!(markdown && oldPrefix)) {
+export const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
+  if (!(markdown && (oldPrefix && typeof oldPrefix === 'string') && (newPrefix && typeof newPrefix === 'string'))) {
     return markdown
   }
 
@@ -143,11 +143,11 @@ export const replaceLinkURL = (markdown, oldPrefix, newPrefix = '') => {
  * @param {Object} metadata Metadata.
  * @param {String} dir Path of Markdown file output directory.
  * @param {Logger} logger Logger.
- * @param {Modes} modes Modes.
+ * @param {CLIOptions} options Options.
  *
  * @return {Promise} Promise task.
  */
-const convertPost = async (post, metadata, rootDir, modes, logger) => {
+const convertPost = async (post, metadata, rootDir, logger, options) => {
   logger.log(`${metadata.year}/${metadata.month}/${metadata.day} ['${metadata.type}']: ${metadata.title}`)
 
   const dir = createSaveDir(rootDir, metadata.year, metadata.month)
@@ -162,21 +162,21 @@ const convertPost = async (post, metadata, rootDir, modes, logger) => {
     throw new Error('Failed to create the stream.')
   }
 
-  if (modes.withMetadata) {
+  if (options.withMetadata) {
     stream.write(createMetadataHeader(metadata), 'utf8')
   } else {
     stream.write(`# ${metadata.title}\n\n`, 'utf8')
   }
 
-  let markdown = Convert(post['content:encoded'][0], modes)
+  let markdown = Convert(post['content:encoded'][0], options)
 
-  if (modes.withImageLinkReplace) {
+  if (options.withImageLinkReplace) {
     const basename = Path.basename(filePath, '.md')
     markdown = await ImageLinkReplace(markdown, dir, basename, logger)
   }
 
-  if (modes.replaceLinkURL && modes.replaceLinkURL.old) {
-    markdown = replaceLinkURL(markdown, modes.replaceLinkURL.old, modes.replaceLinkURL.new)
+  if (options.replaceLinkPrefix) {
+    markdown = replaceLinkURL(markdown, options.replaceLinkPrefix.old, options.replaceLinkPrefix.new)
   }
 
   stream.write(markdown, 'utf8')
@@ -234,12 +234,12 @@ const postsFromXML = async (src) => {
  *
  * @param {String} src Path of the WordPress XML file.
  * @param {String} dest Path of Markdown files output directory.
- * @param {Modes} modes Modes.
  * @param {Logger} logger Logger.
+ * @param {CLIOptions} options Options.
  *
  * @return {Promise} Promise object.
  */
-const WordPressXmlToMarkdown = async (src, dest, modes, logger) => {
+const WordPressXmlToMarkdown = async (src, dest, logger, options) => {
   const dir = createUniqueDestDir(dest)
   if (!(dir)) {
     throw new Error('Failed to create the root directory.')
@@ -258,7 +258,7 @@ const WordPressXmlToMarkdown = async (src, dest, modes, logger) => {
   const posts = await postsFromXML(src)
   for (let post of posts) {
     const m = readMetadata(post)
-    await convertPost(post, m, m.type === 'post' ? postsDir : pagesDir, modes, logger)
+    await convertPost(post, m, m.type === 'post' ? postsDir : pagesDir, logger, options)
   }
 }
 
