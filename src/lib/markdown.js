@@ -2,7 +2,7 @@ import Util from './util.js'
 
 /**
  * Convert the HTML DOM Node to Markdown text.
- * @type {Array.<MdConverter>}
+ * @type {MdConverter[]}
  * @see https://github.com/domchristie/to-markdown/blob/master/lib/md-converters.js
  */
 const MarkdownConverters = [

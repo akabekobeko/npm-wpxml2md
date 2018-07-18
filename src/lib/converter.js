@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom'
 import CollapseWhitespace from 'collapse-whitespace'
 import Util from './util.js'
-import Shortcode from './shortcode.js'
+import ConvertShortCode from './shortcode.js'
 import MarkdownConverters from './markdown.js'
 import GfmConverters from './gfm.js'
 
@@ -146,7 +146,7 @@ const getContent = (node) => {
  * @return {String} Prepared text.
  */
 const prepareText = (text) => {
-  const result = Shortcode.convert(text)
+  const result = ConvertShortCode(text)
 
   // Escape number list
   return result.replace(/(\d+)\. /g, '$1\\. ')

@@ -85,7 +85,7 @@ const downloadImages = async (images, dir, logger) => {
  *
  * @return {Object} Link and image (URL/Saved file name) list.
  */
-export const parseImageLink = (markdown, basename) => {
+const parseImageLink = (markdown, basename) => {
   if (!(markdown)) {
     return { links: [], images: [] }
   }
@@ -123,7 +123,7 @@ export const parseImageLink = (markdown, basename) => {
  *
  * @return {Object[]} Replaced link syntaxes.
  */
-export const replaceLinks = (links, images) => {
+const replaceLinks = (links, images) => {
   const results = []
   for (let link of links) {
     let newLink = link

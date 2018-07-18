@@ -1,8 +1,14 @@
 import assert from 'assert'
-import { replaceLinkURL, createMetadataHeader } from './wpxml2md.js'
+import Rewire from 'rewire'
 
+/** @test {WordPressXmlToMarkdown} */
 describe('WordPressXmlToMarkdown', () => {
+  const Module = Rewire('./wpxml2md.js')
+
+  /** @test {replaceLinkURL} */
   describe('replaceLinkURL', () => {
+    const replaceLinkURL = Module.__get__('replaceLinkURL')
+
     it('"/"', () => {
       const text = 'text\n[alt](http://example.com/test/ "title")\ntext'
 
@@ -12,7 +18,10 @@ describe('WordPressXmlToMarkdown', () => {
     })
   })
 
+  /** @test {createMetadataHeader} */
   describe('createMetadataHeader', () => {
+    const createMetadataHeader = Module.__get__('createMetadataHeader')
+
     it('Post page', () => {
       const metadata = {
         type: 'post',

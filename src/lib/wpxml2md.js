@@ -61,7 +61,7 @@ const arrayToString = (arr) => {
  *
  * @return {String} Header text.
  */
-export const createMetadataHeader = (metadata) => {
+const createMetadataHeader = (metadata) => {
   const last = metadata.type === 'page' ? 'single: true\n---\n\n' : '---\n\n'
   return `---
 path: "/${metadata.type}s/${metadata.year}/${metadata.month}/${metadata.permanentName}/"
@@ -124,7 +124,7 @@ const readMetadata = (post) => {
  *
  * @return {String} Replaced string.
  */
-export const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
+const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
   if (!(markdown && (oldPrefix && typeof oldPrefix === 'string') && (newPrefix && typeof newPrefix === 'string'))) {
     return markdown
   }
@@ -141,7 +141,7 @@ export const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
  *
  * @param {Object} post Post data.
  * @param {Object} metadata Metadata.
- * @param {String} dir Path of Markdown file output directory.
+ * @param {String} rootDir Path of Markdown file output directory.
  * @param {Logger} logger Logger.
  * @param {CLIOptions} options Options.
  *
