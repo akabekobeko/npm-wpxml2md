@@ -99,14 +99,12 @@ const readMetadata = (post) => {
     })
   }
 
-  const datetime = post['wp:post_date_gmt'][0].split(' ')
-  const date     = datetime[0].split('-')
-
+  const datetime = Util.datetimeFromWpGMT(post['wp:post_date_gmt'][0])
   return {
-    year: date[0],
-    month: date[1],
-    day: date[2],
-    time: datetime[1],
+    year: datetime.year,
+    month: datetime.month,
+    day: datetime.day,
+    time: datetime.time,
     permanentName: post['wp:post_name'][0],
     title: post['title'][0],
     categories,

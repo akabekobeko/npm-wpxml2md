@@ -160,6 +160,57 @@ wpxml2md('wp.xml', dest, { report: true })
       <wp:meta_key><![CDATA[_edit_last]]></wp:meta_key>
       <wp:meta_value><![CDATA[1]]></wp:meta_value>
     </wp:postmeta>
+    <wp:comment>
+      <wp:comment_id>66571</wp:comment_id>
+      <wp:comment_author><![CDATA[anonymous]]></wp:comment_author>
+      <wp:comment_author_email><![CDATA[anonymous@example.com]]></wp:comment_author_email>
+      <wp:comment_author_url></wp:comment_author_url>
+      <wp:comment_author_IP><![CDATA[211.15.36.226]]></wp:comment_author_IP>
+      <wp:comment_date><![CDATA[2017-12-28 13:59:53]]></wp:comment_date>
+      <wp:comment_date_gmt><![CDATA[2017-12-28 04:59:53]]></wp:comment_date_gmt>
+      <wp:comment_content><![CDATA[aaaaaaaaaaaaaaaaaaa]]></wp:comment_content>
+      <wp:comment_approved><![CDATA[1]]></wp:comment_approved>
+      <wp:comment_type><![CDATA[]]></wp:comment_type>
+      <wp:comment_parent>0</wp:comment_parent>
+      <wp:comment_user_id>0</wp:comment_user_id>
+      <wp:commentmeta>
+        <wp:meta_key><![CDATA[akismet_result]]></wp:meta_key>
+        <wp:meta_value><![CDATA[false]]></wp:meta_value>
+      </wp:commentmeta>
+      <wp:commentmeta>
+        <wp:meta_key><![CDATA[akismet_history]]></wp:meta_key>
+        <wp:meta_value><![CDATA[a:2:{s:4:"time";d:1514437193.1423799991607666015625;s:5:"event";s:9:"check-ham";}]]></wp:meta_value>
+      </wp:commentmeta>
+      <wp:commentmeta>
+        <wp:meta_key><![CDATA[akismet_history]]></wp:meta_key>
+        <wp:meta_value><![CDATA[a:3:{s:4:"time";d:1514453720.850161075592041015625;s:5:"event";s:15:"status-approved";s:4:"user";s:7:"akabeko";}]]></wp:meta_value>
+      </wp:commentmeta>
+    </wp:comment>
+    <wp:comment>
+      <wp:comment_id>66580</wp:comment_id>
+      <wp:comment_author><![CDATA[akabeko]]></wp:comment_author>
+      <wp:comment_author_email><![CDATA[akabekobeko@gmail.com]]></wp:comment_author_email>
+      <wp:comment_author_url>http://akabeko.me/blog/</wp:comment_author_url>
+      <wp:comment_author_IP><![CDATA[222.12.88.158]]></wp:comment_author_IP>
+      <wp:comment_date><![CDATA[2017-12-28 18:42:28]]></wp:comment_date>
+      <wp:comment_date_gmt><![CDATA[2017-12-28 09:42:28]]></wp:comment_date_gmt>
+      <wp:comment_content><![CDATA[Reply Message
+
+Sample
+Sample]]></wp:comment_content>
+      <wp:comment_approved><![CDATA[1]]></wp:comment_approved>
+      <wp:comment_type><![CDATA[]]></wp:comment_type>
+      <wp:comment_parent>66571</wp:comment_parent>
+      <wp:comment_user_id>1</wp:comment_user_id>
+      <wp:commentmeta>
+        <wp:meta_key><![CDATA[akismet_result]]></wp:meta_key>
+        <wp:meta_value><![CDATA[false]]></wp:meta_value>
+      </wp:commentmeta>
+      <wp:commentmeta>
+        <wp:meta_key><![CDATA[akismet_history]]></wp:meta_key>
+        <wp:meta_value><![CDATA[a:3:{s:4:"time";d:1514454148.485455036163330078125;s:5:"event";s:9:"check-ham";s:4:"user";s:7:"akabeko";}]]></wp:meta_value>
+      </wp:commentmeta>
+    </wp:comment>
   </item>
   <item>
     <title>Sample Page</title>

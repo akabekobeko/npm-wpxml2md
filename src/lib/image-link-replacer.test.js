@@ -31,7 +31,7 @@ The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the 
         ]
       }
 
-      assert.deepEqual(actual, expected)
+      assert.deepStrictEqual(actual, expected)
     })
   })
 
@@ -61,7 +61,7 @@ The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the 
         { link: links[3], newLink: '[![title](2.jpg)](1.png "title")' }
       ]
 
-      assert.deepEqual(actual, expected)
+      assert.deepStrictEqual(actual, expected)
     })
   })
 })
