@@ -1,92 +1,83 @@
 import assert from 'assert'
 import Path from 'path'
-import { ParseArgv, Options } from './cli.js'
+import Rewire from 'rewire'
 
 /** @test {CLI} */
 describe('CLI', () => {
+  const Module = Rewire('./cli.js')
+
   /** @test {CLI#parseArgv} */
   describe('parseArgv', () => {
-    it('help', () => {
-      let options = ParseArgv([])
-      assert(options.help)
-
-      options = ParseArgv([Options.help.name])
-      assert(options.help)
-
-      options = ParseArgv([Options.help.shortName])
-      assert(options.help)
-    })
-
-    it('version', () => {
-      let options = ParseArgv([Options.version.name])
-      assert(options.version)
-
-      options = ParseArgv([Options.version.shortName])
-      assert(options.version)
-    })
+    const parseArgv = Module.__get__('parseArgv')
+    const Options = Module.__get__('Options')
 
     it('input', () => {
       const input    = './examples/wp.xml'
       const expected = Path.resolve(input)
-      let options = ParseArgv([Options.input.name, input])
+      let options = parseArgv([Options.input.name, input])
       assert(options.input === expected)
 
-      options = ParseArgv([Options.input.shortName, input])
+      options = parseArgv([Options.input.shortName, input])
       assert(options.input === expected)
 
-      options = ParseArgv([Options.input.name])
+      options = parseArgv([Options.input.name])
       assert(options.input !== expected)
 
-      options = ParseArgv([Options.input.shortName, Options.help.name])
+      options = parseArgv([Options.input.shortName, Options.help.name])
       assert(options.input !== expected)
     })
 
     it('output', () => {
-      const output   = './examples'
+      const output = './examples'
       const expected = Path.resolve(output)
-      let options = ParseArgv([Options.output.name, output])
+      let options = parseArgv([Options.output.name, output])
       assert(options.output === expected)
 
-      options = ParseArgv([Options.output.shortName, output])
+      options = parseArgv([Options.output.shortName, output])
       assert(options.output === expected)
 
-      options = ParseArgv([Options.output.name])
+      options = parseArgv([Options.output.name])
       assert(options.output !== expected)
 
-      options = ParseArgv([Options.output.shortName, Options.help.name])
+      options = parseArgv([Options.output.shortName, Options.help.name])
       assert(options.output !== expected)
     })
 
     it('report', () => {
-      let options = ParseArgv([Options.report.name])
+      let options = parseArgv([Options.report.name])
       assert(options.report === true)
 
-      options = ParseArgv([Options.report.shortName])
+      options = parseArgv([Options.report.shortName])
       assert(options.report === true)
     })
 
     it('noGFM', () => {
-      const options = ParseArgv([Options.noGFM.name])
+      const options = parseArgv([Options.noGFM.name])
       assert(options.noGFM === true)
     })
 
     it('noMELink', () => {
-      const options = ParseArgv([Options.noMELink.name])
+      const options = parseArgv([Options.noMELink.name])
       assert(options.noMELink === true)
     })
 
     it('withMetadata', () => {
-      const options = ParseArgv([Options.withMetadata.name])
+      const options = parseArgv([Options.withMetadata.name])
       assert(options.withMetadata === true)
     })
 
-    it('withImageLinkReplace', () => {
-      const options = ParseArgv([Options.withImageLinkReplace.name])
-      assert(options.withImageLinkReplace === true)
+    it('withImageDownload', () => {
+      const options = parseArgv([Options.withImageDownload.name])
+      assert(options.withImageDownload === true)
+    })
+
+    it('withComment', () => {
+      const options = parseArgv([Options.withComment.name])
+      assert(options.withComment === true)
     })
 
     it('replaceLinkPrefix', () => {
-      const options = ParseArgv([Options.replaceLinkPrefix.name, 'http://example.com/=/'])
+      const options = parseArgv([Options.replaceLinkPrefix.name, 'http://example.com/=/'])
       assert(options.replaceLinkPrefix.old === 'http://example.com/')
       assert(options.replaceLinkPrefix.new === '/')
     })

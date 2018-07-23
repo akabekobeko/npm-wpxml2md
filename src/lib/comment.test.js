@@ -39,7 +39,6 @@ describe('Comment', () => {
       ]
 
       const actual = convertMarkdown(comments)
-      console.log(actual)
       const expected =
 `![](https://www.gravatar.com/avatar/45e67126a4c44c6ae030279e21437c79?d=identicon) **[akabeko](http://akabeko.me/)** 2017-12-28T09:42:28Z
 

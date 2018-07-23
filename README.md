@@ -32,33 +32,25 @@ Can export the **WordPress XML** in the following way.
 ```js
 const wpxml2md = require('wpxml2md');
 
-wpxml2md('wordpress.xml', 'dest', true)
+const options = {
+  report: true,
+  noGFM: false,
+  noMELink: true,
+  withMetadata: true,
+  withImageDownload: true,
+  withComment: true,
+  replaceLinkPrefix: {
+    old: 'http://akabeko.me/blog/',
+    new: '/'
+  }
+}
+
+wpxml2md('wordpress.xml', 'dest', options)
 .then(() => {
   console.log('Completed!!');
 } )
 .catch((err) => {
   console.error(err);
-});
-```
-
-With modes:
-
-```js
-const wpxml2md = require('wpxml2md');
-
-const modes = {
-  noGFM: true,
-  noMELink: true,
-  withMetadata: true,
-  withImageLinkReplace: true
-};
-
-wpxml2md('wordpress.xml', 'dest', true, modes)
-.then(() => {
-  console.log('Completed!!');
-})
-.catch((err) => {
-  console.error( err);
 });
 ```
 
@@ -80,10 +72,10 @@ Options:
 |noGFM|Boolean|Default is `false`. Disable the Convert the GitHub Flavored Markdown.|
 |noMELink|Boolean|Default is `false`. Disable the Convert the GitHub Extra link on header.|
 |withMetadata|Boolean|Default is `false`. Output article metadata in YAML format at the top of Markdown.|
-|withImageLinkReplace|Boolean|Default is `false`. Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers, `DD` is an article posted day (yyyymm"dd"). `DD-1.png`, `DD-2.png`, ...etc.|
-|replaceLinkURL|Object|Default is `undefined`. Replace the link URL prefix with the specified word.|
-|_replaceLinkURL_.old|String|Target.|
-|_replaceLinkURL_.new|String|Replacement.|
+|withImageDownload|Boolean|Default is `false`. Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers, `DD` is an article posted day (yyyymm"dd"). `DD-1.png`, `DD-2.png`, ...etc.|
+|replaceLinkPrefix|Object|Default is `undefined`. Replace the link URL prefix with the specified word.|
+|_replaceLinkPrefix_.old|String|Target.|
+|_replaceLinkPrefix_.new|String|Replacement.|
 
 ### CLI
 
@@ -93,30 +85,22 @@ Usage: wpxml2md [OPTIONS]
   Convert the WordPress XML file to Markdown files.
 
   Options:
-    -h, --help      Display this text.
-
-    -v, --version   Display the version number.
-
-    -i, --input     Path of the XML file exported from WordPress.
-
-    -o, --output    Path of the output directory.
-
-    -r, --report    Output process reports.
-
-    --no-gfm        Disable the GitHub Flavored Markdown.
-
-    --no-melink     Disable the Markdown Extra link on header.
-
-    --with-metadata Enable output article metadata.
-
-    --with-image    Enable download and replace link syntaxes a linked images from article.
-
-    --replace-link  Replace the link URL prefix with the specified word, format is "target=placeholder".
-                    If "--replace-link http://example.com/=/" then "http://example.com/" will be replaced with "/".
+    -h, --help            Display this text.
+    -v, --version         Display the version number.
+    -i, --input           Path of the XML file exported from WordPress.
+    -o, --output          Path of the output directory.
+    -r, --report          Output process reports.
+    --no-gfm              Disable the GitHub Flavored Markdown.
+    --no-melink           Disable the Markdown Extra link on header.
+    --with-metadata       Enable output article metadata.
+    --with-image-download Enable download and replace link syntaxes a linked images from article.
+    --with-comment        Enable comment output from article.
+    --replace-link-prefix Replace the link URL prefix with the specified word, format is "target=placeholder".
+                          If "--replace-link http://example.com/=/" then "http://example.com/" will be replaced with "/".
 
   Examples:
     $ wpxml2md -i wordpress.xml -o ./dist -r
-    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image --replace-link http://akabeko.me/=/
+    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image-download --with-comment --replace-link-prefix http://akabeko.me/=/
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md

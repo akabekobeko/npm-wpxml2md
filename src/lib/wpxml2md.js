@@ -168,7 +168,7 @@ const convertPost = async (post, metadata, rootDir, logger, options) => {
 
   let markdown = Convert(post['content:encoded'][0], options)
 
-  if (options.withImageLinkReplace) {
+  if (options.withImageDownload) {
     const basename = Path.basename(filePath, '.md')
     markdown = await ImageLinkReplace(markdown, dir, basename, logger)
   }

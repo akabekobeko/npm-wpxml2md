@@ -1,4 +1,5 @@
 import Path from 'path'
+import WpXml2Md from '../lib/index.js'
 
 /**
  * Help text.
@@ -10,30 +11,22 @@ Usage: wpxml2md [OPTIONS]
   Convert the WordPress XML file to Markdown files.
 
   Options:
-    -h, --help      Display this text.
-
-    -v, --version   Display the version number.
-
-    -i, --input     Path of the XML file exported from WordPress.
-
-    -o, --output    Path of the output directory.
-
-    -r, --report    Output process reports.
-
-    --no-gfm        Disable the GitHub Flavored Markdown.
-
-    --no-melink     Disable the Markdown Extra link on header.
-
-    --with-metadata Enable output article metadata.
-
-    --with-image    Enable download and replace link syntaxes a linked images from article.
-
-    --replace-link  Replace the link URL prefix with the specified word, format is "target=placeholder".
-                    If "--replace-link http://example.com/=/" then "http://example.com/" will be replaced with "/".
+    -h, --help            Display this text.
+    -v, --version         Display the version number.
+    -i, --input           Path of the XML file exported from WordPress.
+    -o, --output          Path of the output directory.
+    -r, --report          Output process reports.
+    --no-gfm              Disable the GitHub Flavored Markdown.
+    --no-melink           Disable the Markdown Extra link on header.
+    --with-metadata       Enable output article metadata.
+    --with-image-download Enable download and replace link syntaxes a linked images from article.
+    --with-comment        Enable comment output from article.
+    --replace-link-prefix Replace the link URL prefix with the specified word, format is "target=placeholder".
+                          If "--replace-link http://example.com/=/" then "http://example.com/" will be replaced with "/".
 
   Examples:
     $ wpxml2md -i wordpress.xml -o ./dist -r
-    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image --replace-link http://akabeko.me/=/
+    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image-download --with-comment --replace-link-prefix http://akabeko.me/=/
 
   See also:
     https://github.com/akabekobeko/npm-wpxml2md
@@ -43,7 +36,7 @@ Usage: wpxml2md [OPTIONS]
  * CLI options.
  * @type {Object}
  */
-export const Options = {
+const Options = {
   help: { name: '--help', shortName: '-h' },
   version: { name: '--version', shortName: '-v' },
   input: { name: '--input', shortName: '-i' },
@@ -52,8 +45,9 @@ export const Options = {
   noGFM: { name: '--no-gfm' },
   noMELink: { name: '--no-melink' },
   withMetadata: { name: '--with-metadata' },
-  withImageLinkReplace: { name: '--with-image' },
-  replaceLinkPrefix: { name: '--replace-link' }
+  withImageDownload: { name: '--with-image-download' },
+  withComment: { name: '--with-comment' },
+  replaceLinkPrefix: { name: '--replace-link-prefix' }
 }
 
 /**
@@ -147,8 +141,12 @@ const parseArgv = (argv) => {
         options.withMetadata = true
         break
 
-      case Options.withImageLinkReplace.name:
-        options.withImageLinkReplace = true
+      case Options.withImageDownload.name:
+        options.withImageDownload = true
+        break
+
+      case Options.withComment.name:
+        options.withComment = true
         break
 
       case Options.replaceLinkPrefix.name:
@@ -167,13 +165,13 @@ const parseArgv = (argv) => {
 }
 
 /**
- * Parse for the command line argumens.
+ * Parse for the command line arguments.
  *
  * @param {String[]} argv Arguments of the command line.
  *
  * @return {CLIOptions} Parse results.
  */
-export const ParseArgv = (argv) => {
+const parseOption = (argv) => {
   if (!(argv && 0 < argv.length)) {
     return { help: true }
   }
@@ -197,7 +195,7 @@ export const ParseArgv = (argv) => {
  *
  * @param {WritableStream} stdout Standard output.
  */
-export const PrintHelp = (stdout) => {
+const printHelp = (stdout) => {
   stdout.write(HelpText)
 }
 
@@ -206,7 +204,7 @@ export const PrintHelp = (stdout) => {
  *
  * @param {WritableStream} stdout Standard output.
  */
-export const PrintVersion = (stdout) => {
+const printVersion = (stdout) => {
   const read = (path) => {
     try {
       return require(path).version
@@ -218,3 +216,38 @@ export const PrintVersion = (stdout) => {
   const version = read('../package.json') || read('../../package.json')
   stdout.write('v' + version + '\n')
 }
+
+/**
+ * Entry point of the CLI.
+ *
+ * @param {String[]} argv Arguments of the command line.
+ * @param {WritableStream} stdout Standard output.
+ *
+ * @return {Promise} Asynchronous task.
+ */
+const CLI = (argv, stdout) => {
+  return new Promise((resolve, reject) => {
+    const options = parseOption(argv)
+    if (options.help) {
+      printHelp(stdout)
+      return resolve()
+    }
+
+    if (options.version) {
+      printVersion(stdout)
+      return resolve()
+    }
+
+    if (!(options.input)) {
+      return reject(new Error('"-i" or "--input" has not been specified. This parameter is required.'))
+    }
+
+    if (!(options.output)) {
+      return reject(new Error('"-o" or "--output" has not been specified. This parameter is required.'))
+    }
+
+    return WpXml2Md(options.input, options.output, options)
+  })
+}
+
+export default CLI
