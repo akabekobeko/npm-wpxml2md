@@ -3,8 +3,10 @@ import Path  from 'path'
 import NodeUtil from 'util'
 import XmlParser  from 'xml2js'
 import Util from './util.js'
+import Logger from './logger.js'
 import Convert from './converter.js'
 import ImageLinkReplace from './image-link-replacer.js'
+import Comment from './comment.js'
 
 const ParseXML = NodeUtil.promisify(XmlParser.parseString)
 
@@ -177,6 +179,10 @@ const convertPost = async (post, metadata, rootDir, logger, options) => {
     markdown = replaceLinkURL(markdown, options.replaceLinkPrefix.old, options.replaceLinkPrefix.new)
   }
 
+  if (options.withComment) {
+    markdown += Comment(post['wp:comment'])
+  }
+
   stream.write(markdown, 'utf8')
 }
 
@@ -232,12 +238,15 @@ const postsFromXML = async (src) => {
  *
  * @param {String} src Path of the WordPress XML file.
  * @param {String} dest Path of Markdown files output directory.
- * @param {Logger} logger Logger.
  * @param {CLIOptions} options Options.
  *
  * @return {Promise} Promise object.
  */
-const WordPressXmlToMarkdown = async (src, dest, logger, options) => {
+const WordPressXmlToMarkdown = async (src, dest, options = { report: false }) => {
+  const logger = new Logger(options.report)
+  logger.log(`Input:  ${src}`)
+  logger.log(`Output: ${dest}`)
+
   const dir = createUniqueDestDir(dest)
   if (!(dir)) {
     throw new Error('Failed to create the root directory.')

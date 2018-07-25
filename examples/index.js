@@ -1,12 +1,13 @@
-const wpxml2md = require('wpxml2md')
+// const wpxml2md = require('wpxml2md')
+const wpxml2md = require('../dist/lib/')
 const util = require('./util.js')
 
-const dest = './dest'
+const dest = './'
 util.mkdirSync(dest)
 
 const options = {
   report: true,
-  noGFM: true,
+  noGFM: false,
   noMELink: true,
   withMetadata: true,
   withImageDownload: true,

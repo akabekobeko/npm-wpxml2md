@@ -140,7 +140,7 @@ const Comment = (src) => {
     return ''
   }
 
-  return `## Comments\n\n${convertMarkdown(comments)}`
+  return `\n\n## Comments\n\n${convertMarkdown(comments)}`
 }
 
 export default Comment

@@ -1,42 +1,65 @@
-# ChangeLog
+# Change Log
+
+## v2.0.0
+
+### Breaking Changes
+
+* Change CLI options [#64](https://github.com/akabekobeko/npm-wpxml2md/issues/64)
+* Drop Node v6.x [#49](https://github.com/akabekobeko/npm-wpxml2md/issues/49)
+
+### Changes
+
+* Add function of parse comments [#63](https://github.com/akabekobeko/npm-wpxml2md/issues/63)
+* Add function of replace a link prefix [#59](https://github.com/akabekobeko/npm-wpxml2md/issues/59)
+* Add function of parse metadata for GatsbyJS [#52](https://github.com/akabekobeko/npm-wpxml2md/issues/52)
+* Add function of image linl replacer and downloader
 
 ## v1.1.3
 
-* Fix
-  * CLI is not work [#45](https://github.com/akabekobeko/npm-wpxml2md/issues/45)
+### Fixes
+
+* CLI is not work [#45](https://github.com/akabekobeko/npm-wpxml2md/issues/45)
 
 ## v1.1.2
 
-* Change
-  * Node v4 support [#43](https://github.com/akabekobeko/npm-wpxml2md/issues/43)
+### Changes
+
+* Node v4 support [#43](https://github.com/akabekobeko/npm-wpxml2md/issues/43)
 
 ## v1.1.1
 
-* Fix
-  * The files path on publish has not been modified [#41](https://github.com/akabekobeko/npm-wpxml2md/issues/41)
+### Fixes
+
+* The files path on publish has not been modified [#41](https://github.com/akabekobeko/npm-wpxml2md/issues/41)
 
 ## v1.1.0
 
-* Change
-  * Drop transpile by Babel[#37](https://github.com/akabekobeko/npm-wpxml2md/issues/37)
+### Changes
+
+* Drop transpile by Babel[#37](https://github.com/akabekobeko/npm-wpxml2md/issues/37)
 
 ## v1.0.3
 
-* Change
-  * Node v7 support [#32](https://github.com/akabekobeko/npm-wpxml2md/issues/32)
+### Changes
+
+* Node v7 support [#32](https://github.com/akabekobeko/npm-wpxml2md/issues/32)
 
 ## v1.0.2
 
-* Change
-    * Update a node modules
-    * Node v6 support
+### Changes
+
+* Update a node modules
+* Node v6 support
 
 ## v1.0.1
 
-* Change:
-     * Add an examples [#29](https://github.com/akabekobeko/npm-wpxml2md/issues/29)
-* Fix:
-    * Collapsed code block of README [#28](https://github.com/akabekobeko/npm-wpxml2md/issues/28)
+### Changes
+
+* Add an examples [#29](https://github.com/akabekobeko/npm-wpxml2md/issues/29)
+
+### Fixes
+
+* Collapsed code block of README [#28](https://github.com/akabekobeko/npm-wpxml2md/issues/28)
 
 ## v1.0.0
 
