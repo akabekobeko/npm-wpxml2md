@@ -3,21 +3,18 @@ import Util from './util.js'
 
 /**
  * Create a Markdown image link (Gravatar) from e-mail address.
- *
+ * @param {String} author Author.
  * @param {String} mail Mail e-mail address.
- *
  * @return {String} Markdown text.
  */
-const createIconLink = (mail) => {
-  return mail ? `![](https://www.gravatar.com/avatar/${MD5(mail)}?d=identicon) ` : ''
+const createIconLink = (author, mail) => {
+  return mail ? `![${author}](https://www.gravatar.com/avatar/${MD5(mail)}?d=identicon) ` : ''
 }
 
 /**
  * Create a Markdown text of author.
- *
  * @param {String} author Author.
  * @param {String} url URL of author web site.
- *
  * @return {String} Markdown text.
  */
 const createAuthor = (author, url) => {
@@ -26,10 +23,7 @@ const createAuthor = (author, url) => {
 
 /**
  * Create a datetime text.
- *
  * @param {Object} date Datetime
- *
- *
  * @return {String} Markdown text.
  */
 const createDate = (date) => {
@@ -37,10 +31,17 @@ const createDate = (date) => {
 }
 
 /**
- * Convert comments to Markdown.
- *
+ * Convert a content of comment to indented markdown code block.
+ * @param {String} content Content of comment.
+ * @return markdown code block.
+ */
+const convertBody = (content) => {
+  return content.replace(/^/mg, '  > ')
+}
+
+/**
+ * Convert a comments to Markdown.
  * @param {Object[]} comments Comments.
- *
  * @return {String} Markdown text.
  */
 const convertMarkdown = (comments) => {
@@ -50,7 +51,8 @@ const convertMarkdown = (comments) => {
 
   let md = ''
   for (let comment of comments) {
-    md += `${createIconLink(comment.mail)}**${createAuthor(comment.author, comment.url)}** ${createDate(comment.date)}\n\n${comment.content}\n\n`
+    const body = convertBody(comment.content)
+    md += `* ${createIconLink(comment.author, comment.mail)}**${createAuthor(comment.author, comment.url)}** ${createDate(comment.date)}\n${body}\n`
     if (comment.children) {
       md += convertMarkdown(comment.children)
     }
@@ -61,9 +63,7 @@ const convertMarkdown = (comments) => {
 
 /**
  * Crerate a comment tree with parent identifier.
- *
  * @param {Object[]} comments Comments.
- *
  * @return {Object[]} Parsed comments.
  */
 const createCommentTree = (comments) => {
@@ -101,9 +101,7 @@ const createCommentTree = (comments) => {
 
 /**
  * Parse a comments..
- *
  * @param {Object[]} src Comments (wp:comment).
- *
  * @return {Object[]} Parsed comments.
  */
 const parse = (src) => {
@@ -129,9 +127,7 @@ const parse = (src) => {
 
 /**
  * Create a comment list.
- *
  * @param {Object[]} src Comments (wp:comment).
- *
  * @return {String} Comment list (HTML text).
  */
 const Comment = (src) => {
@@ -140,7 +136,7 @@ const Comment = (src) => {
     return ''
   }
 
-  return `\n\n## Comments\n\n${convertMarkdown(comments)}`
+  return `\n\n## Comments from WordPress\n\n${convertMarkdown(comments)}`
 }
 
 export default Comment

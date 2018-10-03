@@ -1,5 +1,4 @@
-// const wpxml2md = require('wpxml2md')
-const wpxml2md = require('../dist/lib/')
+const wpxml2md = require('wpxml2md')
 const util = require('./util.js')
 
 const dest = './'

@@ -3,6 +3,15 @@ import Rewire from 'rewire'
 
 describe('Comment', () => {
   const Module = Rewire('./comment.js')
+  describe('convertBody', () => {
+    const convertBody = Module.__get__('convertBody')
+
+    it('Normal', () => {
+      const actual = convertBody(`aaa\nbbb`)
+      const expected = '  > aaa\n  > bbb'
+      assert(actual === expected)
+    })
+  })
 
   describe('convertMarkdown', () => {
     const convertMarkdown = Module.__get__('convertMarkdown')
@@ -40,24 +49,16 @@ describe('Comment', () => {
 
       const actual = convertMarkdown(comments)
       const expected =
-`![](https://www.gravatar.com/avatar/45e67126a4c44c6ae030279e21437c79?d=identicon) **[akabeko](http://akabeko.me/)** 2017-12-28T09:42:28Z
-
-aaaaa
-aaaaa
-
-![](https://www.gravatar.com/avatar/cc7cd2a9c587aafc83517c97ab675864?d=identicon) **anonymous** 2017-12-28T09:45:12Z
-
-bbbbb
-
-**anonymous** 2017-12-29T17:01:47Z
-
-ccccc
-ccccc
-
-**anonymous** 2017-12-29T18:17:33Z
-
-zzzzzz
-
+`* ![akabeko](https://www.gravatar.com/avatar/45e67126a4c44c6ae030279e21437c79?d=identicon) **[akabeko](http://akabeko.me/)** 2017-12-28T09:42:28Z
+  > aaaaa
+  > aaaaa
+* ![anonymous](https://www.gravatar.com/avatar/cc7cd2a9c587aafc83517c97ab675864?d=identicon) **anonymous** 2017-12-28T09:45:12Z
+  > bbbbb
+* **anonymous** 2017-12-29T17:01:47Z
+  > ccccc
+  > ccccc
+* **anonymous** 2017-12-29T18:17:33Z
+  > zzzzzz
 `
 
       assert(actual === expected)
