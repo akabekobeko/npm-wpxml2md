@@ -1,7 +1,7 @@
 {
   "name": "wpxml2md",
   "description": "Convert the WordPress XML file to Markdown files.",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "author": "akabeko (http://akabeko.me/)",
   "license": "MIT",
   "homepage": "https://github.com/akabekobeko/npm-wpxml2md#readme",
@@ -26,41 +26,8 @@
   "bugs": {
     "url": "https://github.com/akabekobeko/npm-wpxml2md/issues"
   },
-  "esdoc": {
-    "source": "./src",
-    "destination": "./docs",
-    "plugins": [
-      {
-        "name": "esdoc-standard-plugin",
-        "option": {
-          "test": {
-            "source": "./src"
-          }
-        }
-      }
-    ]
-  },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "node": 8
-          }
-        }
-      ]
-    ],
-    "env": {
-      "development": {
-        "presets": [
-          "power-assert"
-        ]
-      }
-    }
-  },
   "scripts": {
-    "test": "mocha --timeout 50000 --require babel-register src/**/*.test.js",
+    "test": "mocha --timeout 50000 --require @babel/register src/**/*.test.js",
     "start": "npm run watch",
     "esdoc": "esdoc",
     "eslint": "eslint ./src",
@@ -70,26 +37,27 @@
   },
   "dependencies": {
     "collapse-whitespace": "^1.1.6",
-    "jsdom": "^11.11.0",
+    "jsdom": "^12.1.0",
     "md5": "^2.2.1",
-    "request": "^2.87.0",
+    "request": "^2.88.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-power-assert": "^2.0.0",
-    "babel-register": "^6.26.0",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "babel-preset-power-assert": "^3.0.0",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
-    "eslint": "^5.1.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.13.0",
+    "eslint": "^5.6.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
-    "power-assert": "^1.6.0",
+    "power-assert": "^1.6.1",
     "rewire": "^4.0.1"
   }
 }
