@@ -12,11 +12,9 @@ const ParseXML = NodeUtil.promisify(XmlParser.parseString)
 
 /**
  * Create a directory to save the markdown file.
- *
  * @param {String} root Path of the roo directory.
  * @param {String} year Year.
  * @param {String} month Month
- *
  * @return {String} If successful it is the path of the created directory.
  */
 const createSaveDir = (root, year, month) => {
@@ -37,9 +35,7 @@ const createSaveDir = (root, year, month) => {
 
 /**
  * Array to string for metadata.
- *
  * @param {Array} arr Array.
- *
  * @return {String} String.
  */
 const arrayToString = (arr) => {
@@ -57,13 +53,43 @@ const arrayToString = (arr) => {
 }
 
 /**
+ * Create a excerpt string from Markdown text.
+ * The specification of the excerpt statement is below.
+ * - No line break
+ * - No header, list (ul/ol), table, blockquote
+ * - No Markdown decoration
+ * - Markdown links and images extracted only text
+ * - Add "..." to the end if it exceeds 100 characters
+ * - Escape a double quote for YAML
+ * @param {String} markdown Markdown text of content body.
+ * @return {String} Excerpted string.
+ */
+const createExcerpt = (markdown) => {
+  if (!markdown) {
+    return ''
+  }
+
+  let str = markdown
+    .replace(/\n\n/mg, '\n')
+    .replace(/^(#|\*|\d{1,5}\. |\||> ).*?\n/mg, '')
+    .replace(/\n/mg, '')
+    .replace(/\*\*(.*?)\*\*/g, (m, $1) => $1)
+    .replace(/__(.*?)__/g, (m, $1) => $1)
+    .replace(/!\[(.*?)\]\(.*?\)/g, (m, $1) => $1)
+    .replace(/\[(.*?)\]\(.*?\)/g, (m, $1) => $1)
+    .replace(/"/g, '\\"')
+
+  str = 100 <= str.length ? str.substring(0, 99) + '...' : str
+  return str
+}
+
+/**
  * Create a header of article metadata.
- *
  * @param {Object} metadata Metadata of article.
- *
+ * @param {String} markdown Markdown text of content body.
  * @return {String} Header text.
  */
-const createMetadataHeader = (metadata) => {
+const createMetadataHeader = (metadata, markdown) => {
   const last = metadata.type === 'page' ? 'single: true\n---\n\n' : '---\n\n'
   return `---
 path: "/${metadata.type}s/${metadata.year}/${metadata.month}/${metadata.permanentName}/"
@@ -71,14 +97,13 @@ date: "${metadata.year}-${metadata.month}-${metadata.day}T${metadata.time}Z"
 title: "${metadata.title}"
 categories: ${arrayToString(metadata.categories)}
 tags: ${arrayToString(metadata.tags)}
+excerpt: "${createExcerpt(markdown)}"
 ${last}`
 }
 
 /**
  * Read an article metadata from xml object.
- *
  * @param {Object} post XML object.
- *
  * @return {Object} Metadata.
  */
 const readMetadata = (post) => {
@@ -117,11 +142,9 @@ const readMetadata = (post) => {
 
 /**
  * Replace the link URL included in Markdown.
- *
  * @param {String} markdown Markdown text.
  * @param {String} oldPrefix Target.
  * @param {String} newPrefix String to replace.
- *
  * @return {String} Replaced string.
  */
 const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
@@ -138,13 +161,11 @@ const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
 
 /**
  * Convert the post data to markdown file.
- *
  * @param {Object} post Post data.
  * @param {Object} metadata Metadata.
  * @param {String} rootDir Path of Markdown file output directory.
  * @param {Logger} logger Logger.
  * @param {CLIOptions} options Options.
- *
  * @return {Promise} Promise task.
  */
 const convertPost = async (post, metadata, rootDir, logger, options) => {
@@ -162,13 +183,12 @@ const convertPost = async (post, metadata, rootDir, logger, options) => {
     throw new Error('Failed to create the stream.')
   }
 
+  let markdown = Convert(post['content:encoded'][0], options)
   if (options.withMetadata) {
-    stream.write(createMetadataHeader(metadata), 'utf8')
+    stream.write(createMetadataHeader(metadata, markdown), 'utf8')
   } else {
     stream.write(`# ${metadata.title}\n\n`, 'utf8')
   }
-
-  let markdown = Convert(post['content:encoded'][0], options)
 
   if (options.withImageDownload) {
     const basename = Path.basename(filePath, '.md')
@@ -188,9 +208,7 @@ const convertPost = async (post, metadata, rootDir, logger, options) => {
 
 /**
  * Create a directory with a unique name.
- *
  * @param {String} dir Base directory path.
- *
  * @return {String} The path of the created directory. Failure is null.
  */
 const createUniqueDestDir = (dir) => {
@@ -219,9 +237,7 @@ const createUniqueDestDir = (dir) => {
 
 /**
  * Gets the posts data from XML.
- *
  * @param {String} src Path of XML file..
- *
  * @return {Promise} Promise task.
  */
 const postsFromXML = async (src) => {
@@ -235,11 +251,9 @@ const postsFromXML = async (src) => {
 
 /**
  * Conver WordPress XML file to Markdown files.
- *
  * @param {String} src Path of the WordPress XML file.
  * @param {String} dest Path of Markdown files output directory.
  * @param {CLIOptions} options Options.
- *
  * @return {Promise} Promise object.
  */
 const WordPressXmlToMarkdown = async (src, dest, options = { report: false }) => {

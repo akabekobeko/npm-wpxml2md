@@ -18,6 +18,54 @@ describe('WordPressXmlToMarkdown', () => {
     })
   })
 
+  describe('createExcerpt', () => {
+    const createExcerpt = Module.__get__('createExcerpt')
+
+    it('Normal', () => {
+      const markdown =
+`
+# 見出し
+
+文章文章**文章文章文章**文章文章文章[aaa](http://example.com)文章文章文章文章
+
+|ヘッダー|ヘッダー|
+|---|---|
+|値|値|
+
+## 見出し 2
+
+![ZZZ](sample.png)
+
+Sentence__Sentence__Sentence"Sentence"Sentence
+
+* a
+* b
+
+## 見出し 2
+
+1. a
+2. b
+3. c
+
+111.
+
+> 引用
+> 引用
+
+42SentenceSentenceSentenceSentenceSentenceSentenceSentenceSentenceSentenceSentenceSentence
+`
+      const actual = createExcerpt(markdown)
+      const expected = '文章文章文章文章文章文章文章文章aaa文章文章文章文章ZZZSentenceSentenceSentence\\"Sentence\\"Sentence111.42SentenceSentenceSen...'
+      assert(actual === expected)
+    })
+
+    it('Empty', () => {
+      const actual = createExcerpt()
+      const expected = ''
+      assert(actual === expected)
+    })
+  })
+
   /** @test {createMetadataHeader} */
   describe('createMetadataHeader', () => {
     const createMetadataHeader = Module.__get__('createMetadataHeader')
@@ -43,6 +91,7 @@ date: "2018-06-25T15:03:20Z"
 title: "Sample post"
 categories: ["Sample"]
 tags: ["Sample", "wpxml2md"]
+excerpt: ""
 ---
 
 `
@@ -70,6 +119,7 @@ date: "2018-06-25T18:03:20Z"
 title: "Sample page"
 categories: ["Sample"]
 tags: ["Sample", "wpxml2md"]
+excerpt: ""
 single: true
 ---
 
