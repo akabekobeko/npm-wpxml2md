@@ -13,6 +13,7 @@
 * Add function of replace a link prefix [#59](https://github.com/akabekobeko/npm-wpxml2md/issues/59)
 * Add function of parse metadata for GatsbyJS [#52](https://github.com/akabekobeko/npm-wpxml2md/issues/52)
 * Add function of image linl replacer and downloader
+* Add function of excerpt [#67](https://github.com/akabekobeko/npm-wpxml2md/issues/67)
 
 ## v1.1.3
 
