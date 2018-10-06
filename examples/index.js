@@ -1,14 +1,23 @@
 const wpxml2md = require('wpxml2md')
 const util = require('./util.js')
 
-const dest = './dest'
+const dest = './'
 util.mkdirSync(dest)
 
-const modes = {
-  withMetadata: true
+const options = {
+  report: true,
+  noGFM: false,
+  noMELink: true,
+  withMetadata: true,
+  withImageDownload: true,
+  withComment: true,
+  replaceLinkPrefix: {
+    old: 'http://akabeko.me/blog/',
+    new: '/'
+  }
 }
 
-wpxml2md('wp.xml', dest, true, modes)
+wpxml2md('wp.xml', dest, options)
   .then(() => {
     console.log('Completed!!!')
   })

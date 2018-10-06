@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/converter.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/converter.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Convert from &apos;./converter.js&apos;
+
+/** @test {Converter} */
+describe(&apos;Converter&apos;, () =&gt; {
+  /** @test {Convert} */
+  describe(&apos;convert: Markdown&apos;, () =&gt; {
+    it(&apos;Plain text (TEXT_NODE), Keep a whitespace and line break&apos;, () =&gt; {
+      const post     = &apos;Line 1\n\nLine 2  Word\nLine3&apos;
+      const expected = &apos;Line 1\n\nLine 2  Word\nLine3&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;p&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;p&gt;\nLine 1\n\nLine 2\n&lt;/p&gt;&apos;
+      const expected = &apos;Line 1 Line 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;br&gt;&apos;, () =&gt; {
+      const post     = &apos;Line 1&lt;br&gt;Line 2&lt;br&gt;Line 3&apos;
+      const expected = &apos;Line 1  \nLine 2  \nLine 3&apos;
+      const actual   = Convert(post, { noGFM: true })
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;h1&gt; - &lt;h6&gt;, and Markdown Extra Link&apos;, () =&gt; {
+      const post =
+`&lt;h1&gt;Title&lt;/h1&gt;
+  &lt;h2 id=&quot;header-2&quot;&gt;Header 2&lt;/h2&gt;
+    &lt;h3&gt;Header 3&lt;/h3&gt;
+      &lt;h4&gt;Header 4&lt;/h4&gt;
+        &lt;h5&gt;Header 5&lt;/h5&gt;
+          &lt;h6&gt;Header 6&lt;/h6&gt;`
+
+      const expected =
+`# Title
+
+## Header 2 {#header-2}
+
+### Header 3
+
+#### Header 4
+
+##### Header 5
+
+###### Header 6`
+
+      const actual = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;h1&gt; no-melink&apos;, () =&gt; {
+      const post     = &apos;&lt;h1 id=&quot;section1&quot;&gt;Header&lt;/h1&gt;&apos;
+      const expected = &apos;# Header&apos;
+      const actual   = Convert(post, { noMELink: true })
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;hr&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;hr&gt;&apos;
+      const expected = &apos;* * *&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;em&gt;, &lt;i&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;em&gt;Word 1&lt;/em&gt; &lt;i&gt;Word 2&lt;/i&gt;&apos;
+      const expected = &apos;_Word 1_ _Word 2_&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;code&gt;&apos;, () =&gt; {
+      const post     = &apos;Text &lt;code&gt;Code&lt;/code&gt; Text&apos;
+      const expected = &apos;Text `Code` Text&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;a&gt;&apos;, () =&gt; {
+      const post     = &apos;Text &lt;a href=&quot;://example.com/&quot; title=&quot;title&quot;&gt;Link&lt;/a&gt; Text &lt;a href=&quot;#id&quot;&gt;Inter Link&lt;/a&gt;&apos;
+      const expected = &apos;Text [Link](://example.com/ &quot;title&quot;) Text [Inter Link](#id)&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;img&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;img src=&quot;example.png&quot; alt=&quot;Title&quot;&gt; &lt;img src=&quot;example.png&quot; title=&quot;Example&quot;&gt;&apos;
+      const expected = &apos;![Title](example.png) ![](example.png &quot;Example&quot;)&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;pre&gt;&lt;code&gt;...&lt;/code&gt;&lt;/pre&gt;&apos;, () =&gt; {
+      const post =
+`
+Text
+
+&lt;pre&gt;&lt;code&gt;
+const test = &apos;test&apos;;
+&lt;/code&gt;&lt;/pre&gt;
+
+Text
+`
+
+      const expected = &apos;Text\n\n    const test = \&apos;test\&apos;;\n\nText&apos;
+      const actual   = Convert(post, { noGFM: true })
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;blockquote&gt;&apos;, () =&gt; {
+      const post = &apos;&lt;blockquote&gt;\nLine 1\nLine 2\n&lt;/blockquote&gt;&apos;
+      const expected = &apos;&gt; Line 1 Line 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;ul&gt;&lt;li&gt;&apos;, () =&gt; {
+      const post =
+`&lt;ul&gt;
+  &lt;li&gt;Item 1&lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ul&gt;`
+      const expected = &apos;* Item 1\n* Item 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;ul&gt;&lt;li&gt;, nested&apos;, () =&gt; {
+      const post =
+`&lt;ul&gt;
+  &lt;li&gt;Item 1
+    &lt;ul&gt;
+      &lt;li&gt;Item 1-1&lt;/li&gt;
+      &lt;li&gt;Item 1-2&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ul&gt;`
+      const expected = &apos;* Item 1\n    * Item 1-1\n    * Item 1-2\n* Item 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;ol&gt;&lt;li&gt;&apos;, () =&gt; {
+      const post =
+`&lt;ol&gt;
+  &lt;li&gt;Item 1&lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ol&gt;`
+      const expected = &apos;1. Item 1\n2. Item 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;ol&gt;&lt;li&gt;, nested&apos;, () =&gt; {
+      const post =
+`&lt;ol&gt;
+  &lt;li&gt;Item 1
+    &lt;ol&gt;
+      &lt;li&gt;Item 1-1&lt;/li&gt;
+      &lt;li&gt;Item 1-2&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ol&gt;`
+      const expected = &apos;1. Item 1\n    1. Item 1-1\n    2. Item 1-2\n2. Item 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;Block Element&apos;, () =&gt; {
+      const post     = &apos;&lt;address&gt;Copyright 2009 - 2016 akabeko All Rights Reserved&lt;/address&gt;&apos;
+      const expected = &apos;&lt;address&gt;Copyright 2009 - 2016 akabeko All Rights Reserved&lt;/address&gt;&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;Otherwise&apos;, () =&gt; {
+      const post     = &apos;&lt;example&gt;Test&lt;/example&gt;&apos;
+      const expected = &apos;&lt;example&gt;Test&lt;/example&gt;&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+  })
+
+  /** @test {Convert} */
+  describe(&apos;convert: GitHub Flavored Markdown&apos;, () =&gt; {
+    it(&apos;&lt;br&gt;&apos;, () =&gt; {
+      const post     = &apos;Line 1&lt;br&gt;Line 2&lt;br&gt;Line 3&apos;
+      const expected = &apos;Line 1\nLine 2\nLine 3&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;del&gt;, &lt;s&gt;, &lt;strike&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;del&gt;Text 1&lt;/del&gt; &lt;s&gt;Text 2&lt;/s&gt; &lt;strike&gt;Text 3&lt;/strike&gt;&apos;
+      const expected = &apos;~~Text 1~~ ~~Text 2~~ ~~Text 3~~&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;ul&gt;&lt;li&gt;&lt;input type=&quot;checkbox&quot;&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;ul&gt;&lt;li&gt;&lt;input type=&quot;checkbox&quot;&gt;Item 1&lt;/li&gt;&lt;li&gt;&lt;input type=&quot;checkbox&quot; checked=&quot;true&quot;&gt;Item 2&lt;/li&gt;&lt;/ul&gt;&apos;
+      const expected = &apos;* [ ] Item 1\n* [x] Item 2&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;pre&gt;&lt;code&gt;...&lt;/code&gt;&lt;/pre&gt;&apos;, () =&gt; {
+      const post =
+`
+Text
+
+&lt;pre&gt;&lt;code&gt;
+const test = &apos;test&apos;;
+&lt;/code&gt;&lt;/pre&gt;
+
+Text
+`
+
+      const expected = &apos;Text\n\n```\nconst test = \&apos;test\&apos;;\n```\n\nText&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;div class=&quot;highlight highlight-lang&quot;&gt;&lt;pre&gt;...&lt;/pre&gt;&lt;/div&gt;&apos;, () =&gt; {
+      const post =
+`
+Text
+
+&lt;div class=&quot;highlight highlight-js&quot;&gt;&lt;pre&gt;
+const test = &apos;test&apos;;
+&lt;/pre&gt;&lt;/div&gt;
+
+Text
+`
+
+      const expected = &apos;Text\n\n```js\nconst test = \&apos;test\&apos;;\n\n```\n\nText&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;th&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;table&gt;&lt;th&gt;Header 1&lt;/th&gt;&lt;th&gt;Header 2&lt;/th&gt;&lt;/table&gt;&apos;
+      const expected = &apos;| Header 1 | Header 2 |&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;td&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;table&gt;&lt;td&gt;Value 1&lt;/td&gt;&lt;td&gt;Value 2&lt;/td&gt;&lt;/table&gt;&apos;
+      const expected = &apos;| Value 1 | Value 2 |&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;th&gt;, &lt;td&gt;&apos;, () =&gt; {
+      const post     = &apos;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Header 1&lt;/th&gt;&lt;th&gt;Header 2&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Value 1&lt;/td&gt;&lt;td&gt;Value 2&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&apos;
+      const expected = &apos;| Header 1 | Header 2 |\n| Value 1 | Value 2 |&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+
+    it(&apos;&lt;thead&gt;&lt;th&gt;, &lt;tbody&gt;&lt;td&gt;&apos;, () =&gt; {
+      const post =
+`&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;Header 1&lt;/th&gt;&lt;th&gt;Header 2&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Value 1&lt;/td&gt;&lt;td&gt;Value 2&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;`
+      const expected = &apos;| Header 1 | Header 2 |\n| --- | --- |\n| Value 1 | Value 2 |&apos;
+      const actual   = Convert(post)
+      assert(actual === expected)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

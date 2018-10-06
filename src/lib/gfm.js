@@ -3,8 +3,8 @@ import Util from './util.js'
 /**
  * Convert the DOM node to cell text of the table.
  *
+ * @param {Node} node DOM node.
  * @param {String} content Content text.
- * @param {Node}   node    DOM node.
  *
  * @return {String} Cell text.
  */

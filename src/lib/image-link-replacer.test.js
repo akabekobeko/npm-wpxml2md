@@ -1,10 +1,14 @@
 import assert from 'assert'
-import { replaceLinks, parseImageLink } from './image-link-replacer.js'
+import Rewire from 'rewire'
 
 /** @test {ImageLinkReplacer} */
 describe('ImageLinkReplacer', () => {
+  const Module = Rewire('./image-link-replacer.js')
+
   /** @test {parseImageLink} */
   describe('parseImageLink', () => {
+    const parseImageLink = Module.__get__('parseImageLink')
+
     it('Parse', () => {
       const md =
 `![title](http://example.com/sample.png)
@@ -27,12 +31,14 @@ The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the 
         ]
       }
 
-      assert.deepEqual(actual, expected)
+      assert.deepStrictEqual(actual, expected)
     })
   })
 
   /** @test {replaceLinks} */
   describe('replaceLinks', () => {
+    const replaceLinks = Module.__get__('replaceLinks')
+
     it('Replace links', () => {
       const links = [
         '![title](http://example.com/sample.png)',
@@ -55,7 +61,7 @@ The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the 
         { link: links[3], newLink: '[![title](2.jpg)](1.png "title")' }
       ]
 
-      assert.deepEqual(actual, expected)
+      assert.deepStrictEqual(actual, expected)
     })
   })
 })

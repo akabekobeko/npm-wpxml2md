@@ -3,18 +3,18 @@ import Path  from 'path'
 import NodeUtil from 'util'
 import XmlParser  from 'xml2js'
 import Util from './util.js'
+import Logger from './logger.js'
 import Convert from './converter.js'
 import ImageLinkReplace from './image-link-replacer.js'
+import Comment from './comment.js'
 
 const ParseXML = NodeUtil.promisify(XmlParser.parseString)
 
 /**
  * Create a directory to save the markdown file.
- *
  * @param {String} root Path of the roo directory.
  * @param {String} year Year.
  * @param {String} month Month
- *
  * @return {String} If successful it is the path of the created directory.
  */
 const createSaveDir = (root, year, month) => {
@@ -35,9 +35,7 @@ const createSaveDir = (root, year, month) => {
 
 /**
  * Array to string for metadata.
- *
  * @param {Array} arr Array.
- *
  * @return {String} String.
  */
 const arrayToString = (arr) => {
@@ -55,13 +53,43 @@ const arrayToString = (arr) => {
 }
 
 /**
+ * Create a excerpt string from Markdown text.
+ * The specification of the excerpt statement is below.
+ * - No line break
+ * - No header, list (ul/ol), table, blockquote
+ * - No Markdown decoration
+ * - Markdown links and images extracted only text
+ * - Add "..." to the end if it exceeds 100 characters
+ * - Escape a double quote for YAML
+ * @param {String} markdown Markdown text of content body.
+ * @return {String} Excerpted string.
+ */
+const createExcerpt = (markdown) => {
+  if (!markdown) {
+    return ''
+  }
+
+  let str = markdown
+    .replace(/\n\n/mg, '\n')
+    .replace(/^(#|\*|\d{1,5}\. |\||> ).*?\n/mg, '')
+    .replace(/\n/mg, '')
+    .replace(/\*\*(.*?)\*\*/g, (m, $1) => $1)
+    .replace(/__(.*?)__/g, (m, $1) => $1)
+    .replace(/!\[(.*?)\]\(.*?\)/g, (m, $1) => $1)
+    .replace(/\[(.*?)\]\(.*?\)/g, (m, $1) => $1)
+    .replace(/"/g, '\\"')
+
+  str = 100 <= str.length ? str.substring(0, 99) + '...' : str
+  return str
+}
+
+/**
  * Create a header of article metadata.
- *
  * @param {Object} metadata Metadata of article.
- *
+ * @param {String} markdown Markdown text of content body.
  * @return {String} Header text.
  */
-export const createMetadataHeader = (metadata) => {
+const createMetadataHeader = (metadata, markdown) => {
   const last = metadata.type === 'page' ? 'single: true\n---\n\n' : '---\n\n'
   return `---
 path: "/${metadata.type}s/${metadata.year}/${metadata.month}/${metadata.permanentName}/"
@@ -69,14 +97,13 @@ date: "${metadata.year}-${metadata.month}-${metadata.day}T${metadata.time}Z"
 title: "${metadata.title}"
 categories: ${arrayToString(metadata.categories)}
 tags: ${arrayToString(metadata.tags)}
+excerpt: "${createExcerpt(markdown)}"
 ${last}`
 }
 
 /**
  * Read an article metadata from xml object.
- *
  * @param {Object} post XML object.
- *
  * @return {Object} Metadata.
  */
 const readMetadata = (post) => {
@@ -99,14 +126,12 @@ const readMetadata = (post) => {
     })
   }
 
-  const datetime = post['wp:post_date_gmt'][0].split(' ')
-  const date     = datetime[0].split('-')
-
+  const datetime = Util.datetimeFromWpGMT(post['wp:post_date_gmt'][0])
   return {
-    year: date[0],
-    month: date[1],
-    day: date[2],
-    time: datetime[1],
+    year: datetime.year,
+    month: datetime.month,
+    day: datetime.day,
+    time: datetime.time,
     permanentName: post['wp:post_name'][0],
     title: post['title'][0],
     categories,
@@ -117,15 +142,13 @@ const readMetadata = (post) => {
 
 /**
  * Replace the link URL included in Markdown.
- *
  * @param {String} markdown Markdown text.
  * @param {String} oldPrefix Target.
  * @param {String} newPrefix String to replace.
- *
  * @return {String} Replaced string.
  */
-export const replaceLinkURL = (markdown, oldPrefix, newPrefix = '') => {
-  if (!(markdown && oldPrefix)) {
+const replaceLinkURL = (markdown, oldPrefix, newPrefix) => {
+  if (!(markdown && (oldPrefix && typeof oldPrefix === 'string') && (newPrefix && typeof newPrefix === 'string'))) {
     return markdown
   }
 
@@ -138,16 +161,14 @@ export const replaceLinkURL = (markdown, oldPrefix, newPrefix = '') => {
 
 /**
  * Convert the post data to markdown file.
- *
  * @param {Object} post Post data.
  * @param {Object} metadata Metadata.
- * @param {String} dir Path of Markdown file output directory.
+ * @param {String} rootDir Path of Markdown file output directory.
  * @param {Logger} logger Logger.
- * @param {Modes} modes Modes.
- *
+ * @param {CLIOptions} options Options.
  * @return {Promise} Promise task.
  */
-const convertPost = async (post, metadata, rootDir, modes, logger) => {
+const convertPost = async (post, metadata, rootDir, logger, options) => {
   logger.log(`${metadata.year}/${metadata.month}/${metadata.day} ['${metadata.type}']: ${metadata.title}`)
 
   const dir = createSaveDir(rootDir, metadata.year, metadata.month)
@@ -162,21 +183,24 @@ const convertPost = async (post, metadata, rootDir, modes, logger) => {
     throw new Error('Failed to create the stream.')
   }
 
-  if (modes.withMetadata) {
-    stream.write(createMetadataHeader(metadata), 'utf8')
+  let markdown = Convert(post['content:encoded'][0], options)
+  if (options.withMetadata) {
+    stream.write(createMetadataHeader(metadata, markdown), 'utf8')
   } else {
     stream.write(`# ${metadata.title}\n\n`, 'utf8')
   }
 
-  let markdown = Convert(post['content:encoded'][0], modes)
-
-  if (modes.withImageLinkReplace) {
+  if (options.withImageDownload) {
     const basename = Path.basename(filePath, '.md')
     markdown = await ImageLinkReplace(markdown, dir, basename, logger)
   }
 
-  if (modes.replaceLinkURL && modes.replaceLinkURL.old) {
-    markdown = replaceLinkURL(markdown, modes.replaceLinkURL.old, modes.replaceLinkURL.new)
+  if (options.replaceLinkPrefix) {
+    markdown = replaceLinkURL(markdown, options.replaceLinkPrefix.old, options.replaceLinkPrefix.new)
+  }
+
+  if (options.withComment) {
+    markdown += Comment(post['wp:comment'])
   }
 
   stream.write(markdown, 'utf8')
@@ -184,9 +208,7 @@ const convertPost = async (post, metadata, rootDir, modes, logger) => {
 
 /**
  * Create a directory with a unique name.
- *
  * @param {String} dir Base directory path.
- *
  * @return {String} The path of the created directory. Failure is null.
  */
 const createUniqueDestDir = (dir) => {
@@ -215,9 +237,7 @@ const createUniqueDestDir = (dir) => {
 
 /**
  * Gets the posts data from XML.
- *
  * @param {String} src Path of XML file..
- *
  * @return {Promise} Promise task.
  */
 const postsFromXML = async (src) => {
@@ -231,15 +251,16 @@ const postsFromXML = async (src) => {
 
 /**
  * Conver WordPress XML file to Markdown files.
- *
  * @param {String} src Path of the WordPress XML file.
  * @param {String} dest Path of Markdown files output directory.
- * @param {Modes} modes Modes.
- * @param {Logger} logger Logger.
- *
+ * @param {CLIOptions} options Options.
  * @return {Promise} Promise object.
  */
-const WordPressXmlToMarkdown = async (src, dest, modes, logger) => {
+const WordPressXmlToMarkdown = async (src, dest, options = { report: false }) => {
+  const logger = new Logger(options.report)
+  logger.log(`Input:  ${src}`)
+  logger.log(`Output: ${dest}`)
+
   const dir = createUniqueDestDir(dest)
   if (!(dir)) {
     throw new Error('Failed to create the root directory.')
@@ -258,7 +279,7 @@ const WordPressXmlToMarkdown = async (src, dest, modes, logger) => {
   const posts = await postsFromXML(src)
   for (let post of posts) {
     const m = readMetadata(post)
-    await convertPost(post, m, m.type === 'post' ? postsDir : pagesDir, modes, logger)
+    await convertPost(post, m, m.type === 'post' ? postsDir : pagesDir, logger, options)
   }
 }
 

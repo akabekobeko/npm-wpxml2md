@@ -185,6 +185,25 @@ export default class Util {
   }
 
   /**
+   * Get a datetime from WordPress XML GMT
+   *
+   * @param {String} gmt String of GMT.
+   *
+   * @return {Object} Datetime.
+   */
+  static datetimeFromWpGMT (gmt) {
+    const datetime = gmt.split(' ')
+    const date     = datetime[0].split('-')
+
+    return {
+      year: date[0],
+      month: date[1],
+      day: date[2],
+      time: datetime[1]
+    }
+  }
+
+  /**
    * Remove whitespace from both sides of a string.
    *
    * @param {String} str String.

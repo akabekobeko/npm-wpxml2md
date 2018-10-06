@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/bin/cli.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/bin/cli.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Path from &apos;path&apos;
+import Rewire from &apos;rewire&apos;
+
+/** @test {CLI} */
+describe(&apos;CLI&apos;, () =&gt; {
+  const Module = Rewire(&apos;./cli.js&apos;)
+
+  /** @test {CLI#parseArgv} */
+  describe(&apos;parseArgv&apos;, () =&gt; {
+    const parseArgv = Module.__get__(&apos;parseArgv&apos;)
+    const Options = Module.__get__(&apos;Options&apos;)
+
+    it(&apos;input&apos;, () =&gt; {
+      const input    = &apos;./examples/wp.xml&apos;
+      const expected = Path.resolve(input)
+      let options = parseArgv([Options.input.name, input])
+      assert(options.input === expected)
+
+      options = parseArgv([Options.input.shortName, input])
+      assert(options.input === expected)
+
+      options = parseArgv([Options.input.name])
+      assert(options.input !== expected)
+
+      options = parseArgv([Options.input.shortName, Options.help.name])
+      assert(options.input !== expected)
+    })
+
+    it(&apos;output&apos;, () =&gt; {
+      const output = &apos;./examples&apos;
+      const expected = Path.resolve(output)
+      let options = parseArgv([Options.output.name, output])
+      assert(options.output === expected)
+
+      options = parseArgv([Options.output.shortName, output])
+      assert(options.output === expected)
+
+      options = parseArgv([Options.output.name])
+      assert(options.output !== expected)
+
+      options = parseArgv([Options.output.shortName, Options.help.name])
+      assert(options.output !== expected)
+    })
+
+    it(&apos;report&apos;, () =&gt; {
+      let options = parseArgv([Options.report.name])
+      assert(options.report === true)
+
+      options = parseArgv([Options.report.shortName])
+      assert(options.report === true)
+    })
+
+    it(&apos;noGFM&apos;, () =&gt; {
+      const options = parseArgv([Options.noGFM.name])
+      assert(options.noGFM === true)
+    })
+
+    it(&apos;noMELink&apos;, () =&gt; {
+      const options = parseArgv([Options.noMELink.name])
+      assert(options.noMELink === true)
+    })
+
+    it(&apos;withMetadata&apos;, () =&gt; {
+      const options = parseArgv([Options.withMetadata.name])
+      assert(options.withMetadata === true)
+    })
+
+    it(&apos;withImageDownload&apos;, () =&gt; {
+      const options = parseArgv([Options.withImageDownload.name])
+      assert(options.withImageDownload === true)
+    })
+
+    it(&apos;withComment&apos;, () =&gt; {
+      const options = parseArgv([Options.withComment.name])
+      assert(options.withComment === true)
+    })
+
+    it(&apos;replaceLinkPrefix&apos;, () =&gt; {
+      const options = parseArgv([Options.replaceLinkPrefix.name, &apos;http://example.com/=/&apos;])
+      assert(options.replaceLinkPrefix.old === &apos;http://example.com/&apos;)
+      assert(options.replaceLinkPrefix.new === &apos;/&apos;)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
