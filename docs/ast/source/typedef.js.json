@@ -1,0 +1,306 @@
+{
+  "type": "File",
+  "start": 0,
+  "end": 1824,
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 46,
+      "column": 0
+    }
+  },
+  "program": {
+    "type": "Program",
+    "start": 0,
+    "end": 1824,
+    "loc": {
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 46,
+        "column": 0
+      }
+    },
+    "sourceType": "module",
+    "body": [],
+    "directives": [],
+    "leadingComments": null,
+    "innerComments": [
+      {
+        "type": "CommentBlock",
+        "value": "*\n * @external {WritableStream} https://nodejs.org/api/stream.html\n ",
+        "start": 0,
+        "end": 72,
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 3,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * convert the HTML element to Markdown.\n *\n * @typedef {Object} MdConverter\n * @property {String|Array|Function} filter Filter to check the HTML tags.\n * @property {Function} replacement Function to replace the DOM Node.\n ",
+        "start": 74,
+        "end": 303,
+        "loc": {
+          "start": {
+            "line": 5,
+            "column": 0
+          },
+          "end": {
+            "line": 11,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * Modes of markdown parse and output.\n *\n * @typedef {Object} Modes\n * @property {Boolean} noGFM Disable a GitHub Flavored Markdown. Default is enable.\n * @property {Boolean} noMELink Disable a GitHub Extra link on header. Default is enable.\n * @property {Boolean} withMetadata Output article metadata in YAML format at the top of Markdown.\n * @property {Boolean} withImageLinkReplace Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers.\n ",
+        "start": 305,
+        "end": 818,
+        "loc": {
+          "start": {
+            "line": 13,
+            "column": 0
+          },
+          "end": {
+            "line": 21,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * Value of replace link prefix.\n *\n * @typedef {Object} ReplaceLinkPrefix\n * @property {String} old Target string.\n * @property {String} new Placeholder string.\n ",
+        "start": 820,
+        "end": 989,
+        "loc": {
+          "start": {
+            "line": 23,
+            "column": 0
+          },
+          "end": {
+            "line": 29,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * Commad line options.\n *\n * @typedef {Object} CLIOptions\n * @property {Boolean} help Mode to display the help text.\n * @property {Boolean} version Mode to display the version number.\n * @property {String} input Path of the SVG file or PNG file directory.\n * @property {String} output Path of the output directory.\n * @property {Boolean} report Display the process reports. Default is disable.\n * @property {Boolean} noGFM Disable the GitHub Flavored Markdown.\n * @property {Boolean} noMELink Disable the Markdown Extra link on header.\n * @property {Boolean} withMetadata Enable output article metadata.\n * @property {Boolean} withImageLinkReplace Enable download and replace link syntaxes a linked images from article.\n * @property {ReplaceLinkPrefix} replaceLinkPrefix Replace the link URL prefix with the specified word.\n ",
+        "start": 991,
+        "end": 1823,
+        "loc": {
+          "start": {
+            "line": 31,
+            "column": 0
+          },
+          "end": {
+            "line": 45,
+            "column": 3
+          }
+        }
+      }
+    ]
+  },
+  "comments": [
+    {
+      "type": "CommentBlock",
+      "value": "*\n * @external {WritableStream} https://nodejs.org/api/stream.html\n ",
+      "start": 0,
+      "end": 72,
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 3,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * convert the HTML element to Markdown.\n *\n * @typedef {Object} MdConverter\n * @property {String|Array|Function} filter Filter to check the HTML tags.\n * @property {Function} replacement Function to replace the DOM Node.\n ",
+      "start": 74,
+      "end": 303,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 0
+        },
+        "end": {
+          "line": 11,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * Modes of markdown parse and output.\n *\n * @typedef {Object} Modes\n * @property {Boolean} noGFM Disable a GitHub Flavored Markdown. Default is enable.\n * @property {Boolean} noMELink Disable a GitHub Extra link on header. Default is enable.\n * @property {Boolean} withMetadata Output article metadata in YAML format at the top of Markdown.\n * @property {Boolean} withImageLinkReplace Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers.\n ",
+      "start": 305,
+      "end": 818,
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 0
+        },
+        "end": {
+          "line": 21,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * Value of replace link prefix.\n *\n * @typedef {Object} ReplaceLinkPrefix\n * @property {String} old Target string.\n * @property {String} new Placeholder string.\n ",
+      "start": 820,
+      "end": 989,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 0
+        },
+        "end": {
+          "line": 29,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * Commad line options.\n *\n * @typedef {Object} CLIOptions\n * @property {Boolean} help Mode to display the help text.\n * @property {Boolean} version Mode to display the version number.\n * @property {String} input Path of the SVG file or PNG file directory.\n * @property {String} output Path of the output directory.\n * @property {Boolean} report Display the process reports. Default is disable.\n * @property {Boolean} noGFM Disable the GitHub Flavored Markdown.\n * @property {Boolean} noMELink Disable the Markdown Extra link on header.\n * @property {Boolean} withMetadata Enable output article metadata.\n * @property {Boolean} withImageLinkReplace Enable download and replace link syntaxes a linked images from article.\n * @property {ReplaceLinkPrefix} replaceLinkPrefix Replace the link URL prefix with the specified word.\n ",
+      "start": 991,
+      "end": 1823,
+      "loc": {
+        "start": {
+          "line": 31,
+          "column": 0
+        },
+        "end": {
+          "line": 45,
+          "column": 3
+        }
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "type": "CommentBlock",
+      "value": "*\n * @external {WritableStream} https://nodejs.org/api/stream.html\n ",
+      "start": 0,
+      "end": 72,
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 3,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * convert the HTML element to Markdown.\n *\n * @typedef {Object} MdConverter\n * @property {String|Array|Function} filter Filter to check the HTML tags.\n * @property {Function} replacement Function to replace the DOM Node.\n ",
+      "start": 74,
+      "end": 303,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 0
+        },
+        "end": {
+          "line": 11,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * Modes of markdown parse and output.\n *\n * @typedef {Object} Modes\n * @property {Boolean} noGFM Disable a GitHub Flavored Markdown. Default is enable.\n * @property {Boolean} noMELink Disable a GitHub Extra link on header. Default is enable.\n * @property {Boolean} withMetadata Output article metadata in YAML format at the top of Markdown.\n * @property {Boolean} withImageLinkReplace Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers.\n ",
+      "start": 305,
+      "end": 818,
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 0
+        },
+        "end": {
+          "line": 21,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * Value of replace link prefix.\n *\n * @typedef {Object} ReplaceLinkPrefix\n * @property {String} old Target string.\n * @property {String} new Placeholder string.\n ",
+      "start": 820,
+      "end": 989,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 0
+        },
+        "end": {
+          "line": 29,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * Commad line options.\n *\n * @typedef {Object} CLIOptions\n * @property {Boolean} help Mode to display the help text.\n * @property {Boolean} version Mode to display the version number.\n * @property {String} input Path of the SVG file or PNG file directory.\n * @property {String} output Path of the output directory.\n * @property {Boolean} report Display the process reports. Default is disable.\n * @property {Boolean} noGFM Disable the GitHub Flavored Markdown.\n * @property {Boolean} noMELink Disable the Markdown Extra link on header.\n * @property {Boolean} withMetadata Enable output article metadata.\n * @property {Boolean} withImageLinkReplace Enable download and replace link syntaxes a linked images from article.\n * @property {ReplaceLinkPrefix} replaceLinkPrefix Replace the link URL prefix with the specified word.\n ",
+      "start": 991,
+      "end": 1823,
+      "loc": {
+        "start": {
+          "line": 31,
+          "column": 0
+        },
+        "end": {
+          "line": 45,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "eof",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1824,
+      "end": 1824,
+      "loc": {
+        "start": {
+          "line": 46,
+          "column": 0
+        },
+        "end": {
+          "line": 46,
+          "column": 0
+        }
+      }
+    }
+  ]
+}

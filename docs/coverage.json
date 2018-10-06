@@ -1,0 +1,70 @@
+{
+  "coverage": "90.9%",
+  "expectCount": 77,
+  "actualCount": 70,
+  "files": {
+    "src/bin/cli.js": {
+      "expectCount": 10,
+      "actualCount": 9,
+      "undocumentLines": [
+        60
+      ]
+    },
+    "src/lib/comment.js": {
+      "expectCount": 8,
+      "actualCount": 8,
+      "undocumentLines": []
+    },
+    "src/lib/converter.js": {
+      "expectCount": 11,
+      "actualCount": 9,
+      "undocumentLines": [
+        22,
+        37
+      ]
+    },
+    "src/lib/gfm.js": {
+      "expectCount": 3,
+      "actualCount": 3,
+      "undocumentLines": []
+    },
+    "src/lib/image-link-replacer.js": {
+      "expectCount": 8,
+      "actualCount": 7,
+      "undocumentLines": [
+        7
+      ]
+    },
+    "src/lib/logger.js": {
+      "expectCount": 5,
+      "actualCount": 4,
+      "undocumentLines": [
+        15
+      ]
+    },
+    "src/lib/markdown.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/lib/shortcode.js": {
+      "expectCount": 6,
+      "actualCount": 5,
+      "undocumentLines": [
+        76
+      ]
+    },
+    "src/lib/util.js": {
+      "expectCount": 14,
+      "actualCount": 14,
+      "undocumentLines": []
+    },
+    "src/lib/wpxml2md.js": {
+      "expectCount": 11,
+      "actualCount": 10,
+      "undocumentLines": [
+        11
+      ]
+    }
+  }
+}

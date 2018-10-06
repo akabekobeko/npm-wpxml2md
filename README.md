@@ -3,7 +3,7 @@
 [![Support Node of LTS](https://img.shields.io/badge/node-LTS-brightgreen.svg)](https://nodejs.org/)
 [![npm version](https://badge.fury.io/js/wpxml2md.svg)](https://badge.fury.io/js/wpxml2md)
 [![Build Status](https://travis-ci.org/akabekobeko/npm-wpxml2md.svg?branch=master)](https://travis-ci.org/akabekobeko/npm-wpxml2md)
-[![Document](https://doc.esdoc.org/github.com/akabekobeko/npm-wpxml2md/badge.svg?t=0)](https://doc.esdoc.org/github.com/akabekobeko/npm-wpxml2md)
+[![Document](https://img.shields.io/badge/document-ESDoc-brightgreen.svg)](https://akabekobeko.github.io/npm-wpxml2md/)
 [![Standard - JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](http://standardjs.com/)
 
 Convert the WordPress XML file to Markdown files.

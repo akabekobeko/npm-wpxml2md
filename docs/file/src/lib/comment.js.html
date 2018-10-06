@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/comment.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/comment.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import MD5 from &apos;md5&apos;
+import Util from &apos;./util.js&apos;
+
+/**
+ * Create a Markdown image link (Gravatar) from e-mail address.
+ * @param {String} author Author.
+ * @param {String} mail Mail e-mail address.
+ * @return {String} Markdown text.
+ */
+const createIconLink = (author, mail) =&gt; {
+  return mail ? `![${author}](https://www.gravatar.com/avatar/${MD5(mail)}?d=identicon) ` : &apos;&apos;
+}
+
+/**
+ * Create a Markdown text of author.
+ * @param {String} author Author.
+ * @param {String} url URL of author web site.
+ * @return {String} Markdown text.
+ */
+const createAuthor = (author, url) =&gt; {
+  return url ? `[${author}](${url})` : author
+}
+
+/**
+ * Create a datetime text.
+ * @param {Object} date Datetime
+ * @return {String} Markdown text.
+ */
+const createDate = (date) =&gt; {
+  return date ? `${date.year}-${date.month}-${date.day}T${date.time}Z` : &apos;&apos;
+}
+
+/**
+ * Convert a content of comment to indented markdown code block.
+ * @param {String} content Content of comment.
+ * @return markdown code block.
+ */
+const convertBody = (content) =&gt; {
+  return content.replace(/^/mg, &apos;  &gt; &apos;)
+}
+
+/**
+ * Convert a comments to Markdown.
+ * @param {Object[]} comments Comments.
+ * @return {String} Markdown text.
+ */
+const convertMarkdown = (comments) =&gt; {
+  if (!(comments &amp;&amp; 0 &lt; comments.length)) {
+    return &apos;&apos;
+  }
+
+  let md = &apos;&apos;
+  for (let comment of comments) {
+    const body = convertBody(comment.content)
+    md += `* ${createIconLink(comment.author, comment.mail)}**${createAuthor(comment.author, comment.url)}** ${createDate(comment.date)}\n${body}\n`
+    if (comment.children) {
+      md += convertMarkdown(comment.children)
+    }
+  }
+
+  return md
+}
+
+/**
+ * Crerate a comment tree with parent identifier.
+ * @param {Object[]} comments Comments.
+ * @return {Object[]} Parsed comments.
+ */
+const createCommentTree = (comments) =&gt; {
+  const tree = []
+  if (!(Array.isArray(comments))) {
+    return tree
+  }
+
+  // Identifier mapping and deep copy
+  const map = {}
+  const list = []
+  for (let i = 0; i &lt; comments.length; ++i) {
+    const comment = comments[i]
+    map[comment.id] = i
+    list.push(Object.assign({}, comment))
+  }
+
+  for (let i = 0; i &lt; list.length; ++i) {
+    const comment = list[i]
+    if (comment.parent &amp;&amp; comment.parent !== &apos;0&apos;) {
+      const parent = list[map[comment.parent]]
+      if (parent.children) {
+        parent.children.push(comment)
+      } else {
+        parent.children = [comment]
+      }
+    } else {
+      // Root
+      tree.push(comment)
+    }
+  }
+
+  return tree
+}
+
+/**
+ * Parse a comments..
+ * @param {Object[]} src Comments (wp:comment).
+ * @return {Object[]} Parsed comments.
+ */
+const parse = (src) =&gt; {
+  const comments = []
+  if (!(Array.isArray(src))) {
+    return comments
+  }
+
+  for (let comment of src) {
+    comments.push({
+      id: comment[&apos;wp:comment_id&apos;][0],
+      author: comment[&apos;wp:comment_author&apos;][0],
+      mail: comment[&apos;wp:comment_author_email&apos;][0],
+      url: comment[&apos;wp:comment_author_url&apos;][0],
+      date: Util.datetimeFromWpGMT(comment[&apos;wp:comment_date_gmt&apos;][0]),
+      content: comment[&apos;wp:comment_content&apos;][0],
+      parent: comment[&apos;wp:comment_parent&apos;][0]
+    })
+  }
+
+  return comments
+}
+
+/**
+ * Create a comment list.
+ * @param {Object[]} src Comments (wp:comment).
+ * @return {String} Comment list (HTML text).
+ */
+const Comment = (src) =&gt; {
+  const comments = createCommentTree(parse(src))
+  if (comments.length === 0) {
+    return &apos;&apos;
+  }
+
+  return `\n\n## Comments from WordPress\n\n${convertMarkdown(comments)}`
+}
+
+export default Comment
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

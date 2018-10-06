@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/gfm.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/gfm.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Util from &apos;./util.js&apos;
+
+/**
+ * Convert the DOM node to cell text of the table.
+ *
+ * @param {Node} node DOM node.
+ * @param {String} content Content text.
+ *
+ * @return {String} Cell text.
+ */
+function Cell (node, content) {
+  let index = 0
+  if (node.parentNode &amp;&amp; node.parentNode.childNodes) {
+    index = Util.arrayIndexOf(node.parentNode.childNodes, node)
+  }
+
+  const prefix = (index === 0 ? &apos;| &apos; : &apos; &apos;)
+  return prefix + content + &apos; |&apos;
+}
+
+/**
+ * RegExp for the higlighting.
+ * @type {RegExp}
+ */
+const HighlightRegEx = /highlight highlight-(\S+)/
+
+/**
+ * Convert the HTML DOM Node to GFM (GitHub Flavored Markdown) text.
+ * @type {Array.&lt;MdConverter&gt;}
+ * @see https://github.com/domchristie/to-markdown/blob/master/lib/gfm-converters.js
+ */
+const GfmConverters = [
+  // Line break
+  {
+    filter: &apos;br&apos;,
+    replacement: () =&gt; {
+      return &apos;\n&apos;
+    }
+  },
+  // Delete
+  {
+    filter: [&apos;del&apos;, &apos;s&apos;, &apos;strike&apos;],
+    replacement: (node, content) =&gt; {
+      return &apos;~~&apos; + content + &apos;~~&apos;
+    }
+  },
+  // Checkbox
+  {
+    filter: (node) =&gt; {
+      return node.type === &apos;checkbox&apos; &amp;&amp; node.parentNode.nodeName === &apos;LI&apos;
+    },
+    replacement: (node) =&gt; {
+      return (node.checked ? &apos;[x]&apos; : &apos;[ ]&apos;) + &apos; &apos;
+    }
+  },
+  // Table cell
+  {
+    filter: [ &apos;th&apos;, &apos;td&apos; ],
+    replacement: (node, content) =&gt; {
+      return Cell(node, content)
+    }
+  },
+  // Table row
+  {
+    filter: &apos;tr&apos;,
+    replacement: (node, content) =&gt; {
+      let   borderCells = &apos;&apos;
+      const alignMap    = { left: &apos;:--&apos;, right: &apos;--:&apos;, center: &apos;:-:&apos; }
+
+      if (node.parentNode.nodeName === &apos;THEAD&apos;) {
+        for (let i = 0, max = node.childNodes.length; i &lt; max; ++i) {
+          const elm    = node.childNodes[i]
+          const align  = (elm.attributes ? elm.attributes.align : null)
+          const border = (align ? alignMap[ align.value ] : &apos;---&apos;)
+
+          if (elm._replacement) {
+            borderCells += Cell(elm, border)
+          }
+        }
+      }
+
+      return &apos;\n&apos; + content + (borderCells ? &apos;\n&apos; + borderCells : &apos;&apos;)
+    }
+  },
+  // Table
+  {
+    filter: &apos;table&apos;,
+    replacement: (node, content) =&gt; {
+      return &apos;\n\n&apos; + content + &apos;\n\n&apos;
+    }
+  },
+  // Table parts
+  {
+    filter: [ &apos;thead&apos;, &apos;tbody&apos;, &apos;tfoot&apos; ],
+    replacement: (node, content) =&gt; {
+      return content
+    }
+  },
+  // Fenced code blocks
+  {
+    filter: (node) =&gt; {
+      return node.nodeName === &apos;PRE&apos; &amp;&amp;
+             node.firstChild &amp;&amp;
+             node.firstChild.nodeName === &apos;CODE&apos;
+    },
+    replacement: (node) =&gt; {
+      return &apos;\n\n```\n&apos; + node.firstChild.textContent + &apos;\n```\n\n&apos;
+    }
+  },
+  // Syntax-highlighted code blocks
+  {
+    filter: (node) =&gt; {
+      return node.nodeName === &apos;PRE&apos; &amp;&amp;
+             node.parentNode.nodeName === &apos;DIV&apos; &amp;&amp;
+             HighlightRegEx.test(node.parentNode.className)
+    },
+    replacement: (node) =&gt; {
+      const language = node.parentNode.className.match(HighlightRegEx)[ 1 ]
+      return &apos;\n\n```&apos; + language + &apos;\n&apos; + node.textContent + &apos;\n```\n\n&apos;
+    }
+  },
+  // Div
+  {
+    filter: (node) =&gt; {
+      return node.nodeName === &apos;DIV&apos; &amp;&amp;
+             HighlightRegEx.test(node.className)
+    },
+    replacement: (node, content) =&gt; {
+      return &apos;\n\n&apos; + content + &apos;\n\n&apos;
+    }
+  }
+]
+
+export default GfmConverters
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

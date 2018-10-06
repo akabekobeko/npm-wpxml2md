@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/util.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/util.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Fs from &apos;fs&apos;
+import Path from &apos;path&apos;
+
+/**
+ * Elements of block.
+ * @type {Array}
+ */
+const BlockElements = [
+  &apos;address&apos;, &apos;article&apos;, &apos;aside&apos;, &apos;audio&apos;, &apos;blockquote&apos;, &apos;body&apos;, &apos;canvas&apos;,
+  &apos;center&apos;, &apos;dd&apos;, &apos;dir&apos;, &apos;div&apos;, &apos;dl&apos;, &apos;dt&apos;, &apos;fieldset&apos;, &apos;figcaption&apos;,
+  &apos;figure&apos;, &apos;footer&apos;, &apos;form&apos;, &apos;frameset&apos;, &apos;h1&apos;, &apos;h2&apos;, &apos;h3&apos;, &apos;h4&apos;, &apos;h5&apos;, &apos;h6&apos;,
+  &apos;header&apos;, &apos;hgroup&apos;, &apos;hr&apos;, &apos;html&apos;, &apos;isindex&apos;, &apos;li&apos;, &apos;main&apos;, &apos;menu&apos;, &apos;nav&apos;,
+  &apos;noframes&apos;, &apos;noscript&apos;, &apos;ol&apos;, &apos;output&apos;, &apos;p&apos;, &apos;pre&apos;, &apos;section&apos;, &apos;table&apos;,
+  &apos;tbody&apos;, &apos;td&apos;, &apos;tfoot&apos;, &apos;th&apos;, &apos;thead&apos;, &apos;tr&apos;, &apos;ul&apos;
+]
+
+/**
+ * Elements of void.
+ * @type {Array.&lt;String&gt;}
+ */
+const VoidElements = [
+  &apos;area&apos;, &apos;base&apos;, &apos;br&apos;, &apos;col&apos;, &apos;command&apos;, &apos;embed&apos;, &apos;hr&apos;, &apos;img&apos;, &apos;input&apos;,
+  &apos;keygen&apos;, &apos;link&apos;, &apos;meta&apos;, &apos;param&apos;, &apos;source&apos;, &apos;track&apos;, &apos;wbr&apos;
+]
+
+/**
+ * Provides utility function.
+ */
+export default class Util {
+  /**
+   * This method returns the first index at which a given element can be found in the array
+   *
+   * @param {Array} arr Array.
+   * @param {Object} obj Element to locate in the array.
+   *
+   * @return {Number} If the success index, otherwise -1.
+   */
+  static arrayIndexOf (arr, obj) {
+    return Array.prototype.indexOf.call(arr, obj)
+  }
+
+  /**
+   * Escape a regexp syntaxes.
+   *
+   * @param {String} str Original string.
+   *
+   * @return {String} Escaped string.
+   *
+   * @see https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
+   */
+  static escapeRegExp (str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, &apos;\\$&amp;&apos;)
+  }
+
+  /**
+   * Check the existence of a file or folder.
+   *
+   * @param {String} path Path of the file or folder.
+   *
+   * @return {Boolean} True if exists. Otherwise false.
+   */
+  static existsSync (path) {
+    try {
+      Fs.accessSync(Path.resolve(path), Fs.F_OK)
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
+  /**
+   * Converts the value of the Date object to its equivalent string representation using the specified format.
+   *
+   * @param {Date}   date   Date and time. Default is current date and time.
+   * @param {String} format Date and time format string. Default is &quot;YYYY-MM-DD hh:mm:ss.SSS&quot;.
+   *
+   * @return {String} Formatted string.
+   *
+   * @see http://qiita.com/osakanafish/items/c64fe8a34e7221e811d0
+   */
+  static formatDate (date, format) {
+    if (!(date)) {
+      date = new Date()
+    }
+
+    if (typeof format !== &apos;string&apos;) {
+      format = &apos;YYYY-MM-DD hh:mm:ss.SSS&apos;
+    }
+
+    const Y = date.getFullYear()
+    const M = date.getMonth()
+    const D = date.getDate()
+    const h = date.getHours()
+    const m = date.getMinutes()
+    const s = date.getSeconds()
+
+    if (Number.isNaN(Y) || Number.isNaN(M) || Number.isNaN(D) || Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(s)) {
+      return null
+    }
+
+    // Zero padding
+    let f = format
+    f = f.replace(/YYYY/g, Y)
+    f = f.replace(/MM/g,   (&apos;0&apos; + (M + 1)).slice(-2))
+    f = f.replace(/DD/g,   (&apos;0&apos; +         D).slice(-2))
+    f = f.replace(/hh/g,   (&apos;0&apos; +         h).slice(-2))
+    f = f.replace(/mm/g,   (&apos;0&apos; +         m).slice(-2))
+    f = f.replace(/ss/g,   (&apos;0&apos; +         s).slice(-2))
+
+    // Single digit
+    f = f.replace(/M/g, M + 1)
+    f = f.replace(/D/g, D)
+    f = f.replace(/h/g, h)
+    f = f.replace(/m/g, m)
+    f = f.replace(/s/g, s)
+
+    if (f.match(/S/g)) {
+      let ms = date.getMilliseconds()
+      if (!(Number.isNaN(ms))) {
+        ms = (&apos;00&apos; + ms).slice(-3)
+        for (let i = 0, max = f.match(/S/g).length; i &lt; max; ++i) {
+          f = f.replace(/S/, ms.substring(i, i + 1))
+        }
+      }
+    }
+
+    return f
+  }
+
+  /**
+   * Check the node of a block element.
+   *
+   * @param {Node} node Node.
+   *
+   * @return {Boolean} Block element if &quot;true&quot;.
+   */
+  static isBlockElement (node) {
+    return BlockElements.indexOf(node.nodeName.toLowerCase()) !== -1
+  }
+
+  /**
+   * Check the node of a void element.
+   *
+   * @param {Node} node Node.
+   *
+   * @return {Boolean} Void element if &quot;true&quot;.
+   */
+  static isVoidElement (node) {
+    return VoidElements.indexOf(node.nodeName.toLowerCase()) !== -1
+  }
+
+  /**
+   * Asynchronous mkdir(2). No arguments other than a possible exception are given to the completion callback.
+   * mode defaults to 0o777.
+   *
+   * @param {String} path Directory path.
+   *
+   * @return {Boolean} Success if &quot;true&quot;.
+   */
+  static mkdirSync (path) {
+    const dir = Path.resolve(path)
+    if (Util.existsSync(dir)) {
+      return true
+    }
+
+    Fs.mkdirSync(dir)
+    return Util.existsSync(dir)
+  }
+
+  /**
+   * Get the HTML string of an element with its contents converted.
+   *
+   * @param  {Node}   node    DOM node.
+   * @param  {String} content Text.
+   *
+   * @return {String} HTML text.
+   */
+  static outerHTML (node, content) {
+    const clone = node.cloneNode(false)
+    if (clone.outerHTML) {
+      return clone.outerHTML.replace(&apos;&gt;&lt;&apos;, &apos;&gt;&apos; + content + &apos;&lt;&apos;)
+    }
+
+    return content
+  }
+
+  /**
+   * Get a datetime from WordPress XML GMT
+   *
+   * @param {String} gmt String of GMT.
+   *
+   * @return {Object} Datetime.
+   */
+  static datetimeFromWpGMT (gmt) {
+    const datetime = gmt.split(&apos; &apos;)
+    const date     = datetime[0].split(&apos;-&apos;)
+
+    return {
+      year: date[0],
+      month: date[1],
+      day: date[2],
+      time: datetime[1]
+    }
+  }
+
+  /**
+   * Remove whitespace from both sides of a string.
+   *
+   * @param {String} str String.
+   *
+   * @return {String} New string.1
+   */
+  static trim (str) {
+    return str.replace(/^[ \r\n\t]+|[ \r\n\t]+$/g, &apos;&apos;)
+  }
+
+  /**
+   * If the file or folder to the same path on exists, generates a unique path that does not duplicate.
+   * e.g. &quot;./test&quot; to &quot;test-1&quot;, &quot;./test.md&quot; to &quot;./test-1.md&quot;
+   *
+   * @param  {String} path Original path.
+   * @param  {Number} min  The minimum value of the sequential number. Defailt is 1.
+   * @param  {Number} max  The maximum value of the sequential number. Defailt is 256.
+   *
+   * @return {String} Success is the unique path (full path), failure is null. If not duplicate returns the original path.
+   */
+  static uniquePathWithSequentialNumber (path, min = 1, max = 256) {
+    const originalPath = Path.resolve(path)
+    if (!(Util.existsSync(originalPath) &amp;&amp; typeof min === &apos;number&apos; &amp;&amp; typeof max === &apos;number&apos; &amp;&amp; 0 &lt;= min &amp;&amp; min &lt; max)) {
+      return originalPath
+    }
+
+    const ext    = Path.extname(originalPath)
+    const base   = Path.basename(originalPath, ext)
+    const parent = Path.dirname(originalPath)
+
+    for (let i = min; i &lt;= max; ++i) {
+      const name       = base + &apos;-&apos; + i + ext
+      const uniquePath = Path.join(parent, name)
+      if (!(Util.existsSync(uniquePath))) {
+        return uniquePath
+      }
+    }
+
+    return null
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

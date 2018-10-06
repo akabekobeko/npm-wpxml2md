@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/shortcode.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/shortcode.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Rewire from &apos;rewire&apos;
+import ConvertShortCode from &apos;./shortcode.js&apos;
+
+/** @test {ConvertShortCode} */
+describe(&apos;ConvertShortCode&apos;, () =&gt; {
+  const Module = Rewire(&apos;./shortcode.js&apos;)
+
+  /** @test {ConvertShortCode} */
+  describe(&apos;ConvertShortCode&apos;, () =&gt; {
+    it(&apos;[code]&apos;, () =&gt; {
+      const text     = &apos;[code]\nCode\n[/code]&apos;
+      const actual   = ConvertShortCode(text)
+      const expected = &apos;\n\n```\nCode\n```\n\n&apos;
+      assert(actual === expected)
+    })
+
+    it(&apos;[code lang=&quot;lang&quot;]&apos;, () =&gt; {
+      const text     = &apos;[code lang=&quot;lang&quot;]\nCode\n[/code]&apos;
+      const actual   = ConvertShortCode(text)
+      const expected = &apos;\n\n```lang\nCode\n```\n\n&apos;
+      assert(actual === expected)
+    })
+
+    it(&apos;[lang]&apos;, () =&gt; {
+      let text = &apos;[plain]\nCode\n[/plain]&apos;
+      let actual = ConvertShortCode(text)
+      let expected = &apos;\n\n```\nCode\n```\n\n&apos;
+      assert(actual === expected)
+
+      text = &apos;[text]\nCode\n[/text]&apos;
+      actual = ConvertShortCode(text)
+      assert(actual === expected)
+
+      const SHCodes = Module.__get__(&apos;SHCodes&apos;)
+      for (let i = 3, max = SHCodes.length; i &lt; max; ++i) {
+        const code = SHCodes[ i ]
+        text = &apos;[&apos; + code + &apos;]Code[/&apos; + code + &apos;]&apos;
+        actual   = ConvertShortCode(text)
+        expected = &apos;\n\n```&apos; + code + &apos;\nCode\n```\n\n&apos;
+        assert(actual === expected)
+      }
+    })
+  })
+
+  /** @test {parse} */
+  describe(&apos;parse&apos;, () =&gt; {
+    const parse = Module.__get__(&apos;parse&apos;)
+
+    it(&apos;parse&apos;, () =&gt; {
+      const text = &apos;caption id=&quot;ID&quot; align=&quot;alignright&quot; width=&quot;300&quot; caption=&quot;Caption&quot;&apos;
+      const actual = parse(text)
+      assert(actual.code           === &apos;caption&apos;)
+      assert(actual.params.id      === &apos;ID&apos;)
+      assert(actual.params.align   === &apos;alignright&apos;)
+      assert(actual.params.width   === &apos;300&apos;)
+      assert(actual.params.caption === &apos;Caption&apos;)
+    })
+  })
+
+  /** @test {trimLineBreak} */
+  describe(&apos;trimLineBreak&apos;, () =&gt; {
+    const trimLineBreak = Module.__get__(&apos;trimLineBreak&apos;)
+
+    it(&apos;trimLineBreak&apos;, () =&gt; {
+      let actual = trimLineBreak(&apos;\nText\n&apos;)
+      assert(actual === &apos;Text&apos;)
+
+      actual = trimLineBreak(&apos;\n\nText\n&apos;)
+      assert(actual === &apos;\nText&apos;)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

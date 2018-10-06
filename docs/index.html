@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="npm-wpxml2md">npm-wpxml2md</h1><p><a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-LTS-brightgreen.svg" alt="Support Node of LTS"></a>
+<a href="https://badge.fury.io/js/wpxml2md"><img src="https://badge.fury.io/js/wpxml2md.svg" alt="npm version"></a>
+<a href="https://travis-ci.org/akabekobeko/npm-wpxml2md"><img src="https://travis-ci.org/akabekobeko/npm-wpxml2md.svg?branch=master" alt="Build Status"></a>
+<a href="https://akabekobeko.github.io/npm-wpxml2md/"><img src="https://img.shields.io/badge/document-ESDoc-brightgreen.svg" alt="Document"></a>
+<a href="http://standardjs.com/"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide"></a></p>
+<p>Convert the WordPress XML file to Markdown files.</p>
+<h2 id="installation">Installation</h2><pre><code><code class="source-code prettyprint">$ npm install wpxml2md</code>
+</code></pre><h2 id="wordpress-xml">WordPress XML</h2><p>Can export the <strong>WordPress XML</strong> in the following way.</p>
+<ol>
+<li>Displays the management screen of WordPress</li>
+<li>Select the <code>Tools</code> - <code>Export</code> from the menu</li>
+<li>Select <code>All content</code> in <code>Choose what to export</code></li>
+<li>Click to <code>Download Export File</code></li>
+</ol>
+<h2 id="usage">Usage</h2><h3 id="node-api">Node API</h3><p><code>wpxml2md</code> is promisify function.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const wpxml2md = require(&apos;wpxml2md&apos;);
+
+const options = {
+  report: true,
+  noGFM: false,
+  noMELink: true,
+  withMetadata: true,
+  withImageDownload: true,
+  withComment: true,
+  replaceLinkPrefix: {
+    old: &apos;http://akabeko.me/blog/&apos;,
+    new: &apos;/&apos;
+  }
+}
+
+wpxml2md(&apos;wordpress.xml&apos;, &apos;dest&apos;, options)
+.then(() =&gt; {
+  console.log(&apos;Completed!!&apos;);
+} )
+.catch((err) =&gt; {
+  console.error(err);
+});</code>
+</code></pre>
+<h4 id="wpxml2md">wpxml2md</h4><p><code>wpxml2md(src, dest, options)</code></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>src</td>
+<td>String</td>
+<td>Path of the XML file exported from WordPress.</td>
+</tr>
+<tr>
+<td>dest</td>
+<td>String</td>
+<td>Destination directory path.</td>
+</tr>
+<tr>
+<td>options</td>
+<td>Object</td>
+<td>Options.</td>
+</tr>
+</tbody>
+</table>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>report</td>
+<td>Boolean</td>
+<td>Default is <code>false</code>. Display the process reports.</td>
+</tr>
+<tr>
+<td>noGFM</td>
+<td>Boolean</td>
+<td>Default is <code>false</code>. Disable the Convert the GitHub Flavored Markdown.</td>
+</tr>
+<tr>
+<td>noMELink</td>
+<td>Boolean</td>
+<td>Default is <code>false</code>. Disable the Convert the GitHub Extra link on header.</td>
+</tr>
+<tr>
+<td>withMetadata</td>
+<td>Boolean</td>
+<td>Default is <code>false</code>. Output article metadata in YAML format at the top of Markdown.</td>
+</tr>
+<tr>
+<td>withImageDownload</td>
+<td>Boolean</td>
+<td>Default is <code>false</code>. Download the linked images from articles. The file name is the same as markdown. Multiple images become serial numbers, <code>DD</code> is an article posted day (yyyymm&quot;dd&quot;). <code>DD-1.png</code>, <code>DD-2.png</code>, ...etc.</td>
+</tr>
+<tr>
+<td>replaceLinkPrefix</td>
+<td>Object</td>
+<td>Default is <code>undefined</code>. Replace the link URL prefix with the specified word.</td>
+</tr>
+<tr>
+<td><em>replaceLinkPrefix</em>.old</td>
+<td>String</td>
+<td>Target.</td>
+</tr>
+<tr>
+<td><em>replaceLinkPrefix</em>.new</td>
+<td>String</td>
+<td>Replacement.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cli">CLI</h3><pre><code><code class="source-code prettyprint">Usage: wpxml2md [OPTIONS]
+
+  Convert the WordPress XML file to Markdown files.
+
+  Options:
+    -h, --help            Display this text.
+    -v, --version         Display the version number.
+    -i, --input           Path of the XML file exported from WordPress.
+    -o, --output          Path of the output directory.
+    -r, --report          Output process reports.
+    --no-gfm              Disable the GitHub Flavored Markdown.
+    --no-melink           Disable the Markdown Extra link on header.
+    --with-metadata       Enable output article metadata.
+    --with-image-download Enable download and replace link syntaxes a linked images from article.
+    --with-comment        Enable comment output from article.
+    --replace-link-prefix Replace the link URL prefix with the specified word, format is &quot;target=placeholder&quot;.
+                          If &quot;--replace-link http://example.com/=/&quot; then &quot;http://example.com/&quot; will be replaced with &quot;/&quot;.
+
+  Examples:
+    $ wpxml2md -i wordpress.xml -o ./dist -r
+    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image-download --with-comment --replace-link-prefix http://akabeko.me/=/
+
+  See also:
+    https://github.com/akabekobeko/npm-wpxml2md</code>
+</code></pre><h2 id="conversion">Conversion</h2><p>This section describes the conversion by this tool. Markdown conversion engine was in reference to the design and implementation of the <a href="https://github.com/domchristie/to-markdown">domchristie/to-markdown</a>, rewrite an ES2015 and more.</p>
+<h3 id="output-directories">Output directories</h3><p>Converted Markdown files are output in the following directory.</p>
+<pre><code><code class="source-code prettyprint">YYYYMMDD-hhmmss/
+&#x251C;&#x2500;&#x2500; pages
+&#x2502;   &#x2514;&#x2500;&#x2500; YYYY
+&#x2502;       &#x2514;&#x2500;&#x2500; MM
+&#x2502;           &#x2514;&#x2500;&#x2500; DD.md
+&#x2514;&#x2500;&#x2500; posts
+    &#x2514;&#x2500;&#x2500; YYYY
+        &#x2514;&#x2500;&#x2500; MM
+            &#x2514;&#x2500;&#x2500; DD.md</code>
+</code></pre><ul>
+<li>The name of the root directory is the date time that the execution of the processing</li>
+<li>The result of converting the <strong>Pages</strong> will be output to the <code>pages</code> directory</li>
+<li>The result of converting the <strong>Posts</strong> will be output to the <code>posts</code> directory</li>
+<li>Markdown&apos;s file name is posted date time.</li>
+<li>If the file or directory name is a duplicate will be added to the <strong>sequential number</strong> at the end.</li>
+</ul>
+<h3 id="html-tag">HTML TAG</h3><p>Default markdown.</p>
+<table>
+<thead>
+<tr>
+<th>TAG</th>
+<th>Markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Plain Text</code></td>
+<td>Plain text will keep the line breaks and blank lines. It is a specification to enable the WordPress of paragraph function.</td>
+</tr>
+<tr>
+<td><code>&lt;p&gt;</code></td>
+<td><code>\n\nTEXT\n\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;br&gt;</code></td>
+<td><code>\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;h1&gt;</code></td>
+<td><code>\n\n# TEXT\n\n</code>, support from <code>h1</code> to <code>h6</code>.</td>
+</tr>
+<tr>
+<td><code>&lt;h1 id=&quot;id&quot;&gt;</code></td>
+<td><code>\n\n# TEXT {#id}\n\n</code>, for Markdown Extra.</td>
+</tr>
+<tr>
+<td><code>&lt;hr&gt;</code></td>
+<td><code>\n\n* * *\n\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;em&gt;</code>, <code>&lt;i&gt;</code></td>
+<td><code>_TEXT_</code></td>
+</tr>
+<tr>
+<td><code>&lt;strong&gt;</code>, <code>&lt;b&gt;</code></td>
+<td><code>**TEXT**</code></td>
+</tr>
+<tr>
+<td><code>&lt;code&gt;</code></td>
+<td><code>`TEXT`</code></td>
+</tr>
+<tr>
+<td><code>&lt;a&gt;</code></td>
+<td><code>[TEXT](URL &quot;ALT&quot;)</code></td>
+</tr>
+<tr>
+<td><code>&lt;img&gt;</code></td>
+<td><code>![TITLE](URL)</code></td>
+</tr>
+<tr>
+<td><code>&lt;pre&gt;&lt;code&gt;</code></td>
+<td><code>\n\n    TEXT\n\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;blockquote&gt;</code></td>
+<td><code>\n\n&gt; TEXT\n\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;ul&gt;&lt;li&gt;</code></td>
+<td><code>\n\n* TEXT\n\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;ol&gt;&lt;li&gt;</code></td>
+<td><code>\n\n1. TEXT\n\n</code></td>
+</tr>
+</tbody>
+</table>
+<p>GitHub Flavored Markdown.</p>
+<table>
+<thead>
+<tr>
+<th>TAG</th>
+<th>Markdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;br&gt;</code></td>
+<td><code>\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;del&gt;</code>, <code>&lt;s&gt;</code>, <code>&lt;strike&gt;</code></td>
+<td><code>~~TEXT~~</code></td>
+</tr>
+<tr>
+<td><code>&lt;ul&gt;&lt;li&gt;&lt;input type=&quot;checkbox&quot;&gt;</code></td>
+<td><code>* [ ] Text</code>, <strong>checked</strong> is true if <code>[x]</code>.</td>
+</tr>
+<tr>
+<td><code>&lt;table&gt;</code></td>
+<td>see: <a href="https://help.github.com/articles/organizing-information-with-tables/">Organizing information with tables - User Documentation</a></td>
+</tr>
+<tr>
+<td><code>&lt;pre&gt;&lt;code&gt;</code></td>
+<td><code>\n\n```\nCODE\n```\n\n</code></td>
+</tr>
+<tr>
+<td><code>&lt;div class=&quot;highlight highlight-lang&quot;&gt;&lt;pre&gt;</code></td>
+<td><code>\n\n```lang\nCODE\n```\n\n</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="shortcode">Shortcode</h3><h4 id="caption">caption</h4><pre><code><code class="source-code prettyprint">[caption]
+&lt;a href=&quot;example.png&quot; title=&quot;Title&quot;&gt;
+  &lt;img src=&quot;example.png&quot; alt=&quot;Title&quot;&gt;&lt;/a&gt;
+&lt;/a&gt;
+[/caption]</code>
+</code></pre><p>Remove the short code dregs. Contents will Markdown conversion as HTML.</p>
+<pre><code><code class="source-code prettyprint">[![Title](example.png)](example.png &quot;Title&quot;)</code>
+</code></pre><h4 id="code">code</h4><pre><code><code class="source-code prettyprint">[code lang=&quot;js&quot;]
+const test = &apos;test&apos;;
+console.log(test);
+[/code]</code>
+</code></pre><p><code>code</code> is converted to a code block.</p>
+<pre><code><code class="source-code prettyprint">```js
+const test = &apos;test&apos;;
+console.log(test);
+```</code>
+</code></pre><p>Short code of programming languages and converts it to a code block.</p>
+<pre><code><code class="source-code prettyprint">[js]
+const test = &apos;test&apos;;
+if (test) {
+  console.log(test);
+}
+[/js]</code>
+</code></pre><p>For example, the above will be converted to the following.</p>
+<pre><code><code class="source-code prettyprint">```js
+const test = &apos;test&apos;;
+if (test) {
+  console.log(test);
+}
+```</code>
+</code></pre><p>Language to be converted is the following. The language names are based on the <a href="http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/">SyntaxHighlighter - Bundled Brushes</a>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Language</th>
+<th style="text-align:left">Shortcode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Plain Text</td>
+<td style="text-align:left">plain, text</td>
+</tr>
+<tr>
+<td style="text-align:left">ActionScript3</td>
+<td style="text-align:left">as3, actionscript3</td>
+</tr>
+<tr>
+<td style="text-align:left">Bash/shell</td>
+<td style="text-align:left">bash, shell</td>
+</tr>
+<tr>
+<td style="text-align:left">ColdFusion</td>
+<td style="text-align:left">cf, coldfusion</td>
+</tr>
+<tr>
+<td style="text-align:left">C#</td>
+<td style="text-align:left">c-sharp, csharp</td>
+</tr>
+<tr>
+<td style="text-align:left">C++</td>
+<td style="text-align:left">cpp, c</td>
+</tr>
+<tr>
+<td style="text-align:left">CSS</td>
+<td style="text-align:left">css</td>
+</tr>
+<tr>
+<td style="text-align:left">Delphi</td>
+<td style="text-align:left">delphi, pas, pascal</td>
+</tr>
+<tr>
+<td style="text-align:left">Diff</td>
+<td style="text-align:left">diff, patch</td>
+</tr>
+<tr>
+<td style="text-align:left">Erlang</td>
+<td style="text-align:left">erl, erlang</td>
+</tr>
+<tr>
+<td style="text-align:left">Groovy</td>
+<td style="text-align:left">groovy</td>
+</tr>
+<tr>
+<td style="text-align:left">JavaScript</td>
+<td style="text-align:left">js, jscript, javascript</td>
+</tr>
+<tr>
+<td style="text-align:left">Java</td>
+<td style="text-align:left">java</td>
+</tr>
+<tr>
+<td style="text-align:left">JavaFX</td>
+<td style="text-align:left">jfx, javafx</td>
+</tr>
+<tr>
+<td style="text-align:left">Perl</td>
+<td style="text-align:left">perl, pl</td>
+</tr>
+<tr>
+<td style="text-align:left">PHP</td>
+<td style="text-align:left">php</td>
+</tr>
+<tr>
+<td style="text-align:left">PowerShell</td>
+<td style="text-align:left">ps, powershell</td>
+</tr>
+<tr>
+<td style="text-align:left">Python</td>
+<td style="text-align:left">py, python</td>
+</tr>
+<tr>
+<td style="text-align:left">Ruby</td>
+<td style="text-align:left">rails, ror, ruby</td>
+</tr>
+<tr>
+<td style="text-align:left">Scala</td>
+<td style="text-align:left">scala</td>
+</tr>
+<tr>
+<td style="text-align:left">SQL</td>
+<td style="text-align:left">sql</td>
+</tr>
+<tr>
+<td style="text-align:left">Visual Basic</td>
+<td style="text-align:left">vb, vbnet</td>
+</tr>
+<tr>
+<td style="text-align:left">XML</td>
+<td style="text-align:left">xml, xhtml, xslt, html, xhtml</td>
+</tr>
+</tbody>
+</table>
+<h2 id="changelog">ChangeLog</h2><ul>
+<li><a href="CHANGELOG.md">CHANGELOG</a></li>
+</ul>
+<h2 id="license">License</h2><ul>
+<li><a href="LICENSE.txt">MIT</a></li>
+</ul>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

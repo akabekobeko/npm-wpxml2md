@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/markdown.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/markdown.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Util from &apos;./util.js&apos;
+
+/**
+ * Convert the HTML DOM Node to Markdown text.
+ * @type {MdConverter[]}
+ * @see https://github.com/domchristie/to-markdown/blob/master/lib/md-converters.js
+ */
+const MarkdownConverters = [
+  // Paragraph
+  {
+    filter: &apos;p&apos;,
+    replacement: (node, content) =&gt; {
+      return &apos;\n\n&apos; + content + &apos;\n\n&apos;
+    }
+  },
+  // Line break
+  {
+    filter: &apos;br&apos;,
+    replacement: () =&gt; {
+      return &apos;  \n&apos;
+    }
+  },
+  // Header
+  {
+    filter: [ &apos;h1&apos;, &apos;h2&apos;, &apos;h3&apos;, &apos;h4&apos;, &apos;h5&apos;, &apos;h6&apos; ],
+    replacement: (node, content, modes) =&gt; {
+      const level  = node.nodeName.charAt(1)
+      let   prefix = &apos;&apos;
+      for (let i = 0; i &lt; level; ++i) {
+        prefix += &apos;#&apos;
+      }
+
+      // Inter link (Markdown Extra)
+      if (node.id &amp;&amp; !(modes.noMELink)) {
+        return &apos;\n\n&apos; + prefix + &apos; &apos; + content + &apos; {#&apos; + node.id + &apos;}\n\n&apos;
+      }
+
+      return &apos;\n\n&apos; + prefix + &apos; &apos; + content + &apos;\n\n&apos;
+    }
+  },
+  // Line
+  {
+    filter: &apos;hr&apos;,
+    replacement: () =&gt; {
+      return &apos;\n\n* * *\n\n&apos;
+    }
+  },
+  // Italic
+  {
+    filter: [&apos;em&apos;, &apos;i&apos;],
+    replacement: (node, content) =&gt; {
+      return &apos;_&apos; + content + &apos;_&apos;
+    }
+  },
+  // Strong
+  {
+    filter: [ &apos;strong&apos;, &apos;b&apos; ],
+    replacement: (node, content) =&gt; {
+      return &apos;**&apos; + content + &apos;**&apos;
+    }
+  },
+  // Inline code
+  {
+    filter: (node) =&gt; {
+      const hasSiblings = node.previousSibling || node.nextSibling
+      const isCodeBlock = (node.parentNode.nodeName === &apos;PRE&apos; &amp;&amp; !(hasSiblings))
+
+      return (node.nodeName === &apos;CODE&apos; &amp;&amp; !(isCodeBlock))
+    },
+    replacement: (node, content) =&gt; {
+      return &apos;`&apos; + content + &apos;`&apos;
+    }
+  },
+  // Link
+  {
+    filter: (node) =&gt; {
+      return (node.nodeName === &apos;A&apos; &amp;&amp; node.getAttribute(&apos;href&apos;))
+    },
+    replacement: (node, content) =&gt; {
+      const titlePart = node.title ? &apos; &quot;&apos; + node.title + &apos;&quot;&apos; : &apos;&apos;
+      return &apos;[&apos; + content + &apos;](&apos; + node.getAttribute(&apos;href&apos;) + titlePart + &apos;)&apos;
+    }
+  },
+  // Image
+  {
+    filter: &apos;img&apos;,
+    replacement: (node) =&gt; {
+      const alt       = node.alt || &apos;&apos;
+      const src       = node.getAttribute(&apos;src&apos;) || &apos;&apos;
+      const title     = node.title || &apos;&apos;
+      const titlePart = title ? &apos; &quot;&apos; + title + &apos;&quot;&apos; : &apos;&apos;
+
+      return src ? &apos;![&apos; + alt + &apos;](&apos; + src + titlePart + &apos;)&apos; : &apos;&apos;
+    }
+  },
+  // Code blocks
+  {
+    filter: (node) =&gt; {
+      return node.nodeName === &apos;PRE&apos; &amp;&amp; node.firstChild.nodeName === &apos;CODE&apos;
+    },
+    replacement: (node) =&gt; {
+      return &apos;\n\n    &apos; + node.firstChild.textContent.replace(/\n/g, &apos;\n    &apos;) + &apos;\n\n&apos;
+    }
+  },
+  // Block quote
+  {
+    filter: &apos;blockquote&apos;,
+    replacement: (node, content) =&gt; {
+      let result = Util.trim(content)
+      result = result.replace(/\n{3,}/g, &apos;\n\n&apos;)
+      result = result.replace(/^/gm, &apos;&gt; &apos;)
+      return &apos;\n\n&apos; + result + &apos;\n\n&apos;
+    }
+  },
+  // List item
+  {
+    filter: &apos;li&apos;,
+    replacement: (node, content) =&gt; {
+      const text   = content.replace(/^\s+/, &apos;&apos;).replace(/\n/gm, &apos;\n    &apos;)
+      const parent = node.parentNode
+      const index  = Util.arrayIndexOf(parent.children, node) + 1
+      const ol     = /ol/i
+      const prefix = ol.test(parent.nodeName) ? index + &apos;. &apos; : &apos;* &apos;
+      return prefix + text
+    }
+  },
+  // List
+  {
+    filter: [ &apos;ul&apos;, &apos;ol&apos; ],
+    replacement: (node) =&gt; {
+      const strings = []
+      for (let i = 0, max = node.childNodes.length; i &lt; max; ++i) {
+        if (node.childNodes[i]._replacement) {
+          strings.push(node.childNodes[i]._replacement)
+        }
+      }
+
+      const li = /li/i
+      if (li.test(node.parentNode.nodeName)) {
+        return &apos;\n&apos; + strings.join(&apos;\n&apos;)
+      }
+
+      return &apos;\n\n&apos; + strings.join(&apos;\n&apos;) + &apos;\n\n&apos;
+    }
+  },
+  // Block element
+  {
+    filter: (node) =&gt; {
+      return Util.isBlockElement(node)
+    },
+    replacement: (node, content) =&gt; {
+      return &apos;\n\n&apos; + Util.outerHTML(node, content) + &apos;\n\n&apos;
+    }
+  },
+  // Anything else!
+  {
+    filter: () =&gt; {
+      return true
+    },
+    replacement: (node, content) =&gt; {
+      return Util.outerHTML(node, content)
+    }
+  }
+]
+
+export default MarkdownConverters
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

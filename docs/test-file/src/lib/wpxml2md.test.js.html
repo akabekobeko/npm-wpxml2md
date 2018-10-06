@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/wpxml2md.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/wpxml2md.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Rewire from &apos;rewire&apos;
+
+/** @test {WordPressXmlToMarkdown} */
+describe(&apos;WordPressXmlToMarkdown&apos;, () =&gt; {
+  const Module = Rewire(&apos;./wpxml2md.js&apos;)
+
+  /** @test {replaceLinkURL} */
+  describe(&apos;replaceLinkURL&apos;, () =&gt; {
+    const replaceLinkURL = Module.__get__(&apos;replaceLinkURL&apos;)
+
+    it(&apos;&quot;/&quot;&apos;, () =&gt; {
+      const text = &apos;text\n[alt](http://example.com/test/ &quot;title&quot;)\ntext&apos;
+
+      const actual = replaceLinkURL(text, &apos;http://example.com/&apos;, &apos;/&apos;)
+      const expected = &apos;text\n[alt](/test/ &quot;title&quot;)\ntext&apos;
+      assert(actual === expected)
+    })
+  })
+
+  describe(&apos;createExcerpt&apos;, () =&gt; {
+    const createExcerpt = Module.__get__(&apos;createExcerpt&apos;)
+
+    it(&apos;Normal&apos;, () =&gt; {
+      const markdown =
+`
+# &#x898B;&#x51FA;&#x3057;
+
+&#x6587;&#x7AE0;&#x6587;&#x7AE0;**&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;**&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;[aaa](http://example.com)&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;
+
+|&#x30D8;&#x30C3;&#x30C0;&#x30FC;|&#x30D8;&#x30C3;&#x30C0;&#x30FC;|
+|---|---|
+|&#x5024;|&#x5024;|
+
+## &#x898B;&#x51FA;&#x3057; 2
+
+![ZZZ](sample.png)
+
+Sentence__Sentence__Sentence&quot;Sentence&quot;Sentence
+
+* a
+* b
+
+## &#x898B;&#x51FA;&#x3057; 2
+
+1. a
+2. b
+3. c
+
+111.
+
+&gt; &#x5F15;&#x7528;
+&gt; &#x5F15;&#x7528;
+
+42SentenceSentenceSentenceSentenceSentenceSentenceSentenceSentenceSentenceSentenceSentence
+`
+      const actual = createExcerpt(markdown)
+      const expected = &apos;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;aaa&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;&#x6587;&#x7AE0;ZZZSentenceSentenceSentence\\&quot;Sentence\\&quot;Sentence111.42SentenceSentenceSen...&apos;
+      assert(actual === expected)
+    })
+
+    it(&apos;Empty&apos;, () =&gt; {
+      const actual = createExcerpt()
+      const expected = &apos;&apos;
+      assert(actual === expected)
+    })
+  })
+
+  /** @test {createMetadataHeader} */
+  describe(&apos;createMetadataHeader&apos;, () =&gt; {
+    const createMetadataHeader = Module.__get__(&apos;createMetadataHeader&apos;)
+
+    it(&apos;Post page&apos;, () =&gt; {
+      const metadata = {
+        type: &apos;post&apos;,
+        year: &apos;2018&apos;,
+        month: &apos;06&apos;,
+        day: &apos;25&apos;,
+        time: &apos;15:03:20&apos;,
+        permanentName: &apos;sample&apos;,
+        title: &apos;Sample post&apos;,
+        categories: [&apos;Sample&apos;],
+        tags: [&apos;Sample&apos;, &apos;wpxml2md&apos;]
+      }
+
+      const actual = createMetadataHeader(metadata)
+      const expected =
+`---
+path: &quot;/posts/2018/06/sample/&quot;
+date: &quot;2018-06-25T15:03:20Z&quot;
+title: &quot;Sample post&quot;
+categories: [&quot;Sample&quot;]
+tags: [&quot;Sample&quot;, &quot;wpxml2md&quot;]
+excerpt: &quot;&quot;
+---
+
+`
+      assert(actual === expected)
+    })
+
+    it(&apos;Single page&apos;, () =&gt; {
+      const metadata = {
+        type: &apos;page&apos;,
+        year: &apos;2018&apos;,
+        month: &apos;06&apos;,
+        day: &apos;25&apos;,
+        time: &apos;18:03:20&apos;,
+        permanentName: &apos;sample&apos;,
+        title: &apos;Sample page&apos;,
+        categories: [&apos;Sample&apos;],
+        tags: [&apos;Sample&apos;, &apos;wpxml2md&apos;]
+      }
+
+      const actual = createMetadataHeader(metadata)
+      const expected =
+`---
+path: &quot;/pages/2018/06/sample/&quot;
+date: &quot;2018-06-25T18:03:20Z&quot;
+title: &quot;Sample page&quot;
+categories: [&quot;Sample&quot;]
+tags: [&quot;Sample&quot;, &quot;wpxml2md&quot;]
+excerpt: &quot;&quot;
+single: true
+---
+
+`
+      assert(actual === expected)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/comment.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/comment.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Rewire from &apos;rewire&apos;
+
+describe(&apos;Comment&apos;, () =&gt; {
+  const Module = Rewire(&apos;./comment.js&apos;)
+  describe(&apos;convertBody&apos;, () =&gt; {
+    const convertBody = Module.__get__(&apos;convertBody&apos;)
+
+    it(&apos;Normal&apos;, () =&gt; {
+      const actual = convertBody(`aaa\nbbb`)
+      const expected = &apos;  &gt; aaa\n  &gt; bbb&apos;
+      assert(actual === expected)
+    })
+  })
+
+  describe(&apos;convertMarkdown&apos;, () =&gt; {
+    const convertMarkdown = Module.__get__(&apos;convertMarkdown&apos;)
+
+    it(&apos;Tree&apos;, () =&gt; {
+      const comments = [
+        {
+          author: &apos;akabeko&apos;,
+          date: { year: &apos;2017&apos;, month: &apos;12&apos;, day: &apos;28&apos;, time: &apos;09:42:28&apos; },
+          url: &apos;http://akabeko.me/&apos;,
+          mail: `sample@example.com`,
+          content: &apos;aaaaa\naaaaa&apos;,
+          children: [
+            {
+              author: &apos;anonymous&apos;,
+              date: { year: &apos;2017&apos;, month: &apos;12&apos;, day: &apos;28&apos;, time: &apos;09:45:12&apos; },
+              mail: `sample2@example.com`,
+              content: &apos;bbbbb&apos;,
+              children: [
+                {
+                  author: &apos;anonymous&apos;,
+                  date: { year: &apos;2017&apos;, month: &apos;12&apos;, day: &apos;29&apos;, time: &apos;17:01:47&apos; },
+                  content: &apos;ccccc\nccccc&apos;
+                }
+              ]
+            }
+          ]
+        },
+        {
+          author: &apos;anonymous&apos;,
+          date: { year: &apos;2017&apos;, month: &apos;12&apos;, day: &apos;29&apos;, time: &apos;18:17:33&apos; },
+          content: &apos;zzzzzz&apos;
+        }
+      ]
+
+      const actual = convertMarkdown(comments)
+      const expected =
+`* ![akabeko](https://www.gravatar.com/avatar/45e67126a4c44c6ae030279e21437c79?d=identicon) **[akabeko](http://akabeko.me/)** 2017-12-28T09:42:28Z
+  &gt; aaaaa
+  &gt; aaaaa
+* ![anonymous](https://www.gravatar.com/avatar/cc7cd2a9c587aafc83517c97ab675864?d=identicon) **anonymous** 2017-12-28T09:45:12Z
+  &gt; bbbbb
+* **anonymous** 2017-12-29T17:01:47Z
+  &gt; ccccc
+  &gt; ccccc
+* **anonymous** 2017-12-29T18:17:33Z
+  &gt; zzzzzz
+`
+
+      assert(actual === expected)
+    })
+
+    it(&apos;Empty&apos;, () =&gt; {
+      const actual = convertMarkdown()
+      const expected = &apos;&apos;
+      assert(actual === expected)
+    })
+  })
+
+  describe(&apos;createCommentTree&apos;, () =&gt; {
+    const createCommentTree = Module.__get__(&apos;createCommentTree&apos;)
+
+    it(&apos;Create tree&apos;, () =&gt; {
+      const comments = [
+        { id: &apos;1&apos; },
+        { id: &apos;2&apos;, parent: &apos;1&apos; },
+        { id: &apos;3&apos; },
+        { id: &apos;4&apos;, parent: &apos;2&apos; }
+      ]
+      const actual = createCommentTree(comments)
+      const expected = [
+        {
+          id: &apos;1&apos;,
+          children: [
+            {
+              id: &apos;2&apos;,
+              parent: &apos;1&apos;,
+              children: [
+                {
+                  id: &apos;4&apos;,
+                  parent: &apos;2&apos;
+                }
+              ]
+            }
+          ]
+        },
+        { id: &apos;3&apos; }
+      ]
+
+      assert.deepStrictEqual(actual, expected)
+    })
+
+    it(&apos;Empty&apos;, () =&gt; {
+      const actual = createCommentTree()
+      const expected = []
+      assert.deepStrictEqual(actual, expected)
+    })
+  })
+
+  describe(&apos;parse&apos;, () =&gt; {
+    const parse = Module.__get__(&apos;parse&apos;)
+
+    it(&apos;Single comment&apos;, () =&gt; {
+      const comments = [{
+        &apos;wp:comment_id&apos;: [&apos;66571&apos;],
+        &apos;wp:comment_author&apos;: [&apos;anonymous&apos;],
+        &apos;wp:comment_author_email&apos;: [&apos;anonymous@example.com&apos;],
+        &apos;wp:comment_author_url&apos;: [&apos;http://example.com/&apos;],
+        &apos;wp:comment_author_IP&apos;: [&apos;192.168.0.0&apos;],
+        &apos;wp:comment_date&apos;: [&apos;2017-12-28 13:59:53&apos;],
+        &apos;wp:comment_date_gmt&apos;: [&apos;2017-12-28 04:59:53&apos;],
+        &apos;wp:comment_content&apos;: [&apos;Message\nMessage\n\nMessage&apos;],
+        &apos;wp:comment_approved&apos;: [&apos;1&apos;],
+        &apos;wp:comment_type&apos;: [],
+        &apos;wp:comment_parent&apos;: [&apos;0&apos;],
+        &apos;wp:comment_user_id&apos;: [&apos;0&apos;]
+      }]
+
+      const actual = parse(comments)
+      const expected = [
+        {
+          id: &apos;66571&apos;,
+          author: &apos;anonymous&apos;,
+          mail: &apos;anonymous@example.com&apos;,
+          url: &apos;http://example.com/&apos;,
+          date: { year: &apos;2017&apos;, month: &apos;12&apos;, day: &apos;28&apos;, time: &apos;04:59:53&apos; },
+          content: &apos;Message\nMessage\n\nMessage&apos;,
+          parent: &apos;0&apos;
+        }
+      ]
+
+      assert.deepStrictEqual(actual, expected)
+    })
+
+    it(&apos;Empty&apos;, () =&gt; {
+      const actual = parse()
+      const expected = []
+      assert.deepStrictEqual(actual, expected)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

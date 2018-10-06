@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/wpxml2md.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/wpxml2md.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Fs from &apos;fs&apos;
+import Path  from &apos;path&apos;
+import NodeUtil from &apos;util&apos;
+import XmlParser  from &apos;xml2js&apos;
+import Util from &apos;./util.js&apos;
+import Logger from &apos;./logger.js&apos;
+import Convert from &apos;./converter.js&apos;
+import ImageLinkReplace from &apos;./image-link-replacer.js&apos;
+import Comment from &apos;./comment.js&apos;
+
+const ParseXML = NodeUtil.promisify(XmlParser.parseString)
+
+/**
+ * Create a directory to save the markdown file.
+ * @param {String} root Path of the roo directory.
+ * @param {String} year Year.
+ * @param {String} month Month
+ * @return {String} If successful it is the path of the created directory.
+ */
+const createSaveDir = (root, year, month) =&gt; {
+  // root/year
+  let dir  = Path.join(root, year)
+  if (!(Util.mkdirSync(dir))) {
+    return null
+  }
+
+  // root/year/month
+  dir = Path.join(dir, month)
+  if (!(Util.mkdirSync(dir))) {
+    return null
+  }
+
+  return dir
+}
+
+/**
+ * Array to string for metadata.
+ * @param {Array} arr Array.
+ * @return {String} String.
+ */
+const arrayToString = (arr) =&gt; {
+  if (!(arr &amp;&amp; arr.length)) {
+    return &apos;[]&apos;
+  }
+
+  let str = `[&quot;${arr[0]}&quot;`
+  for (let i = 1, max = arr.length; i &lt; max; ++i) {
+    str += `, &quot;${arr[i]}&quot;`
+  }
+
+  str += &apos;]&apos;
+  return str
+}
+
+/**
+ * Create a excerpt string from Markdown text.
+ * The specification of the excerpt statement is below.
+ * - No line break
+ * - No header, list (ul/ol), table, blockquote
+ * - No Markdown decoration
+ * - Markdown links and images extracted only text
+ * - Add &quot;...&quot; to the end if it exceeds 100 characters
+ * - Escape a double quote for YAML
+ * @param {String} markdown Markdown text of content body.
+ * @return {String} Excerpted string.
+ */
+const createExcerpt = (markdown) =&gt; {
+  if (!markdown) {
+    return &apos;&apos;
+  }
+
+  let str = markdown
+    .replace(/\n\n/mg, &apos;\n&apos;)
+    .replace(/^(#|\*|\d{1,5}\. |\||&gt; ).*?\n/mg, &apos;&apos;)
+    .replace(/\n/mg, &apos;&apos;)
+    .replace(/\*\*(.*?)\*\*/g, (m, $1) =&gt; $1)
+    .replace(/__(.*?)__/g, (m, $1) =&gt; $1)
+    .replace(/!\[(.*?)\]\(.*?\)/g, (m, $1) =&gt; $1)
+    .replace(/\[(.*?)\]\(.*?\)/g, (m, $1) =&gt; $1)
+    .replace(/&quot;/g, &apos;\\&quot;&apos;)
+
+  str = 100 &lt;= str.length ? str.substring(0, 99) + &apos;...&apos; : str
+  return str
+}
+
+/**
+ * Create a header of article metadata.
+ * @param {Object} metadata Metadata of article.
+ * @param {String} markdown Markdown text of content body.
+ * @return {String} Header text.
+ */
+const createMetadataHeader = (metadata, markdown) =&gt; {
+  const last = metadata.type === &apos;page&apos; ? &apos;single: true\n---\n\n&apos; : &apos;---\n\n&apos;
+  return `---
+path: &quot;/${metadata.type}s/${metadata.year}/${metadata.month}/${metadata.permanentName}/&quot;
+date: &quot;${metadata.year}-${metadata.month}-${metadata.day}T${metadata.time}Z&quot;
+title: &quot;${metadata.title}&quot;
+categories: ${arrayToString(metadata.categories)}
+tags: ${arrayToString(metadata.tags)}
+excerpt: &quot;${createExcerpt(markdown)}&quot;
+${last}`
+}
+
+/**
+ * Read an article metadata from xml object.
+ * @param {Object} post XML object.
+ * @return {Object} Metadata.
+ */
+const readMetadata = (post) =&gt; {
+  const categories = []
+  const tags       = []
+  if (post.category) {
+    post.category.forEach((value) =&gt; {
+      switch (value.$.domain) {
+        case &apos;category&apos;:
+          categories.push(value._)
+          break
+
+        case &apos;post_tag&apos;:
+          tags.push(value._)
+          break
+
+        default:
+          break
+      }
+    })
+  }
+
+  const datetime = Util.datetimeFromWpGMT(post[&apos;wp:post_date_gmt&apos;][0])
+  return {
+    year: datetime.year,
+    month: datetime.month,
+    day: datetime.day,
+    time: datetime.time,
+    permanentName: post[&apos;wp:post_name&apos;][0],
+    title: post[&apos;title&apos;][0],
+    categories,
+    tags,
+    type: post[&apos;wp:post_type&apos;][0]
+  }
+}
+
+/**
+ * Replace the link URL included in Markdown.
+ * @param {String} markdown Markdown text.
+ * @param {String} oldPrefix Target.
+ * @param {String} newPrefix String to replace.
+ * @return {String} Replaced string.
+ */
+const replaceLinkURL = (markdown, oldPrefix, newPrefix) =&gt; {
+  if (!(markdown &amp;&amp; (oldPrefix &amp;&amp; typeof oldPrefix === &apos;string&apos;) &amp;&amp; (newPrefix &amp;&amp; typeof newPrefix === &apos;string&apos;))) {
+    return markdown
+  }
+
+  return markdown.replace(/\[(.*?)\]\((.*?)\)/g, (match, $1, $2) =&gt; {
+    const regexp = new RegExp(Util.escapeRegExp(oldPrefix), &apos;g&apos;)
+    const url = $2.replace(regexp, newPrefix)
+    return `[${$1}](${url})`
+  })
+}
+
+/**
+ * Convert the post data to markdown file.
+ * @param {Object} post Post data.
+ * @param {Object} metadata Metadata.
+ * @param {String} rootDir Path of Markdown file output directory.
+ * @param {Logger} logger Logger.
+ * @param {CLIOptions} options Options.
+ * @return {Promise} Promise task.
+ */
+const convertPost = async (post, metadata, rootDir, logger, options) =&gt; {
+  logger.log(`${metadata.year}/${metadata.month}/${metadata.day} [&apos;${metadata.type}&apos;]: ${metadata.title}`)
+
+  const dir = createSaveDir(rootDir, metadata.year, metadata.month)
+  if (!(dir)) {
+    throw new Error(&apos;Failed to create a save directory.&apos;)
+  }
+
+  // If there are multiple articles on the same day, their names will be duplicated and made unique.
+  const filePath = Util.uniquePathWithSequentialNumber(Path.join(dir, `${metadata.day}.md`))
+  const stream = Fs.createWriteStream(filePath)
+  if (!(stream)) {
+    throw new Error(&apos;Failed to create the stream.&apos;)
+  }
+
+  let markdown = Convert(post[&apos;content:encoded&apos;][0], options)
+  if (options.withMetadata) {
+    stream.write(createMetadataHeader(metadata, markdown), &apos;utf8&apos;)
+  } else {
+    stream.write(`# ${metadata.title}\n\n`, &apos;utf8&apos;)
+  }
+
+  if (options.withImageDownload) {
+    const basename = Path.basename(filePath, &apos;.md&apos;)
+    markdown = await ImageLinkReplace(markdown, dir, basename, logger)
+  }
+
+  if (options.replaceLinkPrefix) {
+    markdown = replaceLinkURL(markdown, options.replaceLinkPrefix.old, options.replaceLinkPrefix.new)
+  }
+
+  if (options.withComment) {
+    markdown += Comment(post[&apos;wp:comment&apos;])
+  }
+
+  stream.write(markdown, &apos;utf8&apos;)
+}
+
+/**
+ * Create a directory with a unique name.
+ * @param {String} dir Base directory path.
+ * @return {String} The path of the created directory. Failure is null.
+ */
+const createUniqueDestDir = (dir) =&gt; {
+  const base = Path.resolve(dir)
+  const name = Util.formatDate(new Date(), &apos;YYYYMMDD-hhmmss&apos;)
+
+  let path = Path.resolve(base, name)
+  if (!(Util.existsSync(path))) {
+    if (Util.mkdirSync(path)) {
+      return path
+    }
+  }
+
+  // Add sequential number
+  for (let i = 1; i &lt;= 256; ++i) {
+    path = Path.resolve(base, name + &apos;-&apos; + i)
+    if (!(Util.existsSync(path))) {
+      if (Util.mkdirSync(path)) {
+        return path
+      }
+    }
+  }
+
+  return null
+}
+
+/**
+ * Gets the posts data from XML.
+ * @param {String} src Path of XML file..
+ * @return {Promise} Promise task.
+ */
+const postsFromXML = async (src) =&gt; {
+  const data = Fs.readFileSync(Path.resolve(src))
+  if (!(data)) {
+    throw new Error(`&quot;${src}&quot; is not found.`)
+  }
+  const xml   = await ParseXML(data.toString())
+  return xml.rss.channel[0].item
+}
+
+/**
+ * Conver WordPress XML file to Markdown files.
+ * @param {String} src Path of the WordPress XML file.
+ * @param {String} dest Path of Markdown files output directory.
+ * @param {CLIOptions} options Options.
+ * @return {Promise} Promise object.
+ */
+const WordPressXmlToMarkdown = async (src, dest, options = { report: false }) =&gt; {
+  const logger = new Logger(options.report)
+  logger.log(`Input:  ${src}`)
+  logger.log(`Output: ${dest}`)
+
+  const dir = createUniqueDestDir(dest)
+  if (!(dir)) {
+    throw new Error(&apos;Failed to create the root directory.&apos;)
+  }
+
+  const postsDir = Path.join(dir, &apos;posts&apos;)
+  if (!(Util.mkdirSync(postsDir))) {
+    throw new Error(&apos;Failed to create the posts directory.&apos;)
+  }
+
+  const pagesDir = Path.join(dir, &apos;pages&apos;)
+  if (!(Util.mkdirSync(pagesDir))) {
+    throw new Error(&apos;Failed to create the pages directory.&apos;)
+  }
+
+  const posts = await postsFromXML(src)
+  for (let post of posts) {
+    const m = readMetadata(post)
+    await convertPost(post, m, m.type === &apos;post&apos; ? postsDir : pagesDir, logger, options)
+  }
+}
+
+export default WordPressXmlToMarkdown
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/bin/cli.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/bin/cli.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Path from &apos;path&apos;
+import WpXml2Md from &apos;../lib/index.js&apos;
+
+/**
+ * Help text.
+ * @type {String}
+ */
+const HelpText = `
+Usage: wpxml2md [OPTIONS]
+
+  Convert the WordPress XML file to Markdown files.
+
+  Options:
+    -h, --help            Display this text.
+    -v, --version         Display the version number.
+    -i, --input           Path of the XML file exported from WordPress.
+    -o, --output          Path of the output directory.
+    -r, --report          Output process reports.
+    --no-gfm              Disable the GitHub Flavored Markdown.
+    --no-melink           Disable the Markdown Extra link on header.
+    --with-metadata       Enable output article metadata.
+    --with-image-download Enable download and replace link syntaxes a linked images from article.
+    --with-comment        Enable comment output from article.
+    --replace-link-prefix Replace the link URL prefix with the specified word, format is &quot;target=placeholder&quot;.
+                          If &quot;--replace-link http://example.com/=/&quot; then &quot;http://example.com/&quot; will be replaced with &quot;/&quot;.
+
+  Examples:
+    $ wpxml2md -i wordpress.xml -o ./dist -r
+    $ wpxml2md -i wordpress.xml -o ./dist -r --with-metadata --with-image-download --with-comment --replace-link-prefix http://akabeko.me/=/
+
+  See also:
+    https://github.com/akabekobeko/npm-wpxml2md
+`
+
+/**
+ * CLI options.
+ * @type {Object}
+ */
+const Options = {
+  help: { name: &apos;--help&apos;, shortName: &apos;-h&apos; },
+  version: { name: &apos;--version&apos;, shortName: &apos;-v&apos; },
+  input: { name: &apos;--input&apos;, shortName: &apos;-i&apos; },
+  output: { name: &apos;--output&apos;, shortName: &apos;-o&apos; },
+  report: { name: &apos;--report&apos;, shortName: &apos;-r&apos; },
+  noGFM: { name: &apos;--no-gfm&apos; },
+  noMELink: { name: &apos;--no-melink&apos; },
+  withMetadata: { name: &apos;--with-metadata&apos; },
+  withImageDownload: { name: &apos;--with-image-download&apos; },
+  withComment: { name: &apos;--with-comment&apos; },
+  replaceLinkPrefix: { name: &apos;--replace-link-prefix&apos; }
+}
+
+/**
+ * Check that it is an option value.
+ *
+ * @param {String} value Value.
+ *
+ * @return {Boolean} If the option of the value &quot;true&quot;.
+ */
+const isValue = (value) =&gt; {
+  const keys = Object.keys(Options)
+  return !(keys.some((key) =&gt; value === Options[key].name || value === Options[key].shortName))
+}
+
+/**
+ * Parse for option value.
+ *
+ * @param {String[]} argv Arguments of the command line.
+ * @param {Number} index Index of argumens.
+ *
+ * @return {String} Its contents if the option value, otherwise null.
+ */
+const parseArgValue =  (argv, index) =&gt; {
+  if (!(index + 1 &lt; argv.length)) {
+    return null
+  }
+
+  const value = argv[index + 1]
+  return (isValue(value) ? value : null)
+}
+
+/**
+ * Parse for the link option.
+ *
+ * @param {String} value Option value.
+ *
+ * @return {Object} Replace targets.
+ */
+const parseReplaceLinkURL = (value) =&gt; {
+  const units = value.split(&apos;=&apos;)
+  if (units.length &lt; 2) {
+    return { old: &apos;&apos;, new: &apos;&apos; }
+  }
+
+  return { old: units[0], new: units[1] }
+}
+
+/**
+ * Parse for the command line argumens.
+ *
+ * @param {String[]} argv Arguments of the command line.
+ *
+ * @return {CLIOptions} Parse results.
+ */
+const parseArgv = (argv) =&gt; {
+  const options = {}
+  let   value   = null
+
+  argv.forEach((arg, index) =&gt; {
+    switch (arg) {
+      case Options.input.name:
+      case Options.input.shortName:
+        value = parseArgValue(argv, index)
+        if (value) {
+          options.input = Path.resolve(value)
+        }
+        break
+
+      case Options.output.name:
+      case Options.output.shortName:
+        value = parseArgValue(argv, index)
+        if (value) {
+          options.output = Path.resolve(value)
+        }
+        break
+
+      case Options.report.name:
+      case Options.report.shortName:
+        options.report = true
+        break
+
+      case Options.noGFM.name:
+        options.noGFM = true
+        break
+
+      case Options.noMELink.name:
+        options.noMELink = true
+        break
+
+      case Options.withMetadata.name:
+        options.withMetadata = true
+        break
+
+      case Options.withImageDownload.name:
+        options.withImageDownload = true
+        break
+
+      case Options.withComment.name:
+        options.withComment = true
+        break
+
+      case Options.replaceLinkPrefix.name:
+        value = parseArgValue(argv, index)
+        if (value) {
+          options.replaceLinkPrefix = parseReplaceLinkURL(value)
+        }
+        break
+
+      default:
+        break
+    }
+  })
+
+  return options
+}
+
+/**
+ * Parse for the command line arguments.
+ *
+ * @param {String[]} argv Arguments of the command line.
+ *
+ * @return {CLIOptions} Parse results.
+ */
+const parseOption = (argv) =&gt; {
+  if (!(argv &amp;&amp; 0 &lt; argv.length)) {
+    return { help: true }
+  }
+
+  switch (argv[0]) {
+    case Options.help.name:
+    case Options.help.shortName:
+      return { help: true }
+
+    case Options.version.name:
+    case Options.version.shortName:
+      return { version: true }
+
+    default:
+      return parseArgv(argv)
+  }
+}
+
+/**
+ * Print a help text.
+ *
+ * @param {WritableStream} stdout Standard output.
+ */
+const printHelp = (stdout) =&gt; {
+  stdout.write(HelpText)
+}
+
+/**
+ * Print a version number.
+ *
+ * @param {WritableStream} stdout Standard output.
+ */
+const printVersion = (stdout) =&gt; {
+  const read = (path) =&gt; {
+    try {
+      return require(path).version
+    } catch (err) {
+      return null
+    }
+  }
+
+  const version = read(&apos;../package.json&apos;) || read(&apos;../../package.json&apos;)
+  stdout.write(&apos;v&apos; + version + &apos;\n&apos;)
+}
+
+/**
+ * Entry point of the CLI.
+ *
+ * @param {String[]} argv Arguments of the command line.
+ * @param {WritableStream} stdout Standard output.
+ *
+ * @return {Promise} Asynchronous task.
+ */
+const CLI = (argv, stdout) =&gt; {
+  return new Promise((resolve, reject) =&gt; {
+    const options = parseOption(argv)
+    if (options.help) {
+      printHelp(stdout)
+      return resolve()
+    }
+
+    if (options.version) {
+      printVersion(stdout)
+      return resolve()
+    }
+
+    if (!(options.input)) {
+      return reject(new Error(&apos;&quot;-i&quot; or &quot;--input&quot; has not been specified. This parameter is required.&apos;))
+    }
+
+    if (!(options.output)) {
+      return reject(new Error(&apos;&quot;-o&quot; or &quot;--output&quot; has not been specified. This parameter is required.&apos;))
+    }
+
+    return WpXml2Md(options.input, options.output, options)
+  })
+}
+
+export default CLI
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

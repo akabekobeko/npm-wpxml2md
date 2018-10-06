@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/shortcode.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/shortcode.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * Constatns for the Converter class.
+ * @type {Object}
+ */
+const SHCodes = [
+  // ``` + lang parameter
+  &apos;code&apos;,
+
+  // ```
+  &apos;plain&apos;,
+  &apos;text&apos;,
+
+  // ```lang
+  &apos;as3&apos;,
+  &apos;actionscript3&apos;,
+  &apos;bash&apos;,
+  &apos;shell&apos;,
+  &apos;cf&apos;,
+  &apos;coldfusion&apos;,
+  &apos;c-sharp&apos;,
+  &apos;csharp&apos;,
+  &apos;cpp&apos;,
+  &apos;c&apos;,
+  &apos;css&apos;,
+  &apos;delphi&apos;,
+  &apos;pas&apos;,
+  &apos;pascal&apos;,
+  &apos;diff&apos;,
+  &apos;patch&apos;,
+  &apos;erl&apos;,
+  &apos;erlang&apos;,
+  &apos;groovy&apos;,
+  &apos;js&apos;,
+  &apos;jscript&apos;,
+  &apos;javascript&apos;,
+  &apos;java&apos;,
+  &apos;jfx&apos;,
+  &apos;javafx&apos;,
+  &apos;perl&apos;,
+  &apos;pl&apos;,
+  &apos;php&apos;,
+  &apos;ps&apos;,
+  &apos;powershell&apos;,
+  &apos;py&apos;,
+  &apos;python&apos;,
+  &apos;rails&apos;,
+  &apos;ror&apos;,
+  &apos;ruby&apos;,
+  &apos;scala&apos;,
+  &apos;sql&apos;,
+  &apos;vb&apos;,
+  &apos;vbnet&apos;,
+  &apos;xml&apos;,
+  &apos;xhtml&apos;,
+  &apos;xslt&apos;,
+  &apos;html&apos;
+]
+
+/**
+ * String of the Code block.
+ * @type {Object}
+ */
+const Block = {
+  BeginPlain: &apos;\n\n```\n&apos;,
+  Begin: &apos;\n\n```&apos;,
+  End: &apos;\n```\n\n&apos;
+}
+
+/**
+ * Remove the new line beginning and end of the code block.
+ *
+ * @param {String} text Code block text.
+ *
+ * @return {Text} New text.
+ */
+const trimLineBreak = (text) =&gt; {
+  return text.replace(/^[\n]|[\n]$/g, &apos;&apos;)
+}
+
+/**
+ * Convert a SyntaxHighlighter shortcode to Markdown.
+ *
+ * @param {String} src Original text.
+ * @param {String} code Shortcode name.
+ * @param {Object} params Shortcode parameters.
+ * @param {String} body Shortcode body.
+ *
+ * @return {String} Converted text.
+ */
+const convertSH = (src, code, params, body) =&gt; {
+  const value = trimLineBreak(body)
+  if (code === SHCodes[ 0 ]) {
+    if (params.lang) {
+      return Block.Begin + params.lang + &apos;\n&apos; + value + Block.End
+    }
+
+    return Block.BeginPlain + value + Block.End
+  } else if (code === SHCodes[1] || code === SHCodes[2]) {
+    return Block.BeginPlain + value + Block.End
+  }
+
+  for (let i = 3, max = SHCodes.length; i &lt; max; ++i) {
+    if (code === SHCodes[i]) {
+      return Block.Begin + code + `\n` + value + Block.End
+    }
+  }
+
+  return src
+}
+
+/**
+ * Parse a WordPress shortcode (&quot;code param1=&quot;value1&quot; param2=&quot;value2&quot;).
+ *
+ * @param {String} text shortcode text.
+ *
+ * @return {Object} Parsed result.
+ */
+const parse = (text) =&gt; {
+  const codes = text.split(&apos; &apos;)
+  const obj   = { code: codes[0], params: {} }
+
+  for (let i = 1, max = codes.length; i &lt; max; ++i) {
+    const params = codes[i].split(&apos;=&apos;)
+    if (params.length === 1) {
+      obj.params[params[0]] = &apos; &apos;
+    } else {
+      obj.params[params[0]] = params[1].replace(/^&quot;(.+(?=&quot;$))&quot;$/, &apos;$1&apos;)
+    }
+  }
+
+  return obj
+}
+
+/**
+ * Convert the WordPress&apos;s shotcode to Markdown.
+ *
+ * @return {String} Converted string.
+ */
+const ConvertShortCode = (text) =&gt; {
+  return text.replace(/\[([^\]]+)]([^[]+)\[\/([^\]]+)]/igm, (src, $1, $2) =&gt; {
+    const shortcode = parse($1)
+    if (shortcode.code === &apos;caption&apos;) {
+      return $2
+    }
+
+    return convertSH(src, shortcode.code, shortcode.params, $2)
+  })
+}
+
+export default ConvertShortCode
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

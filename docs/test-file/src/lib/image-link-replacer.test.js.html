@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/image-link-replacer.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/image-link-replacer.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Rewire from &apos;rewire&apos;
+
+/** @test {ImageLinkReplacer} */
+describe(&apos;ImageLinkReplacer&apos;, () =&gt; {
+  const Module = Rewire(&apos;./image-link-replacer.js&apos;)
+
+  /** @test {parseImageLink} */
+  describe(&apos;parseImageLink&apos;, () =&gt; {
+    const parseImageLink = Module.__get__(&apos;parseImageLink&apos;)
+
+    it(&apos;Parse&apos;, () =&gt; {
+      const md =
+`![title](http://example.com/sample.png)
+
+The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.
+
+[title](http://example.com/dummy/)
+
+[![title](http://example.com/thumbnail.jpg)](http://example.com/sample.png &quot;title&quot;)
+`
+      const actual = parseImageLink(md, &apos;base&apos;)
+      const expected = {
+        links: [
+          &apos;![title](http://example.com/sample.png)&apos;,
+          &apos;[![title](http://example.com/thumbnail.jpg)](http://example.com/sample.png &quot;title&quot;)&apos;
+        ],
+        images: [
+          { url: &apos;http://example.com/sample.png&apos;, fileName: &apos;base-1.png&apos; },
+          { url: &apos;http://example.com/thumbnail.jpg&apos;, fileName: &apos;base-2.jpg&apos; }
+        ]
+      }
+
+      assert.deepStrictEqual(actual, expected)
+    })
+  })
+
+  /** @test {replaceLinks} */
+  describe(&apos;replaceLinks&apos;, () =&gt; {
+    const replaceLinks = Module.__get__(&apos;replaceLinks&apos;)
+
+    it(&apos;Replace links&apos;, () =&gt; {
+      const links = [
+        &apos;![title](http://example.com/sample.png)&apos;,
+        &apos;[title](http://example.com/dummy.gif)&apos;,
+        &apos;[![title](http://example.com/sample.png)](http://example.com/sample.png &quot;title&quot;)&apos;,
+        &apos;[![title](http://example.com/thumbnail.jpg)](http://example.com/sample.png &quot;title&quot;)&apos;
+      ]
+
+      const images = [
+        { url: &apos;http://example.com/sample.png&apos;, fileName: &apos;1.png&apos; },
+        { url: &apos;http://example.com/thumbnail.jpg&apos;, fileName: &apos;2.jpg&apos; }
+      ]
+
+      const actual = replaceLinks(links, images)
+
+      // Other than `dummy.gif` should be replaced
+      const expected = [
+        { link: links[0], newLink: &apos;![title](1.png)&apos; },
+        { link: links[2], newLink: &apos;[![title](1.png)](1.png &quot;title&quot;)&apos; },
+        { link: links[3], newLink: &apos;[![title](2.jpg)](1.png &quot;title&quot;)&apos; }
+      ]
+
+      assert.deepStrictEqual(actual, expected)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

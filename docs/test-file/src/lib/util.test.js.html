@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/lib/util.test.js | wpxml2md</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Convert the WordPress XML file to Markdown files."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="wpxml2md"><meta property="twitter:description" content="Convert the WordPress XML file to Markdown files."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/akabekobeko/npm-wpxml2md"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CLIOptions">CLIOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-MdConverter">MdConverter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Modes">Modes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ReplaceLinkPrefix">ReplaceLinkPrefix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-external">E</span><span data-ice="name"><span><a href="https://nodejs.org/api/stream.html">WritableStream</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#bin">bin</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-CLI">CLI</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#lib">lib</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/logger.js~Logger.html">Logger</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/lib/util.js~Util.html">Util</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Comment">Comment</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Convert">Convert</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ImageLinkReplacer">ImageLinkReplacer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ConvertShortCode">ConvertShortCode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-WordPressXmlToMarkdown">WordPressXmlToMarkdown</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GfmConverters">GfmConverters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MarkdownConverters">MarkdownConverters</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/lib/util.test.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;
+import Path from &apos;path&apos;
+import Util from &apos;./util.js&apos;
+
+/** @test {Util} */
+describe(&apos;Util&apos;, () =&gt; {
+  describe(&apos;escapeRegExp&apos;, () =&gt; {
+    it(&apos;Escape&apos;, () =&gt; {
+      const actual = Util.escapeRegExp(&apos;https://example.com/test.jpeg&apos;)
+      const expected = &apos;https://example\\.com/test\\.jpeg&apos;
+      assert(actual === expected)
+    })
+  })
+
+  /** @test {Util#existsSync} */
+  describe(&apos;existsSync&apos;, () =&gt; {
+    it(&apos;Exists&apos;, () =&gt; {
+      assert(Util.existsSync(&apos;./examples&apos;))
+    })
+
+    it(&apos;Not exists&apos;, () =&gt; {
+      assert(!(Util.existsSync(&apos;./XXX&apos;)))
+    })
+  })
+
+  /** @test {Util#formatDate} */
+  describe(&apos;formatDate&apos;, () =&gt; {
+    it(&apos;Default YYYY-MM-DD hh:mm:ss.SSS&apos;, () =&gt; {
+      const date = new Date(2015, 7, 4, 21, 17, 45, 512)
+      const text = Util.formatDate(date)
+      assert(text === &apos;2015-08-04 21:17:45.512&apos;)
+    })
+
+    it(&apos;Hyphen YYYY-MM-DD-hh-mm-ss&apos;, () =&gt; {
+      const date = new Date(2015, 7, 4, 21, 17, 45, 512)
+      const text = Util.formatDate(date, &apos;YYYY-MM-DD-hh-mm-ss&apos;)
+      assert(text === &apos;2015-08-04-21-17-45&apos;)
+    })
+
+    it(&apos;No zero-padding YYYY/M/D h:m:s&apos;, () =&gt; {
+      const date = new Date(2015, 7, 4, 21, 17, 45, 512)
+      const text = Util.formatDate(date, &apos;YYYY/M/D h:m:s&apos;)
+      assert(text === &apos;2015/8/4 21:17:45&apos;)
+    })
+
+    it(&apos;NaN&apos;, () =&gt; {
+      const date = new Date(&apos;Wed, 30 Nov -0001 00:00:00 +0000&apos;)
+      const text = Util.formatDate(date, &apos;YYYY/M/D h:m:s&apos;)
+      assert(text === null)
+    })
+  })
+
+  /** @test {Util#uniquePathWithSequentialNumber} */
+  describe(&apos;uniquePathWithSequentialNumber&apos;, () =&gt; {
+    it(&apos;Unique path: directory&apos;, () =&gt; {
+      const actual = Util.uniquePathWithSequentialNumber(&apos;./examples&apos;)
+      const expect = Path.resolve(&apos;./examples-1&apos;)
+      assert(actual === expect)
+    })
+
+    it(&apos;Unique path: file&apos;, () =&gt; {
+      const actual = Util.uniquePathWithSequentialNumber(&apos;./src/lib/index.js&apos;)
+      const expect = Path.resolve(&apos;./src/lib/index-1.js&apos;)
+      assert(actual === expect)
+    })
+
+    it(&apos;Original path (not exists)&apos;, () =&gt; {
+      const actual = Util.uniquePathWithSequentialNumber(&apos;./XXX.md&apos;)
+      const expect = Path.resolve(&apos;./XXX.md&apos;)
+      assert(actual === expect)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
