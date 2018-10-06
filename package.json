@@ -6,7 +6,7 @@
   "license": "MIT",
   "homepage": "https://github.com/akabekobeko/npm-wpxml2md#readme",
   "engines": {
-    "node": ">= 6"
+    "node": ">= 8"
   },
   "main": "dist/lib/index.js",
   "bin": "dist/bin/index.js",
